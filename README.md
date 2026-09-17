@@ -505,6 +505,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
         "persistent": true,
         "showOnHover": true,
         "dragThreshold": 20,
+        "position": "left",
         "scrollActions": {
             "workspaces": true,
             "volume": true,
@@ -1070,5 +1071,5 @@ Finally, another thank you to all the configs I took inspiration from (only one 
     </picture>
 </a>
 
-[dots-repo]: https://github.com/caelestia-dots/caelestia
 [discord]: https://caelestiashell.com/discord
+[dots-repo]: https://github.com/caelestia-dots/caelestia
