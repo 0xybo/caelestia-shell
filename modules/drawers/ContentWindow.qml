@@ -93,6 +93,7 @@ StyledWindow {
         bar: bar
         win: root
         configPosition: root.contentItem.Config.bar.position
+        dashboardPosition: root.contentItem.Config.bar.dashboardPosition
     }
 
     Region {
@@ -189,6 +190,7 @@ StyledWindow {
 
             panel: panels.dashboard
             deformAmount: 0.1
+            x: panels.dashboard.x + geometry.insetLeft(root.borderThickness)
         }
 
         PanelBg {
