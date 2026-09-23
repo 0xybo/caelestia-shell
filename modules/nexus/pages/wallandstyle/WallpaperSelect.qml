@@ -185,5 +185,23 @@ PageBase {
                 }
             }
         }
+
+        // Grid settings
+        SectionHeader {
+            Layout.topMargin: Tokens.spacing.large
+            text: Tr.tr("Grid")
+        }
+
+        StepperRow {
+            first: true
+            last: true
+            label: Tr.tr("Wallpapers per row")
+            subtext: Tr.tr("Number of wallpaper thumbnails per row")
+            value: Config.nexus.wallpapersPerRow
+            from: 1
+            to: 10
+            stepSize: 1
+            onMoved: v => GlobalConfig.nexus.wallpapersPerRow = v
+        }
     }
 }

@@ -87,7 +87,6 @@ PageBase {
         }
 
         StepperRow {
-            last: true
             label: Tr.tr("Group preview count")
             subtext: Tr.tr("Notifications shown per group before collapsing")
             value: GlobalConfig.notifs.groupPreviewNum
@@ -95,6 +94,52 @@ PageBase {
             to: 10
             stepSize: 1
             onMoved: v => GlobalConfig.notifs.groupPreviewNum = Math.round(v)
+        }
+
+        StepperRow {
+            label: Tr.tr("Fullscreen timeout")
+            // TRANSLATORS: ms is the millisecond unit, leave it untranslated
+            subtext: Tr.tr("Dismissal time for notifications over fullscreen apps (ms)")
+            value: GlobalConfig.notifs.fullscreenExpireTimeout
+            from: 1000
+            to: 60000
+            stepSize: 500
+            onMoved: v => GlobalConfig.notifs.fullscreenExpireTimeout = Math.round(v)
+        }
+
+        StepperRow {
+            label: Tr.tr("Clear threshold")
+            subtext: Tr.tr("Drag distance (screen height) to dismiss a notification")
+            value: Math.round(Config.notifs.clearThreshold * 100)
+            from: 5
+            to: 100
+            stepSize: 5
+            onMoved: v => GlobalConfig.notifs.clearThreshold = v / 100
+        }
+
+        StepperRow {
+            label: Tr.tr("Expand threshold")
+            subtext: Tr.tr("Hover time (ms) before a notification expands")
+            value: Config.notifs.expandThreshold
+            from: 1
+            to: 200
+            stepSize: 1
+            onMoved: v => GlobalConfig.notifs.expandThreshold = Math.round(v)
+        }
+
+        ToggleRow {
+            text: Tr.tr("Open on click")
+            subtext: Tr.tr("Expand the notification when clicked")
+            checked: GlobalConfig.notifs.actionOnClick
+            onToggled: GlobalConfig.notifs.actionOnClick = checked
+        }
+
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Empty list image")
+            subtext: Tr.tr("Image shown when there are no notifications")
+            value: Config.paths.noNotifsPic
+            onEditingFinished: v => GlobalConfig.paths.noNotifsPic = v
         }
 
         // Toasts
@@ -183,10 +228,23 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: Tr.tr("Now playing")
             checked: GlobalConfig.utilities.toasts.nowPlaying
             onToggled: GlobalConfig.utilities.toasts.nowPlaying = checked
+        }
+
+        ToggleRow {
+            text: Tr.tr("Config loaded")
+            checked: GlobalConfig.utilities.toasts.configLoaded
+            onToggled: GlobalConfig.utilities.toasts.configLoaded = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: Tr.tr("Kb limit warning")
+            subtext: Tr.tr("Warn when the keyboard layout limit is reached")
+            checked: GlobalConfig.utilities.toasts.kbLimit
+            onToggled: GlobalConfig.utilities.toasts.kbLimit = checked
         }
     }
 }

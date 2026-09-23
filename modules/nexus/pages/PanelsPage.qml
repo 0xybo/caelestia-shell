@@ -51,10 +51,18 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "power_settings_new"
             text: Tr.tr("Session")
+            subtext: Tr.tr("Logout, shutdown, suspend, restart")
             onClicked: root.nState.openSubPage(6)
+        }
+
+        NavRow {
+            last: true
+            icon: "border_style"
+            text: Tr.tr("Borders")
+            subtext: Tr.tr("Thickness, rounding, smoothing")
+            onClicked: root.nState.openSubPage(12)
         }
     }
 }
