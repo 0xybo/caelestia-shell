@@ -120,6 +120,19 @@ PageBase {
             onToggled: GlobalConfig.dashboard.performance.showNetwork = checked
         }
 
+        // Dashboard
+        SectionHeader {
+            text: Tr.tr("Dashboard")
+        }
+
+        ToggleRow {
+            first: true
+            last: true
+            text: Tr.tr("Show media GIF")
+            checked: Config.dashboard.showMediaGif
+            onToggled: GlobalConfig.dashboard.showMediaGif = checked
+        }
+
         // Behaviour
         SectionHeader {
             text: Tr.tr("Behaviour")

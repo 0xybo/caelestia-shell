@@ -34,6 +34,7 @@ class SessionConfig : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(int, dragThreshold, 30)
     CONFIG_PROPERTY(bool, vimKeybinds, false)
+    CONFIG_PROPERTY(bool, showGif, true)
     CONFIG_SUBOBJECT(SessionIcons, icons)
     CONFIG_SUBOBJECT(SessionCommands, commands)
 };
