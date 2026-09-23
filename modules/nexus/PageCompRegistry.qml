@@ -123,6 +123,9 @@ QtObject {
                 Component {
                     UtilitiesPanel {}
                 }
+                Component {
+                    SessionPanel {}
+                }
 
                 // Taskbar component sub-pages
                 Component {
