@@ -59,36 +59,90 @@ PageBase {
             icon: "workspaces"
             text: Tr.tr("Workspaces")
             subtext: Tr.tr("Indicators, window icons")
-            onClicked: root.nState.openSubPage(6)
+            onClicked: root.nState.openSubPage(7)
         }
 
         NavRow {
             icon: "web_asset"
             text: Tr.tr("Active window")
             subtext: Tr.tr("Title display, popout")
-            onClicked: root.nState.openSubPage(7)
+            onClicked: root.nState.openSubPage(8)
         }
 
         NavRow {
             icon: "widgets"
             text: Tr.tr("Tray")
             subtext: Tr.tr("System tray icons")
-            onClicked: root.nState.openSubPage(8)
+            onClicked: root.nState.openSubPage(9)
         }
 
         NavRow {
             icon: "signal_cellular_alt"
             text: Tr.tr("Status icons")
             subtext: Tr.tr("Visible indicators")
-            onClicked: root.nState.openSubPage(9)
+            onClicked: root.nState.openSubPage(10)
+        }
+
+        NavRow {
+            icon: "schedule"
+            text: Tr.tr("Clock")
+            subtext: Tr.tr("Date, icon, background")
+            onClicked: root.nState.openSubPage(11)
         }
 
         NavRow {
             last: true
-            icon: "schedule"
-            text: Tr.tr("Clock")
-            subtext: Tr.tr("Date, icon, background")
-            onClicked: root.nState.openSubPage(10)
+            icon: "border_style"
+            text: Tr.tr("Borders")
+            subtext: Tr.tr("Thickness, rounding")
+            onClicked: root.nState.openSubPage(12)
+        }
+
+        // Excluded screens
+        SectionHeader {
+            text: Tr.tr("Excluded screens")
+        }
+
+        StringListEditor {
+            first: true
+            labelKey: "name"
+            values: Config.bar.excludedScreens
+            addPlaceholderText: Tr.tr("Screen name")
+            onItemAdded: v => GlobalConfig.bar.excludedScreens = [...GlobalConfig.bar.excludedScreens, v]
+            onItemMoved: (from, to) => {
+                const list = [...GlobalConfig.bar.excludedScreens];
+                const value = list.splice(from, 1)[0];
+                list.splice(to, 0, value);
+                GlobalConfig.bar.excludedScreens = list;
+            }
+            onItemRemoved: index => {
+                const list = [...GlobalConfig.bar.excludedScreens];
+                list.splice(index, 1);
+                GlobalConfig.bar.excludedScreens = list;
+            }
+        }
+
+        // Bar entries
+        SectionHeader {
+            text: Tr.tr("Bar entries")
+        }
+
+        ListEditor {
+            function labelFor(item: var): string {
+                return root.entryNames[item.id] ?? item.id;
+            }
+
+            function toggledFor(item: var): bool {
+                return item.enabled;
+            }
+
+            first: true
+            last: true
+            values: Config.bar.entries.values
+
+            onItemMoved: (from, to) => GlobalConfig.bar.entries.move(from, to)
+            onItemRemoved: index => GlobalConfig.bar.entries.remove(index)
+            onItemToggled: (index, checked) => GlobalConfig.bar.entries.at(index).enabled = checked
         }
 
         // Scroll actions

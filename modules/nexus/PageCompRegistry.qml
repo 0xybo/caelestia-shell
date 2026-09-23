@@ -15,7 +15,9 @@ import qs.modules.nexus.pages.network
 import qs.modules.nexus.pages.panels
 import qs.modules.nexus.pages.services
 import qs.modules.nexus.pages.wallandstyle
+import qs.modules.nexus.pages.general
 import qs.modules.nexus.pages.panels.taskbar
+import qs.modules.nexus.pages.panels.launcher
 
 QtObject {
     id: root
@@ -36,6 +38,12 @@ QtObject {
                 }
                 Component {
                     ColourSelect {}
+                }
+                Component {
+                    DesktopClockPage {}
+                }
+                Component {
+                    VisualiserPage {}
                 }
             }
         },
@@ -103,6 +111,28 @@ QtObject {
 
         // Shell
         Component {
+            // General
+            StackPage {
+                Component {
+                    GeneralPage {}
+                }
+                Component {
+                    IdlePage {}
+                }
+                Component {
+                    BatteryPage {}
+                }
+            }
+        },
+        Component {
+            // Lock
+            StackPage {
+                Component {
+                    LockPage {}
+                }
+            }
+        },
+        Component {
             // Panels
             StackPage {
                 Component {
@@ -140,6 +170,24 @@ QtObject {
                 Component {
                     BarClock {}
                 }
+                Component {
+                    BorderPanel {}
+                }
+                Component {
+                    WorkspaceIconRules {}
+                }
+                Component {
+                    WorkspaceIconRules {}
+                }
+                Component {
+                    WorkspaceIconRules {}
+                }
+                Component {
+                    TrayIconSubs {}
+                }
+                Component {
+                    LauncherActions {}
+                }
             }
         },
         Component {
@@ -164,6 +212,12 @@ QtObject {
                 }
                 Component {
                     NotificationsPage {}
+                }
+                Component {
+                    OsdPage {}
+                }
+                Component {
+                    PlayerAliasesPage {}
                 }
             }
         },

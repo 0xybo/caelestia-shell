@@ -44,5 +44,42 @@ PageBase {
             checked: Config.bar.popouts.tray
             onToggled: GlobalConfig.bar.popouts.tray = checked
         }
+
+        // Substitutions
+        SectionHeader {
+            text: Tr.tr("Substitutions")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "swap_horiz"
+            text: Tr.tr("Icon substitutions")
+            subtext: Tr.tr("Replace tray icon IDs with icons or images")
+            onClicked: root.nState.openSubPage(16)
+        }
+
+        // Hidden icons
+        SectionHeader {
+            text: Tr.tr("Hidden icons")
+        }
+
+        StringListEditor {
+            first: true
+            values: Config.bar.tray.hiddenIcons
+            addPlaceholderText: Tr.tr("Icon ID")
+            onItemAdded: v => GlobalConfig.bar.tray.hiddenIcons = [...Config.bar.tray.hiddenIcons, v]
+            onItemMoved: (from, to) => {
+                const list = [...Config.bar.tray.hiddenIcons];
+                const value = list.splice(from, 1)[0];
+                list.splice(to, 0, value);
+                GlobalConfig.bar.tray.hiddenIcons = list;
+            }
+            onItemRemoved: index => {
+                const list = [...Config.bar.tray.hiddenIcons];
+                list.splice(index, 1);
+                GlobalConfig.bar.tray.hiddenIcons = list;
+            }
+        }
     }
 }

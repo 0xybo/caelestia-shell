@@ -20,7 +20,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.large
+        spacing: Tokens.spacing.extraSmall / 2
 
         StyledClippingRect {
             id: wallWrapper
@@ -171,16 +171,60 @@ PageBase {
             }
         }
 
+        // Background
+        SectionHeader {
+            text: Tr.tr("Background")
+        }
+
         ToggleRow {
             first: true
+            text: Tr.trCtx("Enabled", "toggle label")
+            checked: Config.background.enabled
+            onToggled: GlobalConfig.background.enabled = checked
+        }
+
+        ToggleRow {
             text: Tr.tr("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
         }
 
-        ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Wallpaper folder")
+            subtext: Tr.tr("Folder scanned for local wallpapers")
+            value: GlobalConfig.paths.wallpaperDir
+            onEditingFinished: v => GlobalConfig.paths.wallpaperDir = v
+        }
 
+        // Overlays
+        SectionHeader {
+            text: Tr.tr("Overlays")
+        }
+
+        NavRow {
+            first: true
+            icon: "schedule"
+            text: Tr.tr("Desktop clock")
+            subtext: Tr.tr("Clock overlaid on the wallpaper")
+            onClicked: root.nState.openSubPage(4)
+        }
+
+        NavRow {
+            last: true
+            icon: "monitor_heart"
+            text: Tr.tr("Visualiser")
+            subtext: Tr.tr("Audio visualiser on the wallpaper")
+            onClicked: root.nState.openSubPage(5)
+        }
+
+        // Transparency
+        SectionHeader {
+            text: Tr.tr("Transparency")
+        }
+
+        ToggleRow {
+            first: true
             text: Tr.tr("Transparency")
             // TRANSLATORS: %1/%2 = opacity values from 0 to 1 for the base surface and layered surfaces
             subtext: Tr.tr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
@@ -188,9 +232,114 @@ PageBase {
             onToggled: GlobalConfig.appearance.transparency.enabled = checked
         }
 
-        ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+        StepperRow {
+            label: Tr.tr("Base opacity")
+            value: Config.appearance.transparency.base
+            from: 0
+            to: 1
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.transparency.base = v
+        }
 
+        StepperRow {
+            last: true
+            label: Tr.tr("Layer opacity")
+            value: Config.appearance.transparency.layers
+            from: 0
+            to: 1
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.transparency.layers = v
+        }
+
+        // Scales
+        SectionHeader {
+            text: Tr.tr("Scales")
+        }
+
+        StepperRow {
+            first: true
+            label: Tr.tr("Deformation")
+            subtext: Tr.tr("Scale of the surface deformation effect")
+            value: Config.appearance.deformScale
+            from: 0
+            to: 2
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.deformScale = v
+        }
+
+        StepperRow {
+            label: Tr.tr("Rounding scale")
+            value: Config.appearance.rounding.scale
+            from: 0.5
+            to: 3
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.rounding.scale = v
+        }
+
+        StepperRow {
+            label: Tr.tr("Spacing scale")
+            value: Config.appearance.spacing.scale
+            from: 0.5
+            to: 3
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.spacing.scale = v
+        }
+
+        StepperRow {
+            label: Tr.tr("Padding scale")
+            value: Config.appearance.padding.scale
+            from: 0.5
+            to: 3
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.padding.scale = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Animation scale")
+            subtext: Tr.tr("Duration multiplier for animations")
+            value: Config.appearance.anim.durations.scale
+            from: 0.5
+            to: 3
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.anim.durations.scale = v
+        }
+
+        // Fonts
+        SectionHeader {
+            text: Tr.tr("Fonts")
+        }
+
+        StepperRow {
+            first: true
+            label: Tr.tr("Font scale")
+            value: Config.appearance.font.scale
+            from: 0.5
+            to: 3
+            stepSize: 0.05
+            onMoved: v => GlobalConfig.appearance.font.scale = v
+        }
+
+        TextFieldRow {
+            label: Tr.tr("Clock font")
+            value: Config.appearance.font.clock
+            onEditingFinished: v => GlobalConfig.appearance.font.clock = v
+        }
+
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Workspaces font")
+            value: Config.appearance.font.workspaces
+            onEditingFinished: v => GlobalConfig.appearance.font.workspaces = v
+        }
+
+        // Theme
+        SectionHeader {
+            text: Tr.tr("Theme")
+        }
+
+        ToggleRow {
+            first: true
             last: true
             text: Tr.tr("Dark theme")
             checked: !Colours.light

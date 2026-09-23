@@ -50,5 +50,20 @@ PageBase {
             subtext: Config.utilities.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
             onClicked: root.nState.openSubPage(5)
         }
+
+        NavRow {
+            icon: "power_settings_new"
+            text: Tr.tr("Session")
+            subtext: Tr.tr("Logout, shutdown, suspend, restart")
+            onClicked: root.nState.openSubPage(6)
+        }
+
+        NavRow {
+            last: true
+            icon: "border_style"
+            text: Tr.tr("Borders")
+            subtext: Tr.tr("Thickness, rounding, smoothing")
+            onClicked: root.nState.openSubPage(12)
+        }
     }
 }
