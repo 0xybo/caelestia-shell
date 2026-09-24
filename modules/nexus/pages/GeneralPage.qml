@@ -31,28 +31,6 @@ PageBase {
             onEditingFinished: v => GlobalConfig.general.logo = v
         }
 
-        TextFieldRow {
-            label: Tr.tr("Session GIF speed")
-            subtext: Tr.tr("Playback speed of the session GIF on the lock screen")
-            value: GlobalConfig.general.sessionGifSpeed
-            smallField: true
-            validator: DoubleValidator {
-                bottom: 0.1
-                top: 2
-            }
-            onEditingFinished: v => GlobalConfig.general.sessionGifSpeed = Number(v)
-        }
-
-        StepperRow {
-            label: Tr.tr("Media GIF speed adjustment")
-            subtext: Tr.tr("Compensates for GIFs of varying playback speeds")
-            value: GlobalConfig.general.mediaGifSpeedAdjustment
-            from: 0
-            to: 1000
-            stepSize: 10
-            onMoved: v => GlobalConfig.general.mediaGifSpeedAdjustment = v
-        }
-
         ToggleRow {
             last: true
             text: Tr.tr("Show over fullscreen")
@@ -72,7 +50,7 @@ PageBase {
             icon: "coffee"
             text: Tr.tr("Idle timeouts")
             subtext: Tr.tr("Actions triggered when the system idles")
-            onClicked: root.nState.openSubPage(1)
+            onClicked: root.nState.openSubPage("idlePage")
         }
 
         // Battery
@@ -86,28 +64,7 @@ PageBase {
             icon: "battery_saver"
             text: Tr.tr("Battery warnings")
             subtext: Tr.tr("Notify when battery levels get low")
-            onClicked: root.nState.openSubPage(2)
-        }
-
-        // Animations
-        SectionHeader {
-            text: Tr.tr("Animations")
-        }
-
-        TextFieldRow {
-            first: true
-            label: Tr.tr("Session GIF")
-            subtext: Tr.tr("GIF shown on the lock screen")
-            value: Config.paths.sessionGif
-            onEditingFinished: v => GlobalConfig.paths.sessionGif = v
-        }
-
-        TextFieldRow {
-            last: true
-            label: Tr.tr("Media GIF")
-            subtext: Tr.tr("GIF shown for media playback")
-            value: Config.paths.mediaGif
-            onEditingFinished: v => GlobalConfig.paths.mediaGif = v
+            onClicked: root.nState.openSubPage("batteryPage")
         }
 
         // Apps

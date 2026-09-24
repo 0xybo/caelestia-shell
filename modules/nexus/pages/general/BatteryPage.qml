@@ -61,7 +61,7 @@ PageBase {
                 ObjectListEditor.Field {
                     key: "level"
                     label: Tr.tr("Battery level (%)")
-                    type: root.IntField
+                    type: ObjectListEditor.FieldType.IntField
                     from: 0
                     to: 100
                     step: 1
@@ -84,7 +84,7 @@ PageBase {
                 ObjectListEditor.Field {
                     key: "critical"
                     label: Tr.tr("Critical")
-                    type: root.BoolField
+                    type: ObjectListEditor.FieldType.BoolField
                 }
             ]
             onItemAdded: item => GlobalConfig.general.battery.warnLevels.insert(item)

@@ -74,7 +74,7 @@ PageBase {
                 ObjectListEditor.Field {
                     key: "timeout"
                     label: Tr.trCtx("Timeout", "idle timeout")
-                    type: root.IntField
+                    type: root.ObjectListEditor.IntField
                     from: 10
                     to: 86400
                     step: 10
@@ -83,27 +83,27 @@ PageBase {
                 ObjectListEditor.Field {
                     key: "idleAction"
                     label: Tr.tr("Idle action")
-                    type: root.StringListField
+                    type: root.ObjectListEditor.StringListField
                 },
                 ObjectListEditor.Field {
                     key: "returnAction"
                     label: Tr.tr("Return action")
-                    type: root.StringListField
+                    type: root.ObjectListEditor.StringListField
                 },
                 ObjectListEditor.Field {
                     key: "inhibitWhenAudio"
                     label: Tr.tr("Inhibit when audio playing")
-                    type: root.BoolField
+                    type: root.ObjectListEditor.BoolField
                 },
                 ObjectListEditor.Field {
                     key: "inhibitWhenCharging"
                     label: Tr.tr("Inhibit when charging")
-                    type: root.BoolField
+                    type: root.ObjectListEditor.BoolField
                 },
                 ObjectListEditor.Field {
                     key: "respectInhibitors"
                     label: Tr.tr("Respect inhibitors")
-                    type: root.BoolField
+                    type: root.ObjectListEditor.BoolField
                 }
             ]
             onItemAdded: item => GlobalConfig.general.idle.timeouts.insert(item)

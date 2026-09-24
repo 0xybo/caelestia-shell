@@ -172,7 +172,7 @@ PageBase {
             subtext: Tr.tr("Icons for named workspaces")
             onClicked: {
                 root.nState.editRulesType = "workspace";
-                root.nState.openSubPage(13);
+                root.nState.openSubPage("workspaceIconRules");
             }
         }
 
@@ -182,7 +182,7 @@ PageBase {
             subtext: Tr.tr("Icons for special workspaces")
             onClicked: {
                 root.nState.editRulesType = "special";
-                root.nState.openSubPage(14);
+                root.nState.openSubPage("workspaceIconRulesSpecial");
             }
         }
 
@@ -193,7 +193,7 @@ PageBase {
             subtext: Tr.tr("Icons for open windows")
             onClicked: {
                 root.nState.editRulesType = "window";
-                root.nState.openSubPage(15);
+                root.nState.openSubPage("workspaceIconRulesWindow");
             }
         }
 

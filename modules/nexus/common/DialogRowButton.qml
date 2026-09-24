@@ -18,6 +18,7 @@ Item {
     required property string label
     required property string header
     required property Component content
+    property var contentContext
     required property string acceptLabel
     property bool acceptAllowed: true
     property bool separateContent
@@ -201,6 +202,11 @@ Item {
                         Layout.leftMargin: root.horizontalContentMargin
                         Layout.rightMargin: root.horizontalContentMargin
                         sourceComponent: root.content
+
+                        onLoaded: {
+                            if (root.contentContext && "editor" in item)
+                                item.editor = root.contentContext;
+                        }
                     }
 
                     Loader {

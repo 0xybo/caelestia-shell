@@ -155,7 +155,7 @@ PageBase {
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
                 disabled: !Config.background.wallpaperEnabled
-                onClicked: root.nState.openSubPage(1) // Wallpaper page
+                onClicked: root.nState.openSubPage("wallpaperSelectPage") // Wallpaper page
             }
 
             IconTextButton {
@@ -167,7 +167,7 @@ PageBase {
                 type: IconTextButton.Tonal
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
-                onClicked: root.nState.openSubPage(3) // Colours page
+                onClicked: root.nState.openSubPage("colourSelectPage") // Colours page
             }
         }
 
@@ -207,7 +207,7 @@ PageBase {
             icon: "schedule"
             text: Tr.tr("Desktop clock")
             subtext: Tr.tr("Clock overlaid on the wallpaper")
-            onClicked: root.nState.openSubPage(4)
+            onClicked: root.nState.openSubPage("desktopClockPage")
         }
 
         NavRow {
@@ -215,7 +215,7 @@ PageBase {
             icon: "monitor_heart"
             text: Tr.tr("Visualiser")
             subtext: Tr.tr("Audio visualiser on the wallpaper")
-            onClicked: root.nState.openSubPage(5)
+            onClicked: root.nState.openSubPage("visualiserPage")
         }
 
         // Transparency
@@ -270,7 +270,7 @@ PageBase {
         StepperRow {
             label: Tr.tr("Rounding scale")
             value: Config.appearance.rounding.scale
-            from: 0.5
+            from: 0
             to: 3
             stepSize: 0.05
             onMoved: v => GlobalConfig.appearance.rounding.scale = v
@@ -279,7 +279,7 @@ PageBase {
         StepperRow {
             label: Tr.tr("Spacing scale")
             value: Config.appearance.spacing.scale
-            from: 0.5
+            from: 0
             to: 3
             stepSize: 0.05
             onMoved: v => GlobalConfig.appearance.spacing.scale = v
@@ -288,7 +288,7 @@ PageBase {
         StepperRow {
             label: Tr.tr("Padding scale")
             value: Config.appearance.padding.scale
-            from: 0.5
+            from: 0
             to: 3
             stepSize: 0.05
             onMoved: v => GlobalConfig.appearance.padding.scale = v
@@ -299,7 +299,7 @@ PageBase {
             label: Tr.tr("Animation scale")
             subtext: Tr.tr("Duration multiplier for animations")
             value: Config.appearance.anim.durations.scale
-            from: 0.5
+            from: 0
             to: 3
             stepSize: 0.05
             onMoved: v => GlobalConfig.appearance.anim.durations.scale = v
@@ -344,6 +344,44 @@ PageBase {
             text: Tr.tr("Dark theme")
             checked: !Colours.light
             onToggled: Colours.setMode(checked ? "dark" : "light")
+        }
+
+        // Borders
+        SectionHeader {
+            first: true
+            text: Tr.tr("Border")
+        }
+
+        StepperRow {
+            first: true
+            label: Tr.tr("Thickness")
+            subtext: Tr.tr("Border width around the screen edges")
+            value: Config.border.thickness
+            from: Config.border.minThickness
+            to: 100
+            stepSize: 1
+            onMoved: v => GlobalConfig.border.thickness = v
+        }
+
+        StepperRow {
+            label: Tr.tr("Rounding")
+            subtext: Tr.tr("Corner radius of the border")
+            value: Config.border.rounding
+            from: 0
+            to: 100
+            stepSize: 1
+            onMoved: v => GlobalConfig.border.rounding = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Smoothing")
+            subtext: Tr.tr("How smoothly the border blends")
+            value: Config.border.smoothing
+            from: 1
+            to: 100
+            stepSize: 1
+            onMoved: v => GlobalConfig.border.smoothing = v
         }
     }
 }

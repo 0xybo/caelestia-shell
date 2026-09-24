@@ -158,7 +158,7 @@ PageBase {
 
                                     onClicked: {
                                         root.nState.selectedBtDevice = device.modelData;
-                                        root.nState.openSubPage(1); // Per device info page
+                                        root.nState.openSubPage("btDeviceInfoPage"); // Per device info page
                                     }
                                 }
                             }
@@ -181,7 +181,7 @@ PageBase {
             icon: "add"
             text: Tr.tr("Pair new device")
             disabled: !root.btEnabled
-            onClicked: root.nState.openSubPage(2)
+            onClicked: root.nState.openSubPage("bluetoothPairingPage")
         }
 
         ToggleRow {

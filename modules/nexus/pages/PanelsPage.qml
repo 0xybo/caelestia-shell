@@ -19,28 +19,28 @@ PageBase {
             icon: "dashboard"
             text: Tr.tr("Dashboard")
             subtext: Config.dashboard.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
-            onClicked: root.nState.openSubPage(1)
+            onClicked: root.nState.openSubPage("dashboardPanel")
         }
 
         NavRow {
             icon: "dock_to_bottom"
             text: Tr.tr("Taskbar")
             subtext: Config.bar.persistent ? Tr.tr("Always visible") : Config.bar.showOnHover ? Tr.tr("Reveal on hover") : Tr.tr("Reveal on drag")
-            onClicked: root.nState.openSubPage(2)
+            onClicked: root.nState.openSubPage("taskbarPanel")
         }
 
         NavRow {
             icon: "apps"
             text: Tr.tr("Launcher")
             subtext: Config.launcher.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
-            onClicked: root.nState.openSubPage(3)
+            onClicked: root.nState.openSubPage("launcherPanel")
         }
 
         NavRow {
             icon: "dock_to_right"
             text: Tr.tr("Sidebar")
             subtext: Config.sidebar.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
-            onClicked: root.nState.openSubPage(4)
+            onClicked: root.nState.openSubPage("sidebarPanel")
         }
 
         NavRow {
@@ -48,22 +48,15 @@ PageBase {
             icon: "construction"
             text: Tr.tr("Utilities")
             subtext: Config.utilities.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
-            onClicked: root.nState.openSubPage(5)
-        }
-
-        NavRow {
-            icon: "power_settings_new"
-            text: Tr.tr("Session")
-            subtext: Tr.tr("Logout, shutdown, suspend, restart")
-            onClicked: root.nState.openSubPage(6)
+            onClicked: root.nState.openSubPage("utilitiesPanel")
         }
 
         NavRow {
             last: true
-            icon: "border_style"
-            text: Tr.tr("Borders")
-            subtext: Tr.tr("Thickness, rounding, smoothing")
-            onClicked: root.nState.openSubPage(12)
+            icon: "power_settings_new"
+            text: Tr.tr("Session")
+            subtext: Tr.tr("Logout, shutdown, suspend, restart")
+            onClicked: root.nState.openSubPage("sessionPanel")
         }
     }
 }
