@@ -90,11 +90,11 @@ Item {
 
         Keys.onReturnPressed: {
             if (root.dialog.selectionValid)
-                root.dialog.accepted((currentItem as FileEntry).modelData.path);
+                root.dialog.accepted(root.dialog.selectedPath());
         }
         Keys.onEnterPressed: {
             if (root.dialog.selectionValid)
-                root.dialog.accepted((currentItem as FileEntry).modelData.path);
+                root.dialog.accepted(root.dialog.selectedPath());
         }
 
         StyledScrollBar.vertical: StyledScrollBar {
@@ -175,7 +175,7 @@ Item {
             onDoubleClicked: {
                 if (item.modelData.isDir)
                     root.dialog.cwd.push(item.modelData.name);
-                else if (root.dialog.selectionValid)
+                else if (!root.dialog.selectFolder && root.dialog.selectionValid)
                     root.dialog.accepted(item.modelData.path);
             }
         }

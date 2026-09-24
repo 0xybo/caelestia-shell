@@ -29,7 +29,8 @@ ColumnLayout {
         StringField,
         IntField,
         BoolField,
-        StringListField
+        StringListField,
+        FileField
     }
 
     // Plain copy of the object being added (-1) or edited (>= 0)

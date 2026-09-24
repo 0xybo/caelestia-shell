@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -23,11 +24,13 @@ PageBase {
             text: Tr.tr("Misc")
         }
 
-        TextFieldRow {
+        FilePickerRow {
             first: true
             label: Tr.tr("Logo")
             subtext: Tr.tr("Brand image shown on the lock screen")
             value: GlobalConfig.general.logo
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
             onEditingFinished: v => GlobalConfig.general.logo = v
         }
 

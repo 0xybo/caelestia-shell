@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -61,10 +62,12 @@ PageBase {
             onToggled: GlobalConfig.session.showGif = checked
         }
 
-        TextFieldRow {
+        FilePickerRow {
             label: Tr.tr("Session GIF")
             subtext: Tr.tr("GIF shown on the lock screen")
             value: Config.paths.sessionGif
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
             onEditingFinished: v => GlobalConfig.paths.sessionGif = v
         }
 
