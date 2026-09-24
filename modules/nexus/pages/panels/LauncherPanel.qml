@@ -180,7 +180,7 @@ PageBase {
             icon: "bolt"
             text: Tr.tr("Launcher actions")
             subtext: Tr.tr("Run shell commands from the launcher")
-            onClicked: root.nState.openSubPage(17)
+            onClicked: root.nState.openSubPage("launcherActions")
         }
     }
 }

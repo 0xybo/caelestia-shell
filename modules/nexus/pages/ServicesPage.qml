@@ -77,7 +77,7 @@ PageBase {
             icon: "notifications"
             text: Tr.tr("Notifications")
             subtext: Tr.tr("Notifications, toasts, timeouts")
-            onClicked: root.nState.openSubPage(1)
+            onClicked: root.nState.openSubPage("notificationsPage")
         }
 
         NavRow {
@@ -85,7 +85,7 @@ PageBase {
             icon: "settings_overscan"
             text: Tr.tr("On-screen display")
             subtext: Tr.tr("Brightness and microphone popups")
-            onClicked: root.nState.openSubPage(2)
+            onClicked: root.nState.openSubPage("osdPage")
         }
 
         // Player aliases
@@ -99,7 +99,7 @@ PageBase {
             icon: "music_note"
             text: Tr.tr("Player aliases")
             subtext: Tr.tr("Show friendlier names for media players")
-            onClicked: root.nState.openSubPage(3)
+            onClicked: root.nState.openSubPage("playerAliasesPage")
         }
 
         // Polling

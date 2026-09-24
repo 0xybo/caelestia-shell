@@ -127,10 +127,27 @@ PageBase {
 
         ToggleRow {
             first: true
-            last: true
             text: Tr.tr("Show media GIF")
             checked: Config.dashboard.showMediaGif
             onToggled: GlobalConfig.dashboard.showMediaGif = checked
+        }
+
+        TextFieldRow {
+            label: Tr.tr("Media GIF")
+            subtext: Tr.tr("GIF shown for media playback")
+            value: Config.paths.mediaGif
+            onEditingFinished: v => GlobalConfig.paths.mediaGif = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Media GIF speed adjustment")
+            subtext: Tr.tr("Compensates for GIFs of varying playback speeds")
+            value: GlobalConfig.general.mediaGifSpeedAdjustment
+            from: 0
+            to: 1000
+            stepSize: 10
+            onMoved: v => GlobalConfig.general.mediaGifSpeedAdjustment = v
         }
 
         // Behaviour

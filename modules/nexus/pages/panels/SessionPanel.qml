@@ -38,12 +38,6 @@ PageBase {
             onToggled: GlobalConfig.session.vimKeybinds = checked
         }
 
-        ToggleRow {
-            text: Tr.tr("Show GIF")
-            checked: Config.session.showGif
-            onToggled: GlobalConfig.session.showGif = checked
-        }
-
         StepperRow {
             last: true
             label: Tr.tr("Drag threshold")
@@ -53,6 +47,38 @@ PageBase {
             to: 200
             stepSize: 5
             onMoved: v => GlobalConfig.session.dragThreshold = v
+        }
+
+        // GIF
+        SectionHeader {
+            text: Tr.tr("Session GIF")
+        }
+
+        ToggleRow {
+            first: true
+            text: Tr.tr("Show GIF")
+            checked: Config.session.showGif
+            onToggled: GlobalConfig.session.showGif = checked
+        }
+
+        TextFieldRow {
+            label: Tr.tr("Session GIF")
+            subtext: Tr.tr("GIF shown on the lock screen")
+            value: Config.paths.sessionGif
+            onEditingFinished: v => GlobalConfig.paths.sessionGif = v
+        }
+
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Session GIF speed")
+            subtext: Tr.tr("Playback speed of the session GIF on the lock screen")
+            value: GlobalConfig.general.sessionGifSpeed
+            smallField: true
+            validator: DoubleValidator {
+                bottom: 0.1
+                top: 2
+            }
+            onEditingFinished: v => GlobalConfig.general.sessionGifSpeed = Number(v)
         }
 
         // Icons
@@ -92,7 +118,6 @@ PageBase {
         }
 
         SectionHeader {
-            Layout.topMargin: 0
             text: Tr.tr("Log out")
         }
 
@@ -116,7 +141,6 @@ PageBase {
         }
 
         SectionHeader {
-            Layout.topMargin: 0
             text: Tr.tr("Shut down")
         }
 
@@ -140,7 +164,6 @@ PageBase {
         }
 
         SectionHeader {
-            Layout.topMargin: 0
             text: Tr.tr("Hibernate")
         }
 
@@ -164,7 +187,6 @@ PageBase {
         }
 
         SectionHeader {
-            Layout.topMargin: 0
             text: Tr.tr("Reboot")
         }
 

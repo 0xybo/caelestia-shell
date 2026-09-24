@@ -56,7 +56,7 @@ PageBase {
             icon: "swap_horiz"
             text: Tr.tr("Icon substitutions")
             subtext: Tr.tr("Replace tray icon IDs with icons or images")
-            onClicked: root.nState.openSubPage(16)
+            onClicked: root.nState.openSubPage("trayIconSubs")
         }
 
         // Hidden icons
