@@ -15,7 +15,7 @@ PageBase {
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        width: ObjectListEditor.FieldType.cappedWidth
+        width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
         SectionHeader {
@@ -25,7 +25,7 @@ PageBase {
 
         ObjectListEditor {
             first: true
-            rootParent: ObjectListEditor.FieldType.flickable
+            rootParent: root.flickable
             values: GlobalConfig.bar.tray.iconSubs.values
             nameKey: "id"
             toggleKey: ""
@@ -51,7 +51,7 @@ PageBase {
                 ObjectListEditor.Field {
                     key: "image"
                     label: Tr.tr("Image")
-                    type: ObjectListEditor.FieldType.StringField
+                    type: ObjectListEditor.FieldType.FileField
                 }
             ]
             onItemAdded: item => GlobalConfig.bar.tray.iconSubs.insert(item)

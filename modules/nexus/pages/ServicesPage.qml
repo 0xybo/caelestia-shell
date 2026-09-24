@@ -165,11 +165,12 @@ PageBase {
             onSelected: item => GlobalConfig.services.defaultPlayer = item.text
         }
 
-        TextFieldRow {
+        FilePickerRow {
             last: true
             label: Tr.tr("Lyrics folder")
             subtext: Tr.tr("Folder scanned for synced lyrics")
             value: GlobalConfig.paths.lyricsDir
+            selectFolder: true
             onEditingFinished: v => GlobalConfig.paths.lyricsDir = v
         }
 

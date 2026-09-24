@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -50,11 +51,13 @@ PageBase {
             onToggled: GlobalConfig.lock.hideNotifs = checked
         }
 
-        TextFieldRow {
+        FilePickerRow {
             last: true
             label: Tr.tr("No notifications image")
             subtext: Tr.tr("Image shown on the lock screen when there are no notifications")
             value: Config.paths.lockNoNotifsPic
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
             onEditingFinished: v => GlobalConfig.paths.lockNoNotifsPic = v
         }
 

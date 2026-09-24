@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -129,6 +130,8 @@ PageBase {
             label: Tr.tr("Media GIF")
             subtext: Tr.tr("GIF shown for media playback")
             value: Config.paths.mediaGif
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
             onEditingFinished: v => GlobalConfig.paths.mediaGif = v
         }
 

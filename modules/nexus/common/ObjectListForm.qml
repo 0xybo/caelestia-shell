@@ -30,6 +30,8 @@ VerticalFadeFlickable {
             return boolRow;
         case ObjectListEditor.FieldType.StringListField:
             return stringListRow;
+        case ObjectListEditor.FieldType.FileField:
+            return fileRow;
         default:
             return stringRow;
         }
@@ -143,6 +145,19 @@ VerticalFadeFlickable {
                 list.splice(to, 0, value);
                 valueObj[fieldInfo.key] = list;
             }
+        }
+    }
+
+    Component {
+        id: fileRow
+
+        FilePickerRow {
+            property var fieldInfo
+            property var valueObj
+
+            label: fieldInfo.label ?? ""
+            value: valueObj?.[fieldInfo.key] ?? ""
+            onEditingFinished: v => valueObj[fieldInfo.key] = v
         }
     }
 }

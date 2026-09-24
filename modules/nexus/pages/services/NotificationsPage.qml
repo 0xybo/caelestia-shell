@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components.controls
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -134,11 +135,13 @@ PageBase {
             onToggled: GlobalConfig.notifs.actionOnClick = checked
         }
 
-        TextFieldRow {
+        FilePickerRow {
             last: true
             label: Tr.tr("Empty list image")
             subtext: Tr.tr("Image shown when there are no notifications")
             value: Config.paths.noNotifsPic
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
             onEditingFinished: v => GlobalConfig.paths.noNotifsPic = v
         }
 
