@@ -28,13 +28,6 @@ QtObject {
         Component {
             // Wallpaper & style
             StackPage {
-                Component { id: main; WallpaperAndStyle {} }
-                Component { id: wallpaperSelectPage; WallpaperSelect {} }
-                Component { id: wallpaperCategoryPage; WallpaperCategory {} }
-                Component { id: colourSelectPage; ColourSelect {} }
-                Component { id: desktopClockPage; DesktopClockPage {} }
-                Component { id: visualiserPage; VisualiserPage {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "wallpaperSelectPage", component: wallpaperSelectPage },
@@ -43,6 +36,13 @@ QtObject {
                     { name: "desktopClockPage", component: desktopClockPage },
                     { name: "visualiserPage", component: visualiserPage }
                 ]
+
+                Component { id: main; WallpaperAndStyle {} }
+                Component { id: wallpaperSelectPage; WallpaperSelect {} }
+                Component { id: wallpaperCategoryPage; WallpaperCategory {} }
+                Component { id: colourSelectPage; ColourSelect {} }
+                Component { id: desktopClockPage; DesktopClockPage {} }
+                Component { id: visualiserPage; VisualiserPage {} }
             }
         },
 
@@ -50,14 +50,6 @@ QtObject {
         Component {
             // Network
             StackPage {
-                Component { id: main; NetworkPage {} }
-                Component { id: ethernetDetailPage; EthernetDetailPage {} }
-                Component { id: addNetworkPage; AddNetworkPage {} }
-                Component { id: networkDetailPage; NetworkDetailPage {} }
-                Component { id: addVpnPage; AddVpnPage {} }
-                Component { id: allNetworksPage; AllNetworksPage {} }
-                Component { id: savedNetworksPage; SavedNetworksPage {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "ethernetDetailPage", component: ethernetDetailPage },
@@ -67,32 +59,40 @@ QtObject {
                     { name: "allNetworksPage", component: allNetworksPage },
                     { name: "savedNetworksPage", component: savedNetworksPage }
                 ]
+
+                Component { id: main; NetworkPage {} }
+                Component { id: ethernetDetailPage; EthernetDetailPage {} }
+                Component { id: addNetworkPage; AddNetworkPage {} }
+                Component { id: networkDetailPage; NetworkDetailPage {} }
+                Component { id: addVpnPage; AddVpnPage {} }
+                Component { id: allNetworksPage; AllNetworksPage {} }
+                Component { id: savedNetworksPage; SavedNetworksPage {} }
             }
         },
         Component {
             // Bluetooth
             StackPage {
-                Component { id: main; BluetoothPage {} }
-                Component { id: btDeviceInfoPage; BtDeviceInfo {} }
-                Component { id: bluetoothPairingPage; BluetoothPairing {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "btDeviceInfoPage", component: btDeviceInfoPage },
                     { name: "bluetoothPairingPage", component: bluetoothPairingPage }
                 ]
+
+                Component { id: main; BluetoothPage {} }
+                Component { id: btDeviceInfoPage; BtDeviceInfo {} }
+                Component { id: bluetoothPairingPage; BluetoothPairing {} }
             }
         },
         Component {
             // Audio
             StackPage {
-                Component { id: main; AudioPage {} }
-                Component { id: appVolumesPage; AppVolumes {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "appVolumesPage", component: appVolumesPage }
                 ]
+
+                Component { id: main; AudioPage {} }
+                Component { id: appVolumesPage; AppVolumes {} }
             }
         },
 
@@ -108,48 +108,30 @@ QtObject {
         Component {
             // General
             StackPage {
-                Component { id: main; GeneralPage {} }
-                Component { id: idlePage; IdlePage {} }
-                Component { id: batteryPage; BatteryPage {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "idlePage", component: idlePage },
                     { name: "batteryPage", component: batteryPage }
                 ]
+
+                Component { id: main; GeneralPage {} }
+                Component { id: idlePage; IdlePage {} }
+                Component { id: batteryPage; BatteryPage {} }
             }
         },
         Component {
             // Lock
             StackPage {
-                Component { id: main; LockPage {} }
-
                 pages: [
                     { name: "main", component: main }
                 ]
+
+                Component { id: main; LockPage {} }
             }
         },
         Component {
             // Panels
             StackPage {
-                Component { id: main; PanelsPage {} }
-                Component { id: dashboardPanel; DashboardPanel {} }
-                Component { id: taskbarPanel; TaskbarPanel {} }
-                Component { id: launcherPanel; LauncherPanel {} }
-                Component { id: sidebarPanel; SidebarPanel {} }
-                Component { id: utilitiesPanel; UtilitiesPanel {} }
-                Component { id: sessionPanel; SessionPanel {} }
-                Component { id: barWorkspaces; BarWorkspaces {} }
-                Component { id: barActiveWindow; BarActiveWindow {} }
-                Component { id: barTray; BarTray {} }
-                Component { id: barStatusIcons; BarStatusIcons {} }
-                Component { id: barClock; BarClock {} }
-                Component { id: workspaceIconRules; WorkspaceIconRules {} }
-                Component { id: workspaceIconRulesSpecial; WorkspaceIconRules {} }
-                Component { id: workspaceIconRulesWindow; WorkspaceIconRules {} }
-                Component { id: trayIconSubs; TrayIconSubs {} }
-                Component { id: launcherActions; LauncherActions {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "dashboardPanel", component: dashboardPanel },
@@ -169,57 +151,75 @@ QtObject {
                     { name: "trayIconSubs", component: trayIconSubs },
                     { name: "launcherActions", component: launcherActions }
                 ]
+
+                Component { id: main; PanelsPage {} }
+                Component { id: dashboardPanel; DashboardPanel {} }
+                Component { id: taskbarPanel; TaskbarPanel {} }
+                Component { id: launcherPanel; LauncherPanel {} }
+                Component { id: sidebarPanel; SidebarPanel {} }
+                Component { id: utilitiesPanel; UtilitiesPanel {} }
+                Component { id: sessionPanel; SessionPanel {} }
+                Component { id: barWorkspaces; BarWorkspaces {} }
+                Component { id: barActiveWindow; BarActiveWindow {} }
+                Component { id: barTray; BarTray {} }
+                Component { id: barStatusIcons; BarStatusIcons {} }
+                Component { id: barClock; BarClock {} }
+                Component { id: workspaceIconRules; WorkspaceIconRules {} }
+                Component { id: workspaceIconRulesSpecial; WorkspaceIconRules {} }
+                Component { id: workspaceIconRulesWindow; WorkspaceIconRules {} }
+                Component { id: trayIconSubs; TrayIconSubs {} }
+                Component { id: launcherActions; LauncherActions {} }
             }
         },
         Component {
             // Apps
             StackPage {
-                Component { id: main; AppsPage {} }
-                Component { id: allAppsPage; AllApps {} }
-                Component { id: appInfoPage; AppInfo {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "allAppsPage", component: allAppsPage },
                     { name: "appInfoPage", component: appInfoPage }
                 ]
+
+                Component { id: main; AppsPage {} }
+                Component { id: allAppsPage; AllApps {} }
+                Component { id: appInfoPage; AppInfo {} }
             }
         },
         Component {
             // Services
             StackPage {
-                Component { id: main; ServicesPage {} }
-                Component { id: notificationsPage; NotificationsPage {} }
-                Component { id: osdPage; OsdPage {} }
-                Component { id: playerAliasesPage; PlayerAliasesPage {} }
-
                 pages: [
                     { name: "main", component: main },
                     { name: "notificationsPage", component: notificationsPage },
                     { name: "osdPage", component: osdPage },
                     { name: "playerAliasesPage", component: playerAliasesPage }
                 ]
+
+                Component { id: main; ServicesPage {} }
+                Component { id: notificationsPage; NotificationsPage {} }
+                Component { id: osdPage; OsdPage {} }
+                Component { id: playerAliasesPage; PlayerAliasesPage {} }
             }
         },
         Component {
             // Language & region
             StackPage {
-                Component { id: main; LanguageAndRegion {} }
-
                 pages: [
                     { name: "main", component: main }
                 ]
+
+                Component { id: main; LanguageAndRegion {} }
             }
         },
 
         // About
         Component {
             StackPage {
-                Component { id: main; AboutPage {} }
-
                 pages: [
                     { name: "main", component: main }
                 ]
+
+                Component { id: main; AboutPage {} }
             }
         }
     ]

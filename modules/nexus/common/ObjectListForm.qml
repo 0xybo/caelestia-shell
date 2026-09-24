@@ -14,14 +14,6 @@ VerticalFadeFlickable {
     // The editor is assigned by DialogRowButton after this component is loaded.
     property var editor
 
-    anchors.fill: parent
-    topMargin: Tokens.padding.medium
-    bottomMargin: Tokens.padding.medium
-
-    clip: true
-    contentHeight: formBody.implicitHeight
-    contentItem.children: [formBody]
-
     function compFor(type: int): Component {
         switch (type) {
         case ObjectListEditor.FieldType.IntField:
@@ -36,6 +28,14 @@ VerticalFadeFlickable {
             return stringRow;
         }
     }
+
+    anchors.fill: parent
+    topMargin: Tokens.padding.medium
+    bottomMargin: Tokens.padding.medium
+
+    clip: true
+    contentHeight: formBody.implicitHeight
+    contentItem.children: [formBody]
 
     ColumnLayout {
         id: formBody
