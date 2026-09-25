@@ -59,6 +59,18 @@ QtObject {
 
         // Shell
         {
+            label: Tr.tr("General"),
+            icon: "toggle_on",
+            description: Tr.tr("Idle, battery, print timeouts"),
+            category: "shell"
+        },
+        {
+            label: Tr.tr("Lock"),
+            icon: "lock",
+            description: Tr.tr("Lock screen, fingerprint, howdy"),
+            category: "shell"
+        },
+        {
             label: Tr.tr("Panels"),
             icon: "dock_to_bottom",
             description: Tr.tr("Dashboard, taskbar, launcher, sidebar"),

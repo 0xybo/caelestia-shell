@@ -41,7 +41,6 @@ PageBase {
         TextFieldRow {
             id: prefixRow
 
-            last: true
             label: Tr.tr("Action prefix")
             subtext: Tr.tr("Prefix used to run actions in the launcher")
             errorText: Tr.tr("Prefix must not be alphanumeric")
@@ -57,6 +56,23 @@ PageBase {
                 GlobalConfig.launcher.actionPrefix = value || ">";
                 if (GlobalConfig.launcher.actionPrefix === ">")
                     clear();
+            }
+        }
+
+        TextFieldRow {
+            last: true
+            label: Tr.tr("Special prefix")
+            subtext: Tr.tr("Prefix used to run special actions in the launcher")
+            errorText: Tr.tr("Prefix must not be alphanumeric")
+            value: GlobalConfig.launcher.specialPrefix === "@" ? "" : GlobalConfig.launcher.specialPrefix // TODO: replace with empty only when not loaded once loaded state is exposed
+            placeholderText: "@"
+            maximumLength: 1
+            smallField: true
+            validate: /^[^a-zA-Z0-9\s]$/
+            onEditingFinished: value => {
+                if (!field.valid)
+                    return;
+                GlobalConfig.launcher.specialPrefix = value || "@";
             }
         }
 
@@ -151,6 +167,20 @@ PageBase {
             text: Tr.tr("Wallpapers")
             checked: GlobalConfig.launcher.useFuzzy.wallpapers
             onToggled: GlobalConfig.launcher.useFuzzy.wallpapers = checked
+        }
+
+        // Actions
+        SectionHeader {
+            text: Tr.tr("Actions")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "bolt"
+            text: Tr.tr("Launcher actions")
+            subtext: Tr.tr("Run shell commands from the launcher")
+            onClicked: root.nState.openSubPage("launcherActions")
         }
     }
 }

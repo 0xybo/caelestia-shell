@@ -23,10 +23,13 @@ StyledRect {
         spacing: Tokens.spacing.small
 
         StyledText {
+            visible: !root.dialog.selectFolder
             text: Tr.trCtx("Filter:", "file filter")
         }
 
         StyledRect {
+            visible: !root.dialog.selectFolder
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.rightMargin: Tokens.spacing.medium
@@ -55,7 +58,7 @@ StyledRect {
 
             StateLayer {
                 disabled: !root.dialog.selectionValid
-                onClicked: root.dialog.accepted(root.folder.currentItem.modelData.path)
+                onClicked: root.dialog.accepted(root.dialog.selectedPath())
             }
 
             StyledText {

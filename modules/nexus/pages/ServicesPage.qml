@@ -74,11 +74,32 @@ PageBase {
 
         NavRow {
             first: true
-            last: true
             icon: "notifications"
             text: Tr.tr("Notifications")
             subtext: Tr.tr("Notifications, toasts, timeouts")
-            onClicked: root.nState.openSubPage(1)
+            onClicked: root.nState.openSubPage("notificationsPage")
+        }
+
+        NavRow {
+            last: true
+            icon: "settings_overscan"
+            text: Tr.tr("On-screen display")
+            subtext: Tr.tr("Brightness and microphone popups")
+            onClicked: root.nState.openSubPage("osdPage")
+        }
+
+        // Player aliases
+        SectionHeader {
+            text: Tr.tr("Players")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "music_note"
+            text: Tr.tr("Player aliases")
+            subtext: Tr.tr("Show friendlier names for media players")
+            onClicked: root.nState.openSubPage("playerAliasesPage")
         }
 
         // Polling
@@ -135,7 +156,6 @@ PageBase {
         }
 
         SelectRow {
-            last: true
             label: Tr.tr("Default player")
             subtext: Tr.tr("Preferred media player when several are open")
             menuItems: playerVariants.instances
@@ -143,6 +163,15 @@ PageBase {
             fallbackIcon: "music_note"
             fallbackText: GlobalConfig.services.defaultPlayer || Tr.trCtx("Auto", "default media player")
             onSelected: item => GlobalConfig.services.defaultPlayer = item.text
+        }
+
+        FilePickerRow {
+            last: true
+            label: Tr.tr("Lyrics folder")
+            subtext: Tr.tr("Folder scanned for synced lyrics")
+            value: GlobalConfig.paths.lyricsDir
+            selectFolder: true
+            onEditingFinished: v => GlobalConfig.paths.lyricsDir = v
         }
 
         // Input increments

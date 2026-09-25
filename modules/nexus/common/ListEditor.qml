@@ -14,10 +14,14 @@ ListView {
 
     property alias values: valuesModel.values
     property bool first
+    property bool last
+    property bool showToggle: true
+    property bool editable: false
 
     signal itemMoved(from: int, to: int)
     signal itemRemoved(index: int)
     signal itemToggled(index: int, checked: bool)
+    signal itemEditRequested(index: int)
 
     function labelFor(item: var): string {
         return item.label;
@@ -100,7 +104,9 @@ ListView {
         property real lastMoveY
 
         property real topRadius: root?.first && DelegateModel.itemsIndex === 0 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+        property real bottomRadius: root?.last && DelegateModel.itemsIndex === visualModel.items.count - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
         property real radiusLerpProg
+        readonly property real dimAmount: root?.showToggle ? (enabledSwitch.checked ? 1 : 0.5) : 1
 
         function lerpRadius(a: real, b: real): real {
             return a + (b - a) * radiusLerpProg;
@@ -290,7 +296,7 @@ ListView {
                     id: dragIcon
 
                     text: "drag_indicator"
-                    color: Qt.alpha(Colours.palette.m3onSurfaceVariant, enabledSwitch.checked ? 1 : 0.5)
+                    color: Qt.alpha(Colours.palette.m3onSurfaceVariant, item.dimAmount)
                     fontStyle: Tokens.font.icon.medium
                 }
 
@@ -299,16 +305,29 @@ ListView {
 
                     Layout.fillWidth: true
                     text: root.labelFor(item.modelData)
-                    color: Qt.alpha(Colours.palette.m3onSurface, enabledSwitch.checked ? 1 : 0.5)
+                    color: Qt.alpha(Colours.palette.m3onSurface, item.dimAmount)
                     elide: Text.ElideRight
                 }
 
                 StyledSwitch {
                     id: enabledSwitch
 
+                    visible: root.showToggle
                     checked: root.toggledFor(item.modelData)
                     font: Tokens.font.icon.medium
                     onToggled: root.itemToggled(item.DelegateModel.itemsIndex, checked)
+                }
+
+                IconButton {
+                    visible: root.editable
+                    type: IconButton.Text
+                    isRound: true
+                    icon: "edit"
+                    inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.icon.medium
+                    label.fill: 0
+
+                    onClicked: root.itemEditRequested(item.DelegateModel.itemsIndex)
                 }
 
                 IconButton {
