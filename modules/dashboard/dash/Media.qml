@@ -21,9 +21,16 @@ Item {
 
     readonly property real arcCoverGap: Tokens.spacing.extraSmall
 
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
     implicitWidth: Tokens.sizes.dashboard.mediaWidth
+    implicitHeight: childrenRect.height
+    height: implicitHeight
+
+    anchors {
+        top: Config.dashboard.showMediaGif ? parent.top : undefined
+        bottom: Config.dashboard.showMediaGif ? parent.bottom : undefined
+        verticalCenter: Config.dashboard.showMediaGif ? undefined : parent.verticalCenter
+        horizontalCenter: parent.horizontalCenter
+    }
 
     Behavior on playerProgress {
         Anim {
@@ -161,8 +168,10 @@ Item {
         }
     }
 
-    AnimatedImage {
+    Loader {
         id: bongocat
+
+        active: Config.dashboard.showMediaGif
 
         anchors.top: controls.bottom
         anchors.bottom: parent.bottom
@@ -172,10 +181,12 @@ Item {
         anchors.bottomMargin: Tokens.padding.large
         anchors.margins: Tokens.padding.extraLargeIncreased
 
-        playing: Players.active?.isPlaying ?? false
-        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
-        source: Paths.absolutePath(Config.paths.mediaGif)
-        asynchronous: true
-        fillMode: AnimatedImage.PreserveAspectFit
+        sourceComponent: AnimatedImage {
+            playing: Players.active?.isPlaying ?? false
+            speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
+            source: Paths.absolutePath(Config.paths.mediaGif)
+            asynchronous: true
+            fillMode: AnimatedImage.PreserveAspectFit
+        }
     }
 }
