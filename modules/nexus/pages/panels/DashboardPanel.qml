@@ -133,7 +133,7 @@ PageBase {
             onToggled: GlobalConfig.dashboard.showMediaGif = checked
         }
 
-        TextFieldRow {
+        FilePickerRow {
             label: Tr.tr("Media GIF")
             subtext: Tr.tr("GIF shown for media playback")
             value: Config.paths.mediaGif
