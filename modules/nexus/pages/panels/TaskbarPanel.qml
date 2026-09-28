@@ -148,6 +148,7 @@ PageBase {
         }
 
         NavRow {
+            last: true
             icon: "schedule"
             text: Tr.tr("Clock")
             subtext: Tr.tr("Date, icon, background")
@@ -161,6 +162,7 @@ PageBase {
 
         StringListEditor {
             first: true
+            last: true
             labelKey: "name"
             values: Config.bar.excludedScreens
             addPlaceholderText: Tr.tr("Screen name")
@@ -185,7 +187,7 @@ PageBase {
 
         ListEditor {
             function labelFor(item: var): string {
-                return root.entryNames[item.id] ?? item.id;
+                return Config.bar.entries.values[item.id] ?? item.id;
             }
 
             function toggledFor(item: var): bool {

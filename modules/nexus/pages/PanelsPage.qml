@@ -57,12 +57,5 @@ PageBase {
             subtext: Tr.tr("Logout, shutdown, suspend, restart")
             onClicked: root.nState.openSubPage("sessionPanel")
         }
-
-        NavRow {
-            last: true
-            icon: "power_settings_new"
-            text: Tr.tr("Session")
-            onClicked: root.nState.openSubPage(6)
-        }
     }
 }

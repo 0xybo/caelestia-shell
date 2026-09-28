@@ -35,6 +35,7 @@ ColumnLayout {
     ConnectedRect {
         Layout.fillWidth: true
         first: root.first
+        last: root.last && root.values.length === 0
 
         implicitHeight: addRow.implicitHeight + addRow.anchors.margins * 2
 

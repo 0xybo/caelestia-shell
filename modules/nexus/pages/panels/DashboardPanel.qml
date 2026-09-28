@@ -128,7 +128,6 @@ PageBase {
 
         ToggleRow {
             first: true
-            last: true
             text: Tr.tr("Show media GIF")
             checked: Config.dashboard.showMediaGif
             onToggled: GlobalConfig.dashboard.showMediaGif = checked
