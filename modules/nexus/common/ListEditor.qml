@@ -148,6 +148,12 @@ ListView {
             }
         }
 
+        Behavior on bottomRadius {
+            Anim {
+                type: Anim.DefaultEffects
+            }
+        }
+
         StyledRect {
             id: placeholder
 
@@ -244,6 +250,8 @@ ListView {
                 radius: itemBg.radius
                 topLeftRadius: itemBg.topLeftRadius
                 topRightRadius: itemBg.topRightRadius
+                bottomLeftRadius: itemBg.bottomLeftRadius
+                bottomRightRadius: itemBg.bottomRightRadius
                 level: 3
                 opacity: 0
             }
@@ -256,6 +264,8 @@ ListView {
                 radius: item.lerpRadius(Tokens.rounding.extraSmall, Tokens.rounding.large)
                 topLeftRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
                 topRightRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
+                bottomLeftRadius: item.lerpRadius(item.bottomRadius, Tokens.rounding.large)
+                bottomRightRadius: item.lerpRadius(item.bottomRadius, Tokens.rounding.large)
             }
 
             MouseArea {
@@ -271,6 +281,8 @@ ListView {
                     radius: itemBg.radius
                     topLeftRadius: itemBg.topLeftRadius
                     topRightRadius: itemBg.topRightRadius
+                    bottomLeftRadius: itemBg.bottomLeftRadius
+                    bottomRightRadius: itemBg.bottomRightRadius
                     color: Colours.palette.m3onSurface
                     opacity: parent.containsMouse && !item.held ? 0.08 : 0
 
