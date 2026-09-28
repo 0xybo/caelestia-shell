@@ -55,7 +55,6 @@ PageBase {
         }
 
         StepperRow {
-            last: true
             label: Tr.tr("Spacing")
             subtext: Tr.tr("Gap between the visualiser bars")
             value: Config.background.visualiser.spacing
@@ -63,6 +62,18 @@ PageBase {
             to: 2
             stepSize: 0.1
             onMoved: v => GlobalConfig.background.visualiser.spacing = v
+        }
+
+        StepperRow {
+            last: true
+            // TRANSLATORS: bars of a spectrum analyser, not the taskbar
+            label: Tr.tr("Visualiser bars")
+            subtext: Tr.tr("Number of bars in the audio visualisers")
+            value: GlobalConfig.services.visualiserBars
+            from: 10
+            to: 120
+            stepSize: 2
+            onMoved: v => GlobalConfig.services.visualiserBars = v
         }
     }
 }

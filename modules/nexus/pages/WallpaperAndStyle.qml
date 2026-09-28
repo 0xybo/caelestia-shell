@@ -184,18 +184,10 @@ PageBase {
         }
 
         ToggleRow {
+            last: true
             text: Tr.tr("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
-        }
-
-        FilePickerRow {
-            last: true
-            label: Tr.tr("Wallpaper folder")
-            subtext: Tr.tr("Folder scanned for local wallpapers")
-            value: GlobalConfig.paths.wallpaperDir
-            selectFolder: true
-            onEditingFinished: v => GlobalConfig.paths.wallpaperDir = v
         }
 
         // Overlays
