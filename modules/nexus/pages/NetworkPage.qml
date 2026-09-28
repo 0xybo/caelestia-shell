@@ -357,7 +357,6 @@ PageBase {
 
         StepperRow {
             first: true
-            last: true
             label: Tr.tr("Max networks shown")
             subtext: Tr.tr("Networks listed before collapsing into \"show all\"")
             value: GlobalConfig.nexus.maxNetworksShown
@@ -365,6 +364,17 @@ PageBase {
             to: 20
             stepSize: 1
             onMoved: v => GlobalConfig.nexus.maxNetworksShown = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Wi-Fi rescan")
+            subtext: Tr.tr("How often available networks are rescanned (seconds)")
+            value: GlobalConfig.nexus.networkRescanInterval / 1000
+            from: 5
+            to: 120
+            stepSize: 5
+            onMoved: v => GlobalConfig.nexus.networkRescanInterval = Math.round(v * 1000)
         }
     }
 }

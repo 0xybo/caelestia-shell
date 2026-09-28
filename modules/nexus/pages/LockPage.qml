@@ -116,16 +116,23 @@ PageBase {
 
         // Session
         SectionHeader {
-            text: Tr.tr("Session")
+            text: Tr.tr("Services")
         }
 
         ToggleRow {
             first: true
-            last: true
             text: Tr.tr("Session controls")
             subtext: Tr.tr("Show session controls on the lock screen")
             checked: GlobalConfig.lock.enableSessionControls
             onToggled: GlobalConfig.lock.enableSessionControls = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: Tr.tr("Media controls")
+            subtext: Tr.tr("Show media controls on the lock screen")
+            checked: GlobalConfig.lock.showMedia
+            onToggled: GlobalConfig.lock.showMedia = checked
         }
     }
 }

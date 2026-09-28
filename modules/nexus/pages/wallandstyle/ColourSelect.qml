@@ -20,28 +20,24 @@ PageBase {
         }
 
         ColumnLayout {
-            anchors.centerIn: parent
-            spacing: Tokens.padding.extraSmall
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            width: root.cappedWidth
+            spacing: Tokens.spacing.extraSmall / 2
 
-            MaterialIcon {
-                Layout.alignment: Qt.AlignHCenter
-                text: "handyman"
-                color: Colours.palette.m3outlineVariant
-                fontStyle: Tokens.font.icon.extraLarge
+            // Scheme
+            SectionHeader {
+                first: true
+                text: Tr.tr("Scheme")
             }
 
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: Tr.tr("Page under construction")
-                color: Colours.palette.m3outlineVariant
-                font: Tokens.font.title.large
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: Tr.tr("This page will be available in a future update.")
-                color: Colours.palette.m3outlineVariant
-                font: Tokens.font.body.large
+            ToggleRow {
+                first: true
+                last: true
+                text: Tr.tr("Smart colour scheme")
+                subtext: Tr.tr("Derive theme mode and variant from the wallpaper")
+                checked: GlobalConfig.services.smartScheme
+                onToggled: GlobalConfig.services.smartScheme = checked
             }
         }
     }
