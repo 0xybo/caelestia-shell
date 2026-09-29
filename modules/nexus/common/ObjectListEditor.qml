@@ -2,9 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
-import qs.components
-import qs.components.containers
-import qs.services
 import qs.modules.nexus.common
 
 ColumnLayout {
@@ -14,6 +11,9 @@ ColumnLayout {
     property var values
     property list<Field> fields: []
     property string nameKey: "name"
+    property var labelFor: function (item: var): string {
+        return item?.[root.nameKey] ?? "";
+    }
     property string toggleKey: ""
     property var defaultItem: function (): var {
         return {};
@@ -61,7 +61,7 @@ ColumnLayout {
 
     ListEditor {
         function labelFor(item: var): string {
-            return item?.[root.nameKey] ?? "";
+            return root.labelFor(item);
         }
 
         function toggledFor(item: var): bool {
@@ -86,6 +86,7 @@ ColumnLayout {
         icon: "add"
         label: root.addLabel
         header: root.editIndex >= 0 ? root.editHeader : root.addHeader
+        first: root.values.length === 0
         acceptLabel: root.acceptLabel
         content: root.formComp
         contentContext: root

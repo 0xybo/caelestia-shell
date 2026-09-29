@@ -66,6 +66,7 @@ PageBase {
 
         StringListEditor {
             first: true
+            last: true
             values: Config.bar.tray.hiddenIcons
             addPlaceholderText: Tr.tr("Icon ID")
             onItemAdded: v => GlobalConfig.bar.tray.hiddenIcons = [...Config.bar.tray.hiddenIcons, v]

@@ -46,9 +46,17 @@ PageBase {
 
         ObjectListEditor {
             first: true
+            last: true
             rootParent: root.flickable
             values: GlobalConfig.bar.workspaces[root.listKey].values
-            nameKey: "name"
+            labelFor: function (item: var): string {
+                console.log("labelFor", item.name, item.regex, item.flags, item.icon);
+                if (item.name)
+                    return item.name;
+                if (item.regex)
+                    return Tr.tr("Regex: ") + item.regex;
+                return Tr.tr("Unnamed rule");
+            }
             toggleKey: ""
             addLabel: Tr.tr("Add rule")
             addHeader: Tr.tr("Add rule")
