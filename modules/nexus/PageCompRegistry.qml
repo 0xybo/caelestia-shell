@@ -33,6 +33,11 @@ QtObject {
                     { name: "wallpaperSelectPage", component: wallpaperSelectPage },
                     { name: "wallpaperCategoryPage", component: wallpaperCategoryPage },
                     { name: "colourSelectPage", component: colourSelectPage },
+                    { name: "tokensPage", component: tokensPage },
+                    { name: "tokenShapePage", component: tokenShapePage },
+                    { name: "tokenSpacingPage", component: tokenSpacingPage },
+                    { name: "tokenAnimPage", component: tokenAnimPage },
+                    { name: "tokenNexusPage", component: tokenNexusPage },
                     { name: "desktopClockPage", component: desktopClockPage },
                     { name: "visualiserPage", component: visualiserPage }
                 ]
@@ -41,6 +46,11 @@ QtObject {
                 Component { id: wallpaperSelectPage; WallpaperSelect {} }
                 Component { id: wallpaperCategoryPage; WallpaperCategory {} }
                 Component { id: colourSelectPage; ColourSelect {} }
+                Component { id: tokensPage; TokensPage {} }
+                Component { id: tokenShapePage; TokenShape {} }
+                Component { id: tokenSpacingPage; TokenSpacing {} }
+                Component { id: tokenAnimPage; TokenAnim {} }
+                Component { id: tokenNexusPage; TokenNexus {} }
                 Component { id: desktopClockPage; DesktopClockPage {} }
                 Component { id: visualiserPage; VisualiserPage {} }
             }

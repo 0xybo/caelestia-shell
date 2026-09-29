@@ -142,6 +142,7 @@ PageBase {
         }
 
         ButtonRow {
+            Layout.topMargin: Tokens.spacing.extraSmall
             Layout.alignment: Qt.AlignHCenter
             spacing: Tokens.spacing.small
 
@@ -168,6 +169,18 @@ PageBase {
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
                 onClicked: root.nState.openSubPage("colourSelectPage") // Colours page
+            }
+
+            IconTextButton {
+                icon: "square_foot"
+                text: Tr.tr("Tokens")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                type: IconTextButton.Tonal
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                onClicked: root.nState.openSubPage("tokensPage") // Tokens page
             }
         }
 
