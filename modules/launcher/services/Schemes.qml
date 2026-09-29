@@ -10,8 +10,11 @@ import qs.utils
 Searcher {
     id: root
 
-    property string currentScheme
+    property string currentName
+    property string currentFlavour
+    readonly property string currentScheme: `${currentName} ${currentFlavour}`
     property string currentVariant
+    readonly property bool loaded: currentName !== ""
 
     function transformSearch(search: string): string {
         return search.slice(`${GlobalConfig.launcher.actionPrefix}scheme `.length);
@@ -21,8 +24,45 @@ Searcher {
         return `${item.name} ${item.flavour}`;
     }
 
+    function names(): var {
+        const names = [];
+        for (const scheme of list) {
+            if (!names.includes(scheme.name))
+                names.push(scheme.name);
+        }
+        return names;
+    }
+
+    function flavoursFor(name: string): var {
+        const flavours = [];
+        for (const scheme of list) {
+            if (scheme.name === name && !flavours.includes(scheme.flavour))
+                flavours.push(scheme.flavour);
+        }
+        return flavours;
+    }
+
     function reload(): void {
         getCurrent.running = true;
+    }
+
+    function set(name: string, flavour: string): void {
+        if (!name || name === currentName && (!flavour || flavour === currentFlavour))
+            return;
+
+        const args = ["caelestia", "scheme", "set", "-n", name];
+        if (flavour)
+            args.push("-f", flavour);
+        Quickshell.execDetached(args);
+        syncTimer.restart();
+    }
+
+    function setVariant(variant: string): void {
+        if (!variant || variant === currentVariant)
+            return;
+
+        Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
+        syncTimer.restart();
     }
 
     list: schemes.instances
@@ -68,10 +108,18 @@ Searcher {
         stdout: StdioCollector {
             onStreamFinished: {
                 const [name, flavour, variant] = text.trim().split("\n");
-                root.currentScheme = `${name} ${flavour}`;
-                root.currentVariant = variant;
+                root.currentName = name ?? "";
+                root.currentFlavour = flavour ?? "";
+                root.currentVariant = variant ?? "";
             }
         }
+    }
+
+    Timer {
+        id: syncTimer
+
+        interval: 400
+        onTriggered: root.reload()
     }
 
     component Scheme: QtObject {
@@ -82,7 +130,7 @@ Searcher {
 
         function onClicked(list: AppList): void {
             list.screenState.launcher = false;
-            Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
+            root.set(name, flavour);
         }
     }
 }
