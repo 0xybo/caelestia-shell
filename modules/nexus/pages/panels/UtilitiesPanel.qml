@@ -45,11 +45,18 @@ PageBase {
 
         ToggleRow {
             first: true
-            last: true
             text: Tr.trCtx("Enabled", "toggle label")
             subtext: Tr.tr("Show the utilities panel")
             checked: Config.utilities.enabled
             onToggled: GlobalConfig.utilities.enabled = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: Tr.tr("Always show notifications")
+            subtext: Tr.tr("Keep the notification panel visible while the utilities panel is open")
+            checked: Config.utilities.alwaysShowNotifications
+            onToggled: GlobalConfig.utilities.alwaysShowNotifications = checked
         }
 
         // Cards

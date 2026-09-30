@@ -14,7 +14,18 @@ GridLayout {
     id: root
 
     required property int position
+    required property bool powerTriggersUtilities
+    required property bool activeWindowHover
     readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
+    readonly property bool powerAtEnd: {
+        for (let i = 0; i < repeater.count; i++) {
+            const ch = repeater.itemAt(i) as EntryWrapper;
+            if (ch?.entryId !== "power")
+                continue;
+            return horizontal ? ch.x + ch.width / 2 > width / 2 : ch.y + ch.height / 2 > height / 2;
+        }
+        return true;
+    }
 
     required property ShellScreen screen
     required property ScreenState screenState
@@ -81,11 +92,11 @@ GridLayout {
                 popouts.hasCurrent = false;
                 tray.expanded = true;
             }
-        } else if (id === "activeWindow" && Config.bar.popouts.activeWindow && Config.bar.activeWindow.showOnHover) {
+        } else if (id === "activeWindow" && Config.bar.popouts.activeWindow && Config.bar.activeWindow.showOnHover && activeWindowHover) {
             popouts.currentName = id.toLowerCase();
             popouts.currentCenter = axisCenterOf(ch.item as Item);
             popouts.hasCurrent = true;
-        } else if (id === "power" && horizontal) {
+        } else if (id === "power" && powerTriggersUtilities) {
             popouts.hasCurrent = false;
         }
     }

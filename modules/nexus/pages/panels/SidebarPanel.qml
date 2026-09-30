@@ -4,10 +4,22 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components.controls
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property list<MenuItem> positionItems: [
+        MenuItem {
+            text: Tr.tr("Left")
+            value: HorizontalPosition.Left
+        },
+        MenuItem {
+            text: Tr.tr("Right")
+            value: HorizontalPosition.Right
+        }
+    ]
 
     title: Tr.tr("Sidebar")
     isSubPage: true
@@ -28,6 +40,14 @@ PageBase {
             text: Tr.trCtx("Enabled", "toggle label")
             checked: Config.sidebar.enabled
             onToggled: GlobalConfig.sidebar.enabled = checked
+        }
+
+        SelectRow {
+            label: Tr.tr("Position")
+            subtext: Tr.tr("Which screen edge the sidebar opens from")
+            menuItems: root.positionItems
+            active: root.positionItems.find(i => i.value === Config.sidebar.position)
+            onSelected: i => GlobalConfig.sidebar.position = i.value
         }
 
         StepperRow {
