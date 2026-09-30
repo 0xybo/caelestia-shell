@@ -41,29 +41,6 @@ Item {
     anchors.topMargin: geometry.insetTop(borderThickness)
     anchors.bottomMargin: geometry.insetBottom(borderThickness)
 
-    Item {
-        id: osdWrapper
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
-        clip: sidebar.visible || session.visible
-
-        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
-        implicitHeight: osd.implicitHeight
-
-        Osd.Wrapper {
-            id: osd
-
-            screen: root.screen
-            screenState: root.screenState
-            sidebarOrSessionVisible: sidebar.visible || session.visible
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-        }
-    }
-
     Notifications.Wrapper {
         id: notifications
 
@@ -81,8 +58,10 @@ Item {
         id: sessionWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+        anchors.left: root.geometry.sidebarOnLeft ? parent.left : undefined
+        anchors.right: root.geometry.sidebarOnLeft ? undefined : parent.right
+        anchors.leftMargin: root.geometry.sidebarOnLeft ? sidebar.width * (1 - sidebar.offsetScale) : 0
+        anchors.rightMargin: root.geometry.sidebarOnLeft ? 0 : sidebar.width * (1 - sidebar.offsetScale)
         clip: sidebar.visible
 
         implicitWidth: session.implicitWidth * (1 - session.offsetScale)
@@ -93,9 +72,9 @@ Item {
 
             screenState: root.screenState
             sidebarVisible: sidebar.visible
+            onLeft: root.geometry.sidebarOnLeft
 
             anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
         }
     }
 
@@ -117,6 +96,34 @@ Item {
         position: root.geometry.effectiveDashboardPosition
     }
 
+    Item {
+        id: osdWrapper
+
+        // Keep clear of the sidebar/session when they share the OSD's side
+        readonly property real edgeShift: root.geometry.osdOnLeft ? (root.geometry.sidebarOnLeft ? sidebar.width * (1 - sidebar.offsetScale) : 0) : (sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale))
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: root.geometry.osdOnLeft ? parent.left : undefined
+        anchors.right: root.geometry.osdOnLeft ? undefined : parent.right
+        anchors.leftMargin: root.geometry.osdOnLeft ? edgeShift : 0
+        anchors.rightMargin: root.geometry.osdOnLeft ? 0 : edgeShift
+        clip: sidebar.visible || session.visible
+
+        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
+        implicitHeight: osd.implicitHeight
+
+        Osd.Wrapper {
+            id: osd
+
+            screen: root.screen
+            screenState: root.screenState
+            sidebarOrSessionVisible: sidebar.visible || session.visible
+            onLeft: root.geometry.osdOnLeft
+
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
     BarPopouts.ClipWrapper {
         id: popoutsWrapper
 
@@ -129,18 +136,16 @@ Item {
         id: utilities
 
         screenState: root.screenState
-        sidebar: sidebar
         popouts: popoutsWrapper.content
-
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        position: root.geometry.effectiveUtilitiesPosition
     }
 
     Toasts.Toasts {
         id: toasts
 
         anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
-        anchors.right: sidebar.left
+        anchors.left: root.geometry.sidebarOnLeft ? sidebar.right : undefined
+        anchors.right: root.geometry.sidebarOnLeft ? undefined : sidebar.left
         anchors.margins: Tokens.padding.medium
     }
 
@@ -148,10 +153,12 @@ Item {
         id: sidebar
 
         screenState: root.screenState
+        onLeft: root.geometry.sidebarOnLeft
 
-        anchors.top: notifications.bottom
-        anchors.bottom: utilities.top
-        anchors.right: parent.right
+        anchors.top: root.geometry.utilitiesOnTop ? utilities.bottom : notifications.bottom
+        anchors.bottom: root.geometry.utilitiesOnTop ? parent.bottom : (root.geometry.utilitiesOnRight ? utilities.top : parent.bottom)
+        anchors.left: root.geometry.sidebarOnLeft ? parent.left : undefined
+        anchors.right: root.geometry.sidebarOnLeft ? undefined : parent.right
         anchors.topMargin: -notifications.anchors.topMargin
     }
 }

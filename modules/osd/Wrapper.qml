@@ -12,6 +12,7 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property bool sidebarOrSessionVisible
+    required property bool onLeft
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
@@ -39,6 +40,9 @@ Item {
     }
 
     visible: offsetScale < 1
+    anchors.left: onLeft ? parent.left : undefined
+    anchors.right: onLeft ? undefined : parent.right
+    anchors.leftMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight

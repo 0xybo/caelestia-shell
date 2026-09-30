@@ -3,10 +3,13 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property bool hoverSupported: BarLayout.activeWindowHoverSupported(Config.bar.position, Config.bar.dashboardPosition)
 
     title: Tr.tr("Active window")
     isSubPage: true
@@ -32,7 +35,8 @@ PageBase {
 
         ToggleRow {
             text: Tr.tr("Show on hover")
-            subtext: Tr.tr("Only show the active window title while hovering")
+            subtext: root.hoverSupported ? Tr.tr("Only show the active window title while hovering") : Tr.tr("Unavailable while the dashboard shares this bar's edge")
+            disabled: !root.hoverSupported
             checked: Config.bar.activeWindow.showOnHover
             onToggled: GlobalConfig.bar.activeWindow.showOnHover = checked
         }
@@ -40,7 +44,8 @@ PageBase {
         ToggleRow {
             last: true
             text: Tr.tr("Popout on hover")
-            subtext: Tr.tr("Show a window details popout when hovering")
+            subtext: root.hoverSupported ? Tr.tr("Show a window details popout when hovering") : Tr.tr("Unavailable while the dashboard shares this bar's edge")
+            disabled: !root.hoverSupported
             checked: Config.bar.popouts.activeWindow
             onToggled: GlobalConfig.bar.popouts.activeWindow = checked
         }

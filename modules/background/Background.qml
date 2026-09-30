@@ -67,6 +67,7 @@ Variants {
 
             anchors.margins: Tokens.padding.extraLargeIncreased
             anchors.leftMargin: Tokens.padding.extraLargeIncreased + ((win.edgeGeometry?.barOnLeft ?? true) && state.endsWith("-left") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
+            anchors.rightMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnRight && state.endsWith("-right") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
             anchors.topMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnTop && state.startsWith("top-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
             anchors.bottomMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnBottom && state.startsWith("bottom-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
 

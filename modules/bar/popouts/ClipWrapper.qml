@@ -15,12 +15,15 @@ Item {
 
     readonly property alias content: content
     readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
+    readonly property bool onRight: position === BarPosition.Right
     property real offsetScale: {
         if (content.hasCurrent)
             return 0;
         if (position === BarPosition.Top)
             return y > 0 ? 0 : 1;
         if (position === BarPosition.Bottom)
+            return content.isDetached ? 0 : 1;
+        if (onRight)
             return content.isDetached ? 0 : 1;
         return x > 0 ? 0 : 1;
     }
@@ -35,7 +38,7 @@ Item {
         if (content.isDetached)
             return (parent.width - content.nonAnimWidth) / 2;
         if (!horizontal)
-            return 0;
+            return onRight ? parent.width - content.nonAnimWidth : 0;
 
         const off = content.currentCenter - borderThickness - content.nonAnimWidth / 2;
         const diff = parent.width - Math.floor(off + content.nonAnimWidth);
@@ -85,7 +88,7 @@ Item {
         screen: root.screen
         offsetScale: root.offsetScale
 
-        x: root.horizontal ? (parent.width - width) / 2 : (-width - 5) * root.offsetScale
+        x: root.horizontal ? (parent.width - width) / 2 : (root.onRight ? width + 5 : -width - 5) * root.offsetScale
         y: root.horizontal ? (root.position === BarPosition.Bottom ? parent.height - height + (height + 5) * root.offsetScale : (-height - 5) * root.offsetScale) : (parent.height - height) / 2
     }
 }

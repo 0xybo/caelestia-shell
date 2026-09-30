@@ -63,6 +63,7 @@ Item {
                     anchors.fill: parent
                     anchors.margins: Config.border.thickness
                     anchors.leftMargin: (root.edgeGeometry?.barOnLeft ?? true) ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
+                    anchors.rightMargin: root.edgeGeometry?.barOnRight ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
                     anchors.topMargin: root.edgeGeometry?.barOnTop ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
                     anchors.bottomMargin: root.edgeGeometry?.barOnBottom ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
 
@@ -74,6 +75,10 @@ Item {
                     animationDuration: Tokens.anim.durations.normal
 
                     Behavior on anchors.leftMargin {
+                        Anim {}
+                    }
+
+                    Behavior on anchors.rightMargin {
                         Anim {}
                     }
                 }

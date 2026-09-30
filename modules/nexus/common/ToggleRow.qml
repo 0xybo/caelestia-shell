@@ -56,6 +56,7 @@ StyledSwitch {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
+            opacity: root.disabled ? 0.5 : 1
 
             StyledText {
                 id: label
