@@ -5,17 +5,19 @@ import Quickshell
 import Caelestia
 import Caelestia.Config
 import qs.components
-import qs.modules.sidebar as Sidebar
+import qs.utils
 import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
     required property ScreenState screenState
-    required property Sidebar.Wrapper sidebar
     required property BarPopouts.Wrapper popouts
-    property real horizontalStretch
+    required property int position
     property matrix4x4 deformMatrix
+
+    readonly property bool onTop: BarLayout.isCornerOn(position, BarPosition.Top)
+    readonly property bool onLeft: BarLayout.isCornerOn(position, BarPosition.Left)
 
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
@@ -24,47 +26,17 @@ Item {
 
         reloadableId: "utilities"
     }
-    readonly property bool shouldBeActive: screenState.sidebar || (screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled))
+    readonly property bool shouldBeActive: screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled)
     readonly property real totalPadding: content.anchors.margins + CUtils.clamp(content.anchors.margins - Config.border.thickness, 0, content.anchors.margins)
     readonly property real nonAnimHeight: ((content.item as Content)?.nonAnimHeight ?? 0) + totalPadding
     property real offsetScale: shouldBeActive ? 0 : 1
-    property real sidebarLerp
 
     visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
+    x: onLeft ? 0 : parent.width - width
+    y: onTop ? (-implicitHeight - 5) * offsetScale : parent.height - height + (implicitHeight + 5) * offsetScale
     implicitHeight: content.implicitHeight + totalPadding
-    implicitWidth: sidebar.width * (1 - sidebar.offsetScale) * horizontalStretch * sidebarLerp + Tokens.sizes.utilities.width * (1 - sidebarLerp)
+    implicitWidth: Tokens.sizes.utilities.width
     opacity: 1 - offsetScale
-
-    states: State {
-        name: "attachedToSidebar"
-        when: root.screenState.sidebar
-
-        PropertyChanges {
-            root.sidebarLerp: 1
-        }
-    }
-
-    transitions: [
-        Transition {
-            from: ""
-
-            Anim {
-                property: "sidebarLerp"
-                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
-                easing: Tokens.anim.standardAccel
-            }
-        },
-        Transition {
-            to: ""
-
-            Anim {
-                property: "sidebarLerp"
-                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
-                easing: Tokens.anim.standardDecel
-            }
-        }
-    ]
 
     Behavior on offsetScale {
         Anim {}
@@ -73,8 +45,10 @@ Item {
     Loader {
         id: content
 
-        anchors.top: parent.top
-        anchors.left: parent.left
+        anchors.top: root.onTop ? undefined : parent.top
+        anchors.bottom: root.onTop ? parent.bottom : undefined
+        anchors.left: root.onLeft ? undefined : parent.left
+        anchors.right: root.onLeft ? parent.right : undefined
         anchors.margins: Tokens.padding.large
 
         asynchronous: true
