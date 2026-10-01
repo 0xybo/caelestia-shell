@@ -16,16 +16,16 @@ Region {
 
     x: geometry.insetLeft(clampedThickness, true) + win.dragMaskPadding
     y: geometry.insetTop(clampedThickness, true) + win.dragMaskPadding
-    width: win.width - geometry.insetLeft(clampedThickness, true) - clampedThickness - win.dragMaskPadding * 2
+    width: win.width - geometry.insetLeft(clampedThickness, true) - geometry.insetRight(clampedThickness, true) - clampedThickness - win.dragMaskPadding * 2
     height: win.height - geometry.insetTop(clampedThickness, true) - geometry.insetBottom(clampedThickness, true) - win.dragMaskPadding * 2
     intersection: Intersection.Xor
 
     R {
         panel: root.panels.dashboard
-        x: root.geometry.dashboardOnLeft ? 0 : panel.x + root.geometry.insetLeft(root.borderThickness)
-        y: root.geometry.dashboardOnLeft ? panel.y + root.geometry.insetTop(root.borderThickness) : 0
-        width: root.geometry.dashboardOnLeft ? panel.width * (1 - root.panels.dashboard.offsetScale) + root.geometry.insetLeft(root.borderThickness) : panel.width
-        height: root.geometry.dashboardOnLeft ? panel.height : panel.height * (1 - root.panels.dashboard.offsetScale) + root.geometry.insetTop(root.borderThickness)
+        x: root.geometry.dashboardOnRight ? root.win.width - width : root.geometry.dashboardOnLeft ? 0 : panel.x + root.geometry.insetLeft(root.borderThickness)
+        y: root.geometry.dashboardOnTop ? 0 : panel.y + root.geometry.insetTop(root.borderThickness)
+        width: root.geometry.dashboardOnTop ? panel.width : panel.width * (1 - root.panels.dashboard.offsetScale) + (root.geometry.dashboardOnLeft ? root.geometry.insetLeft(root.borderThickness) : root.geometry.insetRight(root.borderThickness))
+        height: root.geometry.dashboardOnTop ? panel.height * (1 - root.panels.dashboard.offsetScale) + root.geometry.insetTop(root.borderThickness) : panel.height
     }
 
     R {
@@ -38,7 +38,7 @@ Region {
         id: sessionRegion
 
         panel: root.panels.sessionWrapper
-        x: root.win.width - width
+        x: root.geometry.sidebarOnLeft ? 0 : root.win.width - width
         width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width
     }
 
@@ -46,14 +46,14 @@ Region {
         id: sidebarRegion
 
         panel: root.panels.sidebar
-        x: root.win.width - width
+        x: root.geometry.sidebarOnLeft ? 0 : root.win.width - width
         width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
     }
 
     R {
         panel: root.panels.osdWrapper
-        x: root.win.width - width
-        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + sessionRegion.width
+        x: root.geometry.osdOnLeft ? 0 : root.win.width - width
+        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + (root.geometry.osdOnLeft ? sidebarRegion.width : sessionRegion.width)
     }
 
     R {
@@ -64,8 +64,6 @@ Region {
 
     R {
         panel: root.panels.utilities
-        y: root.win.height - height
-        height: panel.height * (1 - root.panels.utilities.offsetScale) + root.geometry.insetBottom(root.borderThickness)
     }
 
     R {

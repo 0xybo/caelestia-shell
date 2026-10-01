@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components.controls
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -21,17 +22,33 @@ PageBase {
         MenuItem {
             text: Tr.tr("Left")
             value: BarPosition.Left
+        },
+        MenuItem {
+            text: Tr.tr("Right")
+            value: BarPosition.Right
         }
     ]
+    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.bar.dashboardPosition)
+    readonly property int effectiveUtilitiesPosition: BarLayout.utilitiesFor(Config.bar.position, Config.utilities.position)
+    readonly property list<MenuItem> dashboardPositionItems: BarLayout.dashboardPositions(Config.bar.position).map(pos => root.dashboardPositionItem(pos))
+    readonly property list<MenuItem> utilitiesPositionItems: BarLayout.utilitiesPositions(Config.bar.position).map(pos => root.utilitiesPositionItem(pos))
 
-    // Clamped to the edges valid for the current bar position, mirroring EdgeGeometry
-    readonly property int effectiveDashboardPosition: {
-        const barPos = Config.bar.position;
-        if (barPos === BarPosition.Top)
-            return DashboardPosition.Left;
-        if (barPos === BarPosition.Bottom)
-            return Config.bar.dashboardPosition;
-        return DashboardPosition.Top;
+    function dashboardPositionItem(pos: int): MenuItem {
+        if (pos === DashboardPosition.Top)
+            return dashboardPosTop;
+        if (pos === DashboardPosition.Left)
+            return dashboardPosLeft;
+        return dashboardPosRight;
+    }
+
+    function utilitiesPositionItem(pos: int): MenuItem {
+        if (pos === UtilitiesPosition.TopLeft)
+            return utilitiesPosTopLeft;
+        if (pos === UtilitiesPosition.TopRight)
+            return utilitiesPosTopRight;
+        if (pos === UtilitiesPosition.BottomLeft)
+            return utilitiesPosBottomLeft;
+        return utilitiesPosBottomRight;
     }
 
     title: Tr.tr("Taskbar")
@@ -61,17 +78,8 @@ PageBase {
         SelectRow {
             label: Tr.tr("Dashboard position")
             subtext: Tr.tr("Which screen edge the dashboard sits on")
-            disabled: menuItems.length < 2
-            menuItems: {
-                const barPos = Config.bar.position;
-                // The dashboard can only sit on edges the bar doesn't occupy
-                if (barPos === BarPosition.Bottom)
-                    return [dashboardPosTop, dashboardPosLeft];
-                if (barPos === BarPosition.Top)
-                    return [dashboardPosLeft];
-                return [dashboardPosTop];
-            }
-            active: menuItems.find(i => i.value === root.effectiveDashboardPosition) && menuItems.length > 1
+            menuItems: root.dashboardPositionItems
+            active: menuItems.find(i => i.value === root.effectiveDashboardPosition)
             onSelected: i => GlobalConfig.bar.dashboardPosition = i.value
 
             MenuItem {
@@ -85,6 +93,45 @@ PageBase {
 
                 text: Tr.tr("Left")
                 value: DashboardPosition.Left
+            }
+            MenuItem {
+                id: dashboardPosRight
+
+                text: Tr.tr("Right")
+                value: DashboardPosition.Right
+            }
+        }
+
+        SelectRow {
+            label: Tr.tr("Utilities position")
+            subtext: Tr.tr("Which screen corner the utilities panel opens in")
+            menuItems: root.utilitiesPositionItems
+            active: menuItems.find(i => i.value === root.effectiveUtilitiesPosition)
+            onSelected: i => GlobalConfig.utilities.position = i.value
+
+            MenuItem {
+                id: utilitiesPosTopLeft
+
+                text: Tr.tr("Top left")
+                value: UtilitiesPosition.TopLeft
+            }
+            MenuItem {
+                id: utilitiesPosTopRight
+
+                text: Tr.tr("Top right")
+                value: UtilitiesPosition.TopRight
+            }
+            MenuItem {
+                id: utilitiesPosBottomLeft
+
+                text: Tr.tr("Bottom left")
+                value: UtilitiesPosition.BottomLeft
+            }
+            MenuItem {
+                id: utilitiesPosBottomRight
+
+                text: Tr.tr("Bottom right")
+                value: UtilitiesPosition.BottomRight
             }
         }
 

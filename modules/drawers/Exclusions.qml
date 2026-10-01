@@ -25,6 +25,7 @@ Scope {
 
     ExclusionZone {
         anchors.right: true
+        hasBar: root.geometry.barOnRight
     }
 
     ExclusionZone {

@@ -93,6 +93,9 @@ StyledWindow {
         win: root
         configPosition: root.contentItem.Config.bar.position
         dashboardPosition: root.contentItem.Config.bar.dashboardPosition
+        configUtilitiesPosition: root.contentItem.Config.utilities.position
+        osdPosition: root.contentItem.Config.osd.position
+        sidebarPosition: root.contentItem.Config.sidebar.position
     }
 
     Region {
@@ -104,7 +107,7 @@ StyledWindow {
         height: panels.notifications.height
 
         Region {
-            x: root.width - width
+            x: geometry.osdOnLeft ? 0 : root.width - width
             y: panels.osdWrapper.y + root.borderThickness
             width: panels.osdWrapper.width * (1 - panels.osd.offsetScale) + root.borderThickness
             height: panels.osd.height
@@ -179,7 +182,7 @@ StyledWindow {
             group: blobGroup
             radius: root.borderRounding
             borderLeft: geometry.insetLeft(root.borderThickness) - anchors.margins - root.sdfBorderOffset
-            borderRight: root.borderThickness - anchors.margins - root.sdfBorderOffset
+            borderRight: geometry.insetRight(root.borderThickness) - anchors.margins - root.sdfBorderOffset
             borderTop: geometry.insetTop(root.borderThickness) - anchors.margins - root.sdfBorderOffset
             borderBottom: geometry.insetBottom(root.borderThickness) - anchors.margins - root.sdfBorderOffset
         }
@@ -211,11 +214,13 @@ StyledWindow {
         PanelBg {
             id: sidebarBg
 
+            readonly property real cornerRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
+
             panel: panels.sidebar
             deformAmount: 0.03
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
-            bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
+            bottomLeftRadius: geometry.sidebarOnLeft ? 0 : cornerRadius
+            bottomRightRadius: geometry.sidebarOnLeft ? cornerRadius : 0
         }
 
         PanelBg {
@@ -237,9 +242,7 @@ StyledWindow {
             id: utilsBg
 
             panel: panels.utilities
-            deformAmount: panels.sidebar.visible ? 0.1 : 0.15
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
-            topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
+            deformAmount: 0.15
         }
 
         PanelBg {
@@ -247,10 +250,11 @@ StyledWindow {
 
             // Extra extent to prevent axis movement deformation partially detaching panel from bar
             property real extraExtent: panels.popouts.isDetached ? 0 : 0.2
+            readonly property real extraX: geometry.horizontal || geometry.barOnRight ? 0 : -panels.popouts.width * extraExtent
 
             panel: panels.popoutsWrapper
             deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
-            x: panels.popoutsWrapper.x + panels.popouts.x + geometry.insetLeft(root.borderThickness) - (geometry.horizontal ? 0 : panels.popouts.width * extraExtent)
+            x: panels.popoutsWrapper.x + panels.popouts.x + geometry.insetLeft(root.borderThickness) + extraX
             y: panels.popoutsWrapper.y + panels.popouts.y + geometry.insetTop(root.borderThickness) - (geometry.barOnTop ? panels.popouts.height * extraExtent : 0)
             implicitWidth: panels.popouts.width * (geometry.horizontal ? 1 : 1 + extraExtent)
             implicitHeight: panels.popouts.height * (geometry.horizontal ? 1 + extraExtent : 1)
@@ -282,7 +286,6 @@ StyledWindow {
             geometry: geometry
             borderThickness: root.borderThickness
 
-            utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
             utilities.deformMatrix: utilsBg.rawDeformMatrix
 
             dashboard.transform: Matrix4x4 {
@@ -314,7 +317,7 @@ StyledWindow {
         BarWrapper {
             id: bar
 
-            x: 0
+            x: geometry.barOnRight ? parent.width - width : 0
             y: geometry.barOnBottom ? parent.height - height : 0
 
             width: geometry.horizontal ? parent.width : implicitWidth
@@ -324,6 +327,8 @@ StyledWindow {
             screenState: root.screenState
             popouts: panels.popouts
             position: geometry.position
+            powerTriggersUtilities: geometry.powerTriggersUtilities
+            activeWindowHover: geometry.activeWindowHover
 
             fullscreen: root.hasFullscreen
         }

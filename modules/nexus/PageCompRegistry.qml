@@ -149,6 +149,7 @@ QtObject {
                     { name: "launcherPanel", component: launcherPanel },
                     { name: "sidebarPanel", component: sidebarPanel },
                     { name: "utilitiesPanel", component: utilitiesPanel },
+                    { name: "osdPanel", component: osdPanel },
                     { name: "sessionPanel", component: sessionPanel },
                     { name: "barWorkspaces", component: barWorkspaces },
                     { name: "barActiveWindow", component: barActiveWindow },
@@ -169,6 +170,7 @@ QtObject {
                 Component { id: sidebarPanel; SidebarPanel {} }
                 Component { id: utilitiesPanel; UtilitiesPanel {} }
                 Component { id: sessionPanel; SessionPanel {} }
+                Component { id: osdPanel; OsdPanel {} }
                 Component { id: barWorkspaces; BarWorkspaces {} }
                 Component { id: barActiveWindow; BarActiveWindow {} }
                 Component { id: barTray; BarTray {} }
