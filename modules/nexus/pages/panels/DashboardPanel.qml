@@ -4,11 +4,23 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components.controls
 import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.bar.dashboardPosition)
+    readonly property list<MenuItem> dashboardPositionItems: BarLayout.dashboardPositions(Config.bar.position).map(pos => root.dashboardPositionItem(pos))
+
+    function dashboardPositionItem(pos: int): MenuItem {
+        if (pos === DashboardPosition.Top)
+            return dashboardPosTop;
+        if (pos === DashboardPosition.Left)
+            return dashboardPosLeft;
+        return dashboardPosRight;
+    }
 
     title: Tr.tr("Dashboard")
     isSubPage: true
@@ -30,6 +42,33 @@ PageBase {
             text: Tr.trCtx("Enabled", "toggle label")
             checked: Config.dashboard.enabled
             onToggled: GlobalConfig.dashboard.enabled = checked
+        }
+
+        SelectRow {
+            label: Tr.tr("Dashboard position")
+            subtext: Tr.tr("Which screen edge the dashboard sits on")
+            menuItems: root.dashboardPositionItems
+            active: menuItems.find(i => i.value === root.effectiveDashboardPosition)
+            onSelected: i => GlobalConfig.bar.dashboardPosition = i.value
+
+            MenuItem {
+                id: dashboardPosTop
+
+                text: Tr.tr("Top")
+                value: DashboardPosition.Top
+            }
+            MenuItem {
+                id: dashboardPosLeft
+
+                text: Tr.tr("Left")
+                value: DashboardPosition.Left
+            }
+            MenuItem {
+                id: dashboardPosRight
+
+                text: Tr.tr("Right")
+                value: DashboardPosition.Right
+            }
         }
 
         ToggleRow {

@@ -28,28 +28,6 @@ PageBase {
             value: BarPosition.Right
         }
     ]
-    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.bar.dashboardPosition)
-    readonly property int effectiveUtilitiesPosition: BarLayout.utilitiesFor(Config.bar.position, Config.utilities.position)
-    readonly property list<MenuItem> dashboardPositionItems: BarLayout.dashboardPositions(Config.bar.position).map(pos => root.dashboardPositionItem(pos))
-    readonly property list<MenuItem> utilitiesPositionItems: BarLayout.utilitiesPositions(Config.bar.position).map(pos => root.utilitiesPositionItem(pos))
-
-    function dashboardPositionItem(pos: int): MenuItem {
-        if (pos === DashboardPosition.Top)
-            return dashboardPosTop;
-        if (pos === DashboardPosition.Left)
-            return dashboardPosLeft;
-        return dashboardPosRight;
-    }
-
-    function utilitiesPositionItem(pos: int): MenuItem {
-        if (pos === UtilitiesPosition.TopLeft)
-            return utilitiesPosTopLeft;
-        if (pos === UtilitiesPosition.TopRight)
-            return utilitiesPosTopRight;
-        if (pos === UtilitiesPosition.BottomLeft)
-            return utilitiesPosBottomLeft;
-        return utilitiesPosBottomRight;
-    }
 
     title: Tr.tr("Taskbar")
     isSubPage: true
@@ -73,66 +51,6 @@ PageBase {
             menuItems: root.barPositionItems
             active: root.barPositionItems.find(i => i.value === Config.bar.position)
             onSelected: i => GlobalConfig.bar.position = i.value
-        }
-
-        SelectRow {
-            label: Tr.tr("Dashboard position")
-            subtext: Tr.tr("Which screen edge the dashboard sits on")
-            menuItems: root.dashboardPositionItems
-            active: menuItems.find(i => i.value === root.effectiveDashboardPosition)
-            onSelected: i => GlobalConfig.bar.dashboardPosition = i.value
-
-            MenuItem {
-                id: dashboardPosTop
-
-                text: Tr.tr("Top")
-                value: DashboardPosition.Top
-            }
-            MenuItem {
-                id: dashboardPosLeft
-
-                text: Tr.tr("Left")
-                value: DashboardPosition.Left
-            }
-            MenuItem {
-                id: dashboardPosRight
-
-                text: Tr.tr("Right")
-                value: DashboardPosition.Right
-            }
-        }
-
-        SelectRow {
-            label: Tr.tr("Utilities position")
-            subtext: Tr.tr("Which screen corner the utilities panel opens in")
-            menuItems: root.utilitiesPositionItems
-            active: menuItems.find(i => i.value === root.effectiveUtilitiesPosition)
-            onSelected: i => GlobalConfig.utilities.position = i.value
-
-            MenuItem {
-                id: utilitiesPosTopLeft
-
-                text: Tr.tr("Top left")
-                value: UtilitiesPosition.TopLeft
-            }
-            MenuItem {
-                id: utilitiesPosTopRight
-
-                text: Tr.tr("Top right")
-                value: UtilitiesPosition.TopRight
-            }
-            MenuItem {
-                id: utilitiesPosBottomLeft
-
-                text: Tr.tr("Bottom left")
-                value: UtilitiesPosition.BottomLeft
-            }
-            MenuItem {
-                id: utilitiesPosBottomRight
-
-                text: Tr.tr("Bottom right")
-                value: UtilitiesPosition.BottomRight
-            }
         }
 
         ToggleRow {
