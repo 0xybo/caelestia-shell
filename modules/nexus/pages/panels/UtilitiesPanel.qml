@@ -3,10 +3,15 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components.controls
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property int effectiveUtilitiesPosition: BarLayout.utilitiesFor(Config.bar.position, Config.utilities.position)
+    readonly property list<MenuItem> utilitiesPositionItems: BarLayout.utilitiesPositions(Config.bar.position).map(pos => root.utilitiesPositionItem(pos))
 
     function isToggleOn(id: string): bool {
         const item = Config.utilities.quickToggles.values.find(t => t.id === id);
@@ -26,6 +31,16 @@ PageBase {
             id,
             enabled: on
         });
+    }
+
+    function utilitiesPositionItem(pos: int): MenuItem {
+        if (pos === UtilitiesPosition.TopLeft)
+            return utilitiesPosTopLeft;
+        if (pos === UtilitiesPosition.TopRight)
+            return utilitiesPosTopRight;
+        if (pos === UtilitiesPosition.BottomLeft)
+            return utilitiesPosBottomLeft;
+        return utilitiesPosBottomRight;
     }
 
     title: Tr.tr("Utilities")
@@ -49,6 +64,39 @@ PageBase {
             subtext: Tr.tr("Show the utilities panel")
             checked: Config.utilities.enabled
             onToggled: GlobalConfig.utilities.enabled = checked
+        }
+
+        SelectRow {
+            label: Tr.tr("Utilities position")
+            subtext: Tr.tr("Which screen corner the utilities panel opens in")
+            menuItems: root.utilitiesPositionItems
+            active: menuItems.find(i => i.value === root.effectiveUtilitiesPosition)
+            onSelected: i => GlobalConfig.utilities.position = i.value
+
+            MenuItem {
+                id: utilitiesPosTopLeft
+
+                text: Tr.tr("Top left")
+                value: UtilitiesPosition.TopLeft
+            }
+            MenuItem {
+                id: utilitiesPosTopRight
+
+                text: Tr.tr("Top right")
+                value: UtilitiesPosition.TopRight
+            }
+            MenuItem {
+                id: utilitiesPosBottomLeft
+
+                text: Tr.tr("Bottom left")
+                value: UtilitiesPosition.BottomLeft
+            }
+            MenuItem {
+                id: utilitiesPosBottomRight
+
+                text: Tr.tr("Bottom right")
+                value: UtilitiesPosition.BottomRight
+            }
         }
 
         ToggleRow {
