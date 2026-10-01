@@ -28,16 +28,6 @@ PageBase {
             value: BarPosition.Right
         }
     ]
-    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.bar.dashboardPosition)
-    readonly property list<MenuItem> dashboardPositionItems: BarLayout.dashboardPositions(Config.bar.position).map(pos => root.dashboardPositionItem(pos))
-
-    function dashboardPositionItem(pos: int): MenuItem {
-        if (pos === DashboardPosition.Top)
-            return dashboardPosTop;
-        if (pos === DashboardPosition.Left)
-            return dashboardPosLeft;
-        return dashboardPosRight;
-    }
 
     title: Tr.tr("Taskbar")
     isSubPage: true
@@ -61,33 +51,6 @@ PageBase {
             menuItems: root.barPositionItems
             active: root.barPositionItems.find(i => i.value === Config.bar.position)
             onSelected: i => GlobalConfig.bar.position = i.value
-        }
-
-        SelectRow {
-            label: Tr.tr("Dashboard position")
-            subtext: Tr.tr("Which screen edge the dashboard sits on")
-            menuItems: root.dashboardPositionItems
-            active: menuItems.find(i => i.value === root.effectiveDashboardPosition)
-            onSelected: i => GlobalConfig.bar.dashboardPosition = i.value
-
-            MenuItem {
-                id: dashboardPosTop
-
-                text: Tr.tr("Top")
-                value: DashboardPosition.Top
-            }
-            MenuItem {
-                id: dashboardPosLeft
-
-                text: Tr.tr("Left")
-                value: DashboardPosition.Left
-            }
-            MenuItem {
-                id: dashboardPosRight
-
-                text: Tr.tr("Right")
-                value: DashboardPosition.Right
-            }
         }
 
         ToggleRow {

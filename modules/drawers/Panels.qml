@@ -101,7 +101,10 @@ Item {
 
         // Keep clear of the sidebar/session when they share the OSD's side
         readonly property bool sidebarOnOsdSide: root.geometry.sidebarOnLeft === root.geometry.osdOnLeft
-        readonly property real edgeShift: sidebarOnOsdSide ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0
+        // The dashboard is anchored to the same edge when it sits on a side, so push the OSD
+        // past it too, otherwise the two panels overlap
+        readonly property bool dashboardOnOsdSide: (root.geometry.dashboardOnLeft && root.geometry.osdOnLeft) || (root.geometry.dashboardOnRight && root.geometry.osdOnRight)
+        readonly property real edgeShift: (sidebarOnOsdSide ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0) + (dashboardOnOsdSide ? dashboard.width * (1 - dashboard.offsetScale) : 0)
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: root.geometry.osdOnLeft ? parent.left : undefined
@@ -155,12 +158,15 @@ Item {
 
         readonly property bool sharesNotifications: root.geometry.sidebarOnRight
         readonly property bool sharesUtilities: root.geometry.sidebarOnLeft ? root.geometry.utilitiesOnLeft : root.geometry.utilitiesOnRight
+        // The utilities panel stacks against this one on a corner; the facing edge is not free
+        readonly property bool utilitiesAbove: sharesUtilities && root.geometry.utilitiesOnTop
+        readonly property bool utilitiesBelow: sharesUtilities && root.geometry.utilitiesOnBottom
 
         screenState: root.screenState
         onLeft: root.geometry.sidebarOnLeft
 
-        anchors.top: sharesUtilities && root.geometry.utilitiesOnTop ? utilities.bottom : sharesNotifications ? notifications.bottom : parent.top
-        anchors.bottom: sharesUtilities && root.geometry.utilitiesOnBottom ? utilities.top : parent.bottom
-        anchors.topMargin: sharesUtilities && root.geometry.utilitiesOnTop ? 0 : sharesNotifications ? -notifications.anchors.topMargin : 0
+        anchors.top: utilitiesAbove ? utilities.bottom : sharesNotifications ? notifications.bottom : parent.top
+        anchors.bottom: utilitiesBelow ? utilities.top : parent.bottom
+        anchors.topMargin: utilitiesAbove ? 0 : sharesNotifications ? -notifications.anchors.topMargin : 0
     }
 }
