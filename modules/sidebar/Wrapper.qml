@@ -34,7 +34,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: root.onLeft ? undefined : parent.left
         anchors.right: root.onLeft ? parent.right : undefined
-        anchors.margins: CUtils.clamp(Tokens.padding.large - Config.border.thickness, 0, Tokens.padding.large)
+        anchors.margins: Tokens.padding.large
         anchors.bottomMargin: 0
 
         active: root.shouldBeActive || root.visible

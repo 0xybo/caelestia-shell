@@ -53,7 +53,7 @@ Region {
     R {
         panel: root.panels.osdWrapper
         x: root.geometry.osdOnLeft ? 0 : root.win.width - width
-        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + (root.geometry.osdOnLeft ? sidebarRegion.width : sessionRegion.width)
+        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + (root.geometry.osdOnLeft === root.geometry.sidebarOnLeft ? sessionRegion.width : 0)
     }
 
     R {
