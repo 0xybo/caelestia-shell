@@ -20,15 +20,19 @@ Item {
     required property real sourceVolume
     required property bool sourceMuted
     required property real brightness
+    required property bool besideSession
+    required property bool besideDashboard
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.large + layout.anchors.horizontalCenterOffset * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    readonly property real padding: Tokens.padding.medium
+
+    implicitWidth: layout.implicitWidth + root.padding * 2 + layout.anchors.horizontalCenterOffset * 2
+    implicitHeight: layout.implicitHeight + root.padding * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: CUtils.clamp(Tokens.padding.large - Config.border.thickness, 0, Tokens.padding.large) / 2
+        anchors.horizontalCenterOffset: CUtils.clamp(root.padding - Config.border.thickness, 0, root.padding) / 2
         spacing: Tokens.spacing.medium
 
         // Speaker volume
@@ -55,7 +59,7 @@ Item {
 
         // Microphone volume
         WrappedLoader {
-            shouldBeActive: Config.osd.enableMicrophone && (!Config.osd.enableBrightness || !root.screenState.session)
+            shouldBeActive: Config.osd.enableMicrophone && !(root.besideSession && root.screenState.session) && !(root.besideDashboard && root.screenState.dashboard)
 
             sourceComponent: CustomMouseArea {
                 function onWheel(event: WheelEvent) {
