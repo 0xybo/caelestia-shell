@@ -112,6 +112,7 @@ PageBase {
         }
 
         StepperRow {
+            last: true
             label: Tr.tr("Media refresh")
             // TRANSLATORS: ms is the millisecond unit, leave it untranslated
             subtext: Tr.tr("How often the media position updates (ms)")
