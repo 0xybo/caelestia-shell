@@ -58,10 +58,7 @@ Item {
         id: sessionWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: root.geometry.sidebarOnLeft ? parent.left : undefined
-        anchors.right: root.geometry.sidebarOnLeft ? undefined : parent.right
-        anchors.leftMargin: root.geometry.sidebarOnLeft ? sidebar.width * (1 - sidebar.offsetScale) : 0
-        anchors.rightMargin: root.geometry.sidebarOnLeft ? 0 : sidebar.width * (1 - sidebar.offsetScale)
+        x: root.geometry.sidebarOnLeft ? sidebar.width * (1 - sidebar.offsetScale) : parent.width - implicitWidth - sidebar.width * (1 - sidebar.offsetScale)
         clip: sidebar.visible
 
         implicitWidth: session.implicitWidth * (1 - session.offsetScale)
@@ -99,21 +96,19 @@ Item {
     Item {
         id: osdWrapper
 
-        // Keep clear of the sidebar/session when they share the OSD's side
+        readonly property bool sessionOnOsdSide: root.geometry.osdOnRight
         readonly property bool sidebarOnOsdSide: root.geometry.sidebarOnLeft === root.geometry.osdOnLeft
-        // The dashboard is anchored to the same edge when it sits on a side, so push the OSD
-        // past it too, otherwise the two panels overlap
         readonly property bool dashboardOnOsdSide: (root.geometry.dashboardOnLeft && root.geometry.osdOnLeft) || (root.geometry.dashboardOnRight && root.geometry.osdOnRight)
         readonly property real edgeShift: (sidebarOnOsdSide ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0) + (dashboardOnOsdSide ? dashboard.width * (1 - dashboard.offsetScale) : 0)
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: root.geometry.osdOnLeft ? parent.left : undefined
-        anchors.right: root.geometry.osdOnLeft ? undefined : parent.right
         anchors.leftMargin: root.geometry.osdOnLeft ? edgeShift : 0
         anchors.rightMargin: root.geometry.osdOnLeft ? 0 : edgeShift
+        x: root.geometry.osdOnLeft ? edgeShift : parent.width - visibleWidth - edgeShift
         clip: sidebar.visible || session.visible
 
-        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
+        readonly property real visibleWidth: osd.width * (1 - osd.offsetScale)
+        implicitWidth: visibleWidth
         implicitHeight: osd.implicitHeight
 
         Osd.Wrapper {
@@ -122,6 +117,9 @@ Item {
             screen: root.screen
             screenState: root.screenState
             sidebarOrSessionVisible: sidebar.visible || session.visible
+            besideSession: osdWrapper.sessionOnOsdSide && session.visible
+            besideSidebar: osdWrapper.sidebarOnOsdSide && sidebar.visible
+            besideDashboard: osdWrapper.dashboardOnOsdSide && dashboard.visible
             onLeft: root.geometry.osdOnLeft
 
             anchors.verticalCenter: parent.verticalCenter
