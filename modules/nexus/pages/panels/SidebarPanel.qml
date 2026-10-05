@@ -50,6 +50,14 @@ PageBase {
             onSelected: i => GlobalConfig.sidebar.position = i.value
         }
 
+        ToggleRow {
+            last: true
+            text: Tr.trCtx("Show on hover", "toggle label")
+            subtext: Tr.tr("Reveal the sidebar when the mouse hovers over its edge")
+            checked: Config.sidebar.showOnHover
+            onToggled: GlobalConfig.sidebar.showOnHover = checked
+        }
+
         StepperRow {
             last: true
             label: Tr.tr("Drag threshold")

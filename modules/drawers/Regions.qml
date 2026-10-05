@@ -21,8 +21,6 @@ Region {
     intersection: Intersection.Xor
 
     R {
-        id: dashboardRegion
-
         panel: root.panels.dashboard
         x: root.geometry.dashboardOnRight ? root.win.width - width : root.geometry.dashboardOnLeft ? 0 : panel.x + root.geometry.insetLeft(root.borderThickness)
         y: root.geometry.dashboardOnTop ? 0 : panel.y + root.geometry.insetTop(root.borderThickness)
@@ -55,7 +53,7 @@ Region {
     R {
         panel: root.panels.osdWrapper
         x: root.geometry.osdOnLeft ? 0 : root.win.width - width
-        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + (root.geometry.osdOnLeft === root.geometry.sidebarOnLeft ? sessionRegion.width : 0) + (root.panels.osdWrapper.dashboardOnOsdSide ? dashboardRegion.width : 0)
+        width: root.borderThickness + root.panels.osdWrapper.edgeShift + root.panels.osdWrapper.visibleWidth + (root.geometry.osdOnLeft === root.geometry.sidebarOnLeft ? sessionRegion.width : 0)
     }
 
     R {

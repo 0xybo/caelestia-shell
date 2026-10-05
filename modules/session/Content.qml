@@ -16,7 +16,6 @@ Column {
     required property ScreenState screenState
 
     padding: Tokens.padding.large
-    rightPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
     spacing: Tokens.spacing.large
 
     SessionButton {
