@@ -18,6 +18,7 @@ Item {
 
     readonly property bool onTop: BarLayout.isCornerOn(position, BarPosition.Top)
     readonly property bool onLeft: BarLayout.isCornerOn(position, BarPosition.Left)
+    readonly property real padding: Tokens.padding.large
 
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
@@ -26,7 +27,7 @@ Item {
 
         reloadableId: "utilities"
     }
-    readonly property bool shouldBeActive: screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled)
+    readonly property bool shouldBeActive: Config.utilities.enabled && screenState.utilities && !(Config.session.enabled && screenState.session && !Config.utilities.alwaysShowNotifications)
     readonly property real totalPadding: content.anchors.margins + CUtils.clamp(content.anchors.margins - Config.border.thickness, 0, content.anchors.margins)
     readonly property real nonAnimHeight: ((content.item as Content)?.nonAnimHeight ?? 0) + totalPadding
     property real offsetScale: shouldBeActive ? 0 : 1
@@ -45,11 +46,9 @@ Item {
     Loader {
         id: content
 
-        anchors.top: root.onTop ? undefined : parent.top
-        anchors.bottom: root.onTop ? parent.bottom : undefined
-        anchors.left: root.onLeft ? undefined : parent.left
-        anchors.right: root.onLeft ? parent.right : undefined
-        anchors.margins: Tokens.padding.large
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.margins: root.padding
 
         asynchronous: true
         active: root.shouldBeActive || root.visible
