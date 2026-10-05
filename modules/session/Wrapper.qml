@@ -33,6 +33,7 @@ Item {
         id: content
 
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
 
         active: root.shouldBeActive || root.visible

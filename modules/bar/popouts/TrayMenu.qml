@@ -15,8 +15,8 @@ StackView {
     required property PopoutState popouts
     required property QsMenuHandle trayItem
 
-    implicitWidth: (currentItem as SubMenu)?.hasChildren ? currentItem.implicitWidth : -Tokens.padding.large * 2
-    implicitHeight: (currentItem as SubMenu)?.hasChildren ? currentItem.implicitHeight : -Tokens.padding.large * 2
+    implicitWidth: (currentItem as SubMenu)?.hasChildren ? currentItem.implicitWidth : -Tokens.padding.medium * 2
+    implicitHeight: (currentItem as SubMenu)?.hasChildren ? currentItem.implicitHeight : -Tokens.padding.medium * 2
 
     initialItem: SubMenu {
         handle: root.trayItem
@@ -47,7 +47,6 @@ StackView {
         property bool isSubMenu
         property bool shown
 
-        padding: Tokens.padding.small
         spacing: Tokens.spacing.small
 
         opacity: shown ? 1 : 0
@@ -189,6 +188,7 @@ StackView {
                     anchors.bottom: parent.bottom
                     implicitWidth: back.implicitWidth
                     implicitHeight: back.implicitHeight
+                    x: Tokens.spacing.small
 
                     StyledRect {
                         anchors.fill: parent

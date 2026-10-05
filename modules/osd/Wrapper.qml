@@ -12,11 +12,14 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property bool sidebarOrSessionVisible
+    required property bool besideSession
+    required property bool besideSidebar
+    required property bool besideDashboard
     required property bool onLeft
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
-    readonly property bool shouldBeActive: screenState.osd && Config.osd.enabled && !(screenState.utilities && Config.utilities.enabled)
+    readonly property bool shouldBeActive: screenState.osd && Config.osd.enabled && !(Config.utilities.enabled && screenState.utilities && !Config.utilities.alwaysShowNotifications)
     property real offsetScale: shouldBeActive ? 0 : 1
     property real sidebarOffset: sidebarOrSessionVisible ? 12 : 0
 
@@ -26,9 +29,26 @@ Item {
     property bool sourceMuted
     property real brightness
 
+    property bool timerRunning: timer.running
+
     function show(): void {
         screenState.osd = true;
         timer.restart();
+    }
+
+    onBesideDashboardChanged: {
+        if (shouldBeActive && !hovered)
+            timer.restart();
+    }
+
+    onBesideSidebarChanged: {
+        if (shouldBeActive && !hovered)
+            timer.restart();
+    }
+
+    onBesideSessionChanged: {
+        if (shouldBeActive && !hovered)
+            timer.restart();
     }
 
     Component.onCompleted: {
@@ -40,10 +60,7 @@ Item {
     }
 
     visible: offsetScale < 1
-    anchors.left: onLeft ? parent.left : undefined
-    anchors.right: onLeft ? undefined : parent.right
-    anchors.leftMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
-    anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
+    x: onLeft ? (-implicitWidth - 5 - sidebarOffset) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5 + sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
     opacity: 1 - offsetScale
@@ -99,6 +116,7 @@ Item {
         id: content
 
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
 
         asynchronous: true
@@ -112,6 +130,8 @@ Item {
             sourceVolume: root.sourceVolume
             sourceMuted: root.sourceMuted
             brightness: root.brightness
+            besideSession: root.besideSession && root.screenState.session
+            besideDashboard: root.besideDashboard && root.screenState.dashboard
         }
     }
 }
