@@ -105,7 +105,7 @@ CustomMouseArea {
     }
 
     function inUtilitiesArea(x: real, y: real): bool {
-        return (geometry.utilitiesOnTop ? inTopPanel(panels.utilities, x, y) : inBottomPanel(panels.utilities, x, y, true)) || (Config.utilities.alwaysShowNotifications && screenState.sidebar && screenState.sidebar && inSidebarArea(x, y));
+        return (geometry.utilitiesOnTop ? inTopPanel(panels.utilities, x, y) : inBottomPanel(panels.utilities, x, y, true)) || (Config.utilities.alwaysShowNotifications && screenState.utilities && screenState.sidebar && inSidebarArea(x, y));
     }
 
     function onWheel(event: WheelEvent): void {
