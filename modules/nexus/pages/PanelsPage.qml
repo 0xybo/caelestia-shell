@@ -58,6 +58,21 @@ PageBase {
         }
 
         NavRow {
+            icon: "volume_up"
+            text: Tr.tr("Volume and brightness")
+            subtext: Config.osd.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
+            onClicked: root.nState.openSubPage("osdPanel")
+        }
+
+        NavRow {
+            last: true
+            icon: "construction"
+            text: Tr.tr("Utilities")
+            subtext: Config.utilities.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
+            onClicked: root.nState.openSubPage("utilitiesPanel")
+        }
+
+        NavRow {
             last: true
             icon: "volume_up"
             text: Tr.tr("Volume and brightness")
