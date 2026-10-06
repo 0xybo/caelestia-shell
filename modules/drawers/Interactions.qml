@@ -222,10 +222,10 @@ CustomMouseArea {
         if (p.sidebar.offsetScale === 1) {
             const showSidebar = pressed && pastSidebarStrip(dragStart.x);
 
-            if (cfg.sidebar.showOnHover) {
+            if (cfg.sidebar.showOnHover && !s.sidebar) {
                 const sy = Math.max(cfg.sidebar.minHoverThreshold, p.notifications.y + p.notifications.height + borderThickness);
                 const showSidebarHover = pastSidebarStrip(x) && y <= sy;
-                if (showSidebarHover && !s.sidebar)
+                if (showSidebarHover)
                     s.sidebar = true;
             }
 
@@ -262,7 +262,7 @@ CustomMouseArea {
                 if (showSidebarHover && !s.sidebar) {
                     s.sidebar = true;
                 } else {
-                    const inSidebarHoverArea = inSidebarArea(x, y) || inSessionArea(x, y) || (s.sidebar || s.sidebarTemporary) || (s.utilities && inUtilitiesArea(x, y));
+                    const inSidebarHoverArea = inSidebarArea(x, y) || inSessionArea(x, y) || (s.sidebarTemporary) || (s.utilities && inUtilitiesArea(x, y));
                     if (!inSidebarHoverArea)
                         s.sidebar = false;
                 }
