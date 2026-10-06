@@ -65,7 +65,6 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "construction"
             text: Tr.tr("Utilities")
             subtext: Config.utilities.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
@@ -78,6 +77,13 @@ PageBase {
             text: Tr.tr("Volume and brightness")
             subtext: Config.osd.enabled ? Tr.trCtx("Enabled", "panel status") : Tr.trCtx("Disabled", "panel status")
             onClicked: root.nState.openSubPage("osdPanel")
+        }
+
+        NavRow {
+            last: true
+            icon: "power_settings_new"
+            text: Tr.tr("Session")
+            onClicked: root.nState.openSubPage(6)
         }
     }
 }
