@@ -51,7 +51,6 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: Tr.trCtx("Show on hover", "toggle label")
             subtext: Tr.tr("Reveal the sidebar when the mouse hovers over its edge")
             checked: Config.sidebar.showOnHover
