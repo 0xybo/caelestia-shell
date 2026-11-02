@@ -2,5 +2,11 @@
     "editor.defaultFormatter": "theqtcompany.qt-qml",
     "[cpp]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "qt-qml.qmlls.additionalImportPaths": [
+        "/run/user/1000/quickshell/vfs/5d311b197817647f3f4cc64161ff3809"
+    ],
+    "[qml]": {
+        "editor.defaultFormatter": "theqtcompany.qt-qml"
     }
 }

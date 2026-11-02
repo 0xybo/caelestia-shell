@@ -11,7 +11,7 @@ Item {
 
     required property ShellScreen screen
     required property ScreenState screenState
-    required property bool sidebarOrSessionVisible
+    required property bool sidebarVisible
     required property bool besideSession
     required property bool besideSidebar
     required property bool besideDashboard
@@ -19,9 +19,9 @@ Item {
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
-    readonly property bool shouldBeActive: screenState.osd && Config.osd.enabled && !(Config.utilities.enabled && screenState.utilities && !Config.utilities.alwaysShowNotifications)
+    readonly property bool shouldBeActive: screenState.osd || screenState.osdTemporary && Config.osd.enabled && !(Config.utilities.enabled && screenState.utilities && !Config.utilities.alsoShowSidebar)
     property real offsetScale: shouldBeActive ? 0 : 1
-    property real sidebarOffset: sidebarOrSessionVisible ? 12 : 0
+    property real sidebarOffset: sidebarVisible ? 12 : 0
 
     property real volume
     property bool muted
@@ -59,11 +59,10 @@ Item {
         brightness = root.monitor?.brightness ?? 0;
     }
 
-    visible: offsetScale < 1
     x: onLeft ? (-implicitWidth - 5 - sidebarOffset) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5 + sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
-    opacity: 1 - offsetScale
+    // opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {}

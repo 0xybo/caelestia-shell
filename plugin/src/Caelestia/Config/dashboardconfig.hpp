@@ -3,6 +3,8 @@
 #include "settings/objectnode.hpp"
 #include "common.hpp"
 
+#include "enums.hpp"
+
 namespace caelestia::config {
 
 class DashboardPerformance : public settings::ObjectNode {
@@ -30,6 +32,7 @@ class DashboardConfig : public settings::ObjectNode {
     CONFIG_GLOBAL_PROPERTY(int, resourceUpdateInterval, 1000)
     CONFIG_PROPERTY(int, dragThreshold, 50)
     CONFIG_SUBOBJECT(DashboardPerformance, performance)
+    CONFIG_ENUM_PROPERTY(DashboardPosition, position, DashboardPosition::Top)
 };
 
 } // namespace caelestia::config

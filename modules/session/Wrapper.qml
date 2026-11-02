@@ -9,7 +9,6 @@ Item {
 
     required property ScreenState screenState
     required property bool sidebarVisible
-    required property bool onLeft
     readonly property real nonAnimWidth: content.implicitWidth
 
     readonly property bool shouldBeActive: screenState.session && Config.session.enabled
@@ -17,8 +16,7 @@ Item {
     property real sidebarOffset: sidebarVisible ? 14 : 0
 
     visible: offsetScale < 1
-    anchors.left: onLeft ? parent.left : undefined
-    anchors.right: onLeft ? undefined : parent.right
+    anchors.right: parent.right
     anchors.leftMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth

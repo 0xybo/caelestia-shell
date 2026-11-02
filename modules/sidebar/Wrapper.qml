@@ -14,7 +14,6 @@ Item {
     readonly property bool shouldBeActive: (screenState.sidebar || screenState.sidebarTemporary) && Config.sidebar.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
 
-    visible: offsetScale < 1
     x: onLeft ? (-implicitWidth - 5) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5) * offsetScale
     implicitWidth: Tokens.sizes.sidebar.width
     opacity: 1 - offsetScale

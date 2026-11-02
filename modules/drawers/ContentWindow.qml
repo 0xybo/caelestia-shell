@@ -92,7 +92,7 @@ StyledWindow {
         bar: bar
         win: root
         configPosition: root.contentItem.Config.bar.position
-        dashboardPosition: root.contentItem.Config.bar.dashboardPosition
+        dashboardPosition: root.contentItem.Config.dashboard.position
         configUtilitiesPosition: root.contentItem.Config.utilities.position
         osdPosition: root.contentItem.Config.osd.position
         sidebarPosition: root.contentItem.Config.sidebar.position

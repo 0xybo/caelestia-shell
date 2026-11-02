@@ -129,6 +129,7 @@ StyledRect {
 
         GridLayout {
             flow: root.horizontal ? GridLayout.LeftToRight : GridLayout.TopToBottom
+            Layout.alignment: root.horizontal ? Qt.AlignVCenter : Qt.AlignHCenter
             Layout.preferredWidth: {
                 if (!root.horizontal)
                     return -1;
@@ -158,6 +159,7 @@ StyledRect {
 
             GridLayout {
                 flow: root.horizontal ? GridLayout.LeftToRight : GridLayout.TopToBottom
+                Layout.alignment: root.horizontal ? Qt.AlignVCenter : Qt.AlignHCenter
 
                 // Hour
                 StyledText {

@@ -1,0 +1,5 @@
+- [ ] Open media player app when dashboard player is clicked
+- [ ] Add media player next to the volume slider
+- [ ] QuickToggle for hyprsunset
+- [ ] Copy issues when clicking on the toast notification "Config loaded with X issues"
+- [ ] Multiple weather locations

@@ -139,7 +139,6 @@ class BarConfig : public settings::ObjectNode {
         }))
     CONFIG_PROPERTY(QStringList, excludedScreens, {})
     CONFIG_ENUM_PROPERTY(BarPosition, position, BarPosition::Left)
-    CONFIG_ENUM_PROPERTY(DashboardPosition, dashboardPosition, DashboardPosition::Top)
 };
 
 } // namespace caelestia::config

@@ -9,7 +9,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    readonly property bool hoverSupported: BarLayout.activeWindowHoverSupported(Config.bar.position, Config.bar.dashboardPosition)
+    readonly property bool hoverSupported: BarLayout.activeWindowHoverSupported(Config.bar.position, Config.dashboard.position)
 
     title: Tr.tr("Active window")
     isSubPage: true

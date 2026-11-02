@@ -13,7 +13,7 @@ Item {
     required property ScreenState screenState
     required property var panels
 
-    readonly property bool shouldBeActive: screenState.launcher && Config.launcher.enabled
+    readonly property bool shouldBeActive: screenState.launcher || screenState.launcherTemporary && Config.launcher.enabled
 
     readonly property real maxHeight: {
         let max = screen.height - Config.border.thickness * 2 + Tokens.padding.extraLarge;

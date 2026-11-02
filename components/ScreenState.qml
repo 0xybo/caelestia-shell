@@ -1,47 +1,31 @@
 import Quickshell
-import Caelestia.Config
 
 PersistentProperties {
     required property ShellScreen modelData
 
     // Drawer visibilities
     property bool bar
+    property bool barTemporary
+
     property bool osd
+    property bool osdTemporary
+
     property bool session
+    property bool sessionTemporary
+
     property bool launcher
+    property bool launcherTemporary
+
     property bool dashboard
+    property bool dashboardTemporary
+
     property bool utilities
+    property bool utilitiesTemporary
 
     property bool sidebar
     property bool sidebarTemporary
-    property bool sidebarBeforeTemporary
 
-    readonly property bool sidebarOrSession: sidebar || sidebarTemporary || session
-
-    onSidebarOrSessionChanged: {
-        if (sidebarOrSession) {
-            dashboard = false;
-            osd = false;
-        }
-    }
-
-    onDashboardChanged: {
-        if (dashboard && sidebarOrSession)
-            dashboard = false;
-    }
-
-    onUtilitiesChanged: {
-        if (utilities && GlobalConfig.utilities.alwaysShowNotifications) {
-            if (!sidebarTemporary) {
-                sidebarBeforeTemporary = sidebar;
-                sidebarTemporary = true;
-                sidebar = true;
-            }
-        } else if (!utilities && sidebarTemporary) {
-            sidebarTemporary = false;
-            sidebar = sidebarBeforeTemporary;
-        }
-    }
+    readonly property bool sidebarOrSession: sidebar || sidebarTemporary || session || sessionTemporary
 
     // Dashboard state
     property int dashboardTab
