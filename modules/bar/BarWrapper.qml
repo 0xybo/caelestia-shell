@@ -15,7 +15,6 @@ Item {
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     required property int position
-    required property bool powerTriggersUtilities
     required property bool activeWindowHover
 
     readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
@@ -99,7 +98,6 @@ Item {
 
         sourceComponent: Bar {
             position: root.position
-            powerTriggersUtilities: root.powerTriggersUtilities
             activeWindowHover: root.activeWindowHover
             screen: root.screen
             screenState: root.screenState

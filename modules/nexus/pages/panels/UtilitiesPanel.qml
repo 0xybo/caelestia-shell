@@ -101,10 +101,10 @@ PageBase {
 
         ToggleRow {
             last: true
-            text: Tr.tr("Always show notifications")
-            subtext: Tr.tr("Keep the notification panel visible while the utilities panel is open")
-            checked: Config.utilities.alwaysShowNotifications
-            onToggled: GlobalConfig.utilities.alwaysShowNotifications = checked
+            text: Tr.tr("Also show sidebar")
+            subtext: Tr.tr("Keep the sidebar panel visible while the utilities panel is open")
+            checked: Config.utilities.alsoShowSidebar
+            onToggled: GlobalConfig.utilities.alsoShowSidebar = checked
         }
 
         // Cards

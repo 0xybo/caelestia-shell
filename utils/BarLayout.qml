@@ -61,10 +61,6 @@ Singleton {
         return powerAtEnd ? UtilitiesPosition.BottomRight : UtilitiesPosition.TopRight;
     }
 
-    function powerTriggersUtilities(barPosition: int, corner: int, powerAtEnd: bool): bool {
-        return corner === powerCorner(barPosition, powerAtEnd);
-    }
-
     function isCornerOn(corner: int, edge: int): bool {
         if (edge === BarPosition.Left)
             return corner === UtilitiesPosition.TopLeft || corner === UtilitiesPosition.BottomLeft;
