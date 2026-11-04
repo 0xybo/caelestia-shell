@@ -47,7 +47,7 @@ Item {
                 height = h;
         }
 
-        if (screenState.utilities && !(utilitiesPanel as Utilities.Wrapper).onTop && !Config.utilities.alwaysShowNotifications) {
+        if (screenState.utilities && !(utilitiesPanel as Utilities.Wrapper).onTop) {
             const h = ((QsWindow.window as QsWindow)?.screen.height ?? 0) - (utilitiesPanel as Utilities.Wrapper).nonAnimHeight - Config.border.thickness * 2 - padding * 2 - Tokens.spacing.extraLarge;
             if (height > h)
                 height = h;

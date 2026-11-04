@@ -8,6 +8,7 @@ import qs.services
 
 Singleton {
     property ShellRoot shellRoot
+    property bool debug: true
 
     function anySidebarOpen(): bool {
         return states.instances.some(s => s.sidebar);

@@ -8,19 +8,11 @@ Item {
     id: root
 
     required property ScreenState screenState
-    required property bool onLeft
+    required property real offsetScale
     readonly property Props props: Props {}
 
-    readonly property bool shouldBeActive: (screenState.sidebar || screenState.sidebarTemporary) && Config.sidebar.enabled
-    property real offsetScale: shouldBeActive ? 0 : 1
-
-    x: onLeft ? (-implicitWidth - 5) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5) * offsetScale
     implicitWidth: Tokens.sizes.sidebar.width
-    opacity: 1 - offsetScale
-
-    Behavior on offsetScale {
-        Anim {}
-    }
+    opacity: 1 - root.offsetScale
 
     Loader {
         id: content
@@ -31,7 +23,7 @@ Item {
         anchors.right: parent.right
         anchors.margins: Tokens.padding.medium
 
-        active: root.shouldBeActive || root.visible
+        active: root.offsetScale < 1
 
         sourceComponent: Content {
             implicitWidth: Tokens.sizes.sidebar.width - content.anchors.margins * 2

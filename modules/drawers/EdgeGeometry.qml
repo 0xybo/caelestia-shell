@@ -38,6 +38,8 @@ QtObject {
     readonly property bool powerTriggersUtilities: BarLayout.powerTriggersUtilities(position, effectiveUtilitiesPosition, bar.powerAtEnd())
     readonly property bool activeWindowHover: BarLayout.activeWindowHoverSupported(position, effectiveDashboardPosition)
 
+    readonly property bool barBesideSidebar: (barOnLeft && sidebarOnLeft) || (barOnRight && sidebarOnRight)
+
     readonly property real barExtent: bar.extent
     readonly property real barClamped: bar.clampedExtent
 

@@ -136,6 +136,26 @@ Scope {
     }
 
     IpcHandler {
+        function toggle(): void {
+            ShellState.debug = !ShellState.debug;
+        }
+
+        function enable(): void {
+            ShellState.debug = true;
+        }
+
+        function disable(): void {
+            ShellState.debug = false;
+        }
+
+        function status(): string {
+            return ShellState.debug ? "1" : "0";
+        }
+
+        target: "debug"
+    }
+
+    IpcHandler {
         function open(): void {
             WindowFactory.create();
         }

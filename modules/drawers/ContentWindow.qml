@@ -226,13 +226,13 @@ StyledWindow {
             // The 2px compensates SDF rounding on a free bottom edge. Stacked against the
             // utilities panel that edge is covered, and the 2px would poke through it and smin
             // into a bump on the inner border.
-            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (panels.sidebar.utilitiesBelow ? 0 : 2)
+            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (panels.sidebarUtilitiesBelow ? 0 : 2)
             // Where the two panels meet, both sides square off so the smin bridge is a clean
             // joint instead of a bulge past the border
-            bottomLeftRadius: geometry.sidebarOnLeft || panels.sidebar.utilitiesBelow ? 0 : cornerRadius
-            bottomRightRadius: !geometry.sidebarOnLeft || panels.sidebar.utilitiesBelow ? 0 : cornerRadius
-            topLeftRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebar.utilitiesAbove ? 0 : -1
+            bottomLeftRadius: geometry.sidebarOnLeft || panels.sidebarUtilitiesBelow ? 0 : cornerRadius
+            bottomRightRadius: !geometry.sidebarOnLeft || panels.sidebarUtilitiesBelow ? 0 : cornerRadius
+            topLeftRadius: panels.sidebarUtilitiesAbove ? 0 : -1
+            topRightRadius: panels.sidebarUtilitiesAbove ? 0 : -1
         }
 
         PanelBg {
@@ -258,10 +258,10 @@ StyledWindow {
             offsetScale: panels.utilities.offsetScale
             deformAmount: 0.15
             // Square off the edge facing the sidebar, see sidebarBg
-            topLeftRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            bottomLeftRadius: panels.sidebar.utilitiesBelow ? 0 : -1
-            bottomRightRadius: panels.sidebar.utilitiesBelow ? 0 : -1
+            topLeftRadius: panels.sidebarUtilitiesAbove ? 0 : -1
+            topRightRadius: panels.sidebarUtilitiesAbove ? 0 : -1
+            bottomLeftRadius: panels.sidebarUtilitiesBelow ? 0 : -1
+            bottomRightRadius: panels.sidebarUtilitiesBelow ? 0 : -1
         }
 
         PanelBg {
@@ -306,7 +306,9 @@ StyledWindow {
             geometry: geometry
             borderThickness: root.borderThickness
 
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
+            Component.onCompleted: {
+                utilities.content.deformMatrix = utilsBg.rawDeformMatrix;
+            }
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix

@@ -31,7 +31,7 @@ Item {
     }
 
     readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
-    readonly property bool shouldBeActive: screenState.dashboard || screenState.dashboardTemporary && Config.dashboard.enabled
+    readonly property bool shouldBeActive: (screenState.dashboard || screenState.dashboardTemporary) && Config.dashboard.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
 
     x: root.onLeft ? (-implicitWidth - 5) * offsetScale : root.onRight ? parent.width - width + (implicitWidth + 5) * offsetScale : (parent.width - width) / 2

@@ -57,7 +57,7 @@ CustomMouseArea {
     }
 
     function handleUtilities(x: real, y: real): void {
-        const inUtilitiesArea = inPanelArea(panels.utilitiesTrigger, x, y);
+        const inUtilitiesArea = inPanelArea(panels.utilities, x, y);
         nextScreenState.utilitiesTemporary = inUtilitiesArea;
         if (Config.utilities.alsoShowSidebar && inUtilitiesArea)
             nextScreenState.sidebarTemporary = true;
@@ -264,7 +264,7 @@ CustomMouseArea {
             // handleLauncher(event.x, event.y, dragY);
             // handleDashboard(event.x, event.y, dragX, dragY);
             handleSidebar(event.x, event.y);
-            // handleUtilities(event.x, event.y);
+            handleUtilities(event.x, event.y);
             // handlePopouts(event.x, event.y);
 
             // handleOverlap();
