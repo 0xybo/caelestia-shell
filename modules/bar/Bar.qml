@@ -175,6 +175,7 @@ GridLayout {
                         bar: root
                         monitor: Brightness.getMonitorForScreen(root.screen)
                         horizontal: root.horizontal
+                        screenState: root.screenState
                     }
                 }
             }

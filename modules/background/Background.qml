@@ -16,7 +16,7 @@ Variants {
 
         required property ShellScreen modelData
 
-        readonly property var edgeGeometry: ShellState.componentsFor(screen)?.rootWindow?.geometry
+        readonly property var edgeGeometry: ShellState.geometryFor(modelData)
 
         screen: modelData
         name: "background"
@@ -42,7 +42,7 @@ Variants {
             anchors.fill: parent
 
             Loader {
-                id: wallpaper
+                id: wallpaperLoader
 
                 asynchronous: true
 
@@ -55,7 +55,7 @@ Variants {
             Visualiser {
                 anchors.fill: parent
                 screen: win.modelData
-                wallpaper: wallpaper
+                wallpaper: wallpaperLoader
             }
         }
 
@@ -66,10 +66,10 @@ Variants {
             active: Config.background.desktopClock.enabled
 
             anchors.margins: Tokens.padding.extraLargeIncreased
-            anchors.leftMargin: Tokens.padding.extraLargeIncreased + ((win.edgeGeometry?.barOnLeft ?? true) && state.endsWith("-left") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
-            anchors.rightMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnRight && state.endsWith("-right") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
-            anchors.topMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnTop && state.startsWith("top-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
-            anchors.bottomMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.barOnBottom && state.startsWith("bottom-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
+            anchors.leftMargin: Tokens.padding.extraLargeIncreased + ((win.edgeGeometry?.bar.onLeft ?? true) && state.endsWith("-left") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
+            anchors.rightMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.bar.onRight && state.endsWith("-right") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
+            anchors.topMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.bar.onTop && state.startsWith("top-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
+            anchors.bottomMargin: Tokens.padding.extraLargeIncreased + (win.edgeGeometry?.bar.onBottom && state.startsWith("bottom-") ? Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness) : 0)
 
             state: Config.background.desktopClock.position
             states: [

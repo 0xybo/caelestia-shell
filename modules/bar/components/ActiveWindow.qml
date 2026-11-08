@@ -14,6 +14,7 @@ Item {
     required property Brightness.Monitor monitor
     required property bool horizontal
     property color colour: Colours.palette.m3primary
+    required property ScreenState screenState
 
     readonly property string windowTitle: {
         const title = Hypr.activeToplevel?.title;
@@ -62,6 +63,11 @@ Item {
                     popouts.currentName = "activewindow";
                     popouts.currentCenter = root.bar.axisCenterOf(root);
                     popouts.hasCurrent = true;
+
+                    if (root.screenState.shouldDashboardVisible) {
+                        root.screenState.dashboardTemporary = false;
+                        root.screenState.dashboard = false;
+                    }
                 }
             }
         }

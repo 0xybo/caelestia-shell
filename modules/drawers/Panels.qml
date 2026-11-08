@@ -23,10 +23,10 @@ Item {
     required property EdgeGeometry geometry
     required property real borderThickness
 
-    readonly property bool sidebarSharesNotifications: root.geometry.sidebarOnRight
-    readonly property bool sidebarSharesUtilities: root.geometry.sidebarOnLeft ? root.geometry.utilitiesOnLeft : root.geometry.utilitiesOnRight
-    readonly property bool sidebarUtilitiesAbove: root.sidebarSharesUtilities && root.geometry.utilitiesOnTop
-    readonly property bool sidebarUtilitiesBelow: root.sidebarSharesUtilities && root.geometry.utilitiesOnBottom
+    readonly property bool sidebarSharesNotifications: root.geometry.sidebar.onRight
+    readonly property bool sidebarSharesUtilities: root.geometry.sidebar.onLeft ? root.geometry.utilities.onLeft : root.geometry.utilities.onRight
+    readonly property bool sidebarUtilitiesAbove: root.sidebarSharesUtilities && root.geometry.utilities.onTop
+    readonly property bool sidebarUtilitiesBelow: root.sidebarSharesUtilities && root.geometry.utilities.onBottom
 
     readonly property alias osd: osd
     readonly property alias notifications: notifications
@@ -63,8 +63,8 @@ Item {
         id: toasts
 
         anchors.bottom: !sidebar.closed ? parent.bottom : utilities.top
-        anchors.left: root.geometry.sidebarOnLeft ? (!sidebar.closed ? sidebar.right : parent.left) : undefined
-        anchors.right: root.geometry.sidebarOnLeft ? undefined : (!sidebar.closed ? sidebar.left : parent.right)
+        anchors.left: root.geometry.sidebar.onLeft ? (!sidebar.closed ? sidebar.right : parent.left) : undefined
+        anchors.right: root.geometry.sidebar.onRight ? (!sidebar.closed ? sidebar.left : parent.right) : undefined
         anchors.margins: Tokens.padding.medium
     }
 
@@ -72,7 +72,7 @@ Item {
         id: popoutsWrapper
 
         screen: root.screen
-        position: root.geometry.position
+        position: root.geometry.bar.position
         borderThickness: root.borderThickness
     }
 
@@ -87,9 +87,9 @@ Item {
         shouldBeActive: root.screenState.shouldSessionVisible
 
         verticalAlignment: Drawers.Panel.Alignment.Center
-        horizontalAlignment: root.geometry.sidebarOnLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        horizontalAlignment: root.geometry.sidebar.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
         slidingDirection: Drawers.Panel.SlidingDirection.Horizontal
-        margin: root.geometry.sessionBesideSidebar ? sidebar.width * (1 - sidebar.offsetScale) : 0
+        margin: root.geometry.session.besideSidebar ? sidebar.width * (1 - sidebar.offsetScale) : 0
 
         content: sessionContent
         trigger: sessionTrigger
@@ -141,7 +141,7 @@ Item {
         shouldBeActive: root.screenState.shouldDashboardVisible
 
         verticalAlignment: {
-            switch (root.geometry.effectiveDashboardPosition) {
+            switch (root.geometry.dashboard.position) {
             case DashboardPosition.Left:
             case DashboardPosition.Right:
                 return Drawers.Panel.Alignment.Center;
@@ -150,7 +150,7 @@ Item {
             }
         }
         horizontalAlignment: {
-            switch (root.geometry.effectiveDashboardPosition) {
+            switch (root.geometry.dashboard.position) {
             case DashboardPosition.Left:
                 return Drawers.Panel.Alignment.Start;
             case DashboardPosition.Right:
@@ -169,7 +169,7 @@ Item {
 
             screenState: root.screenState
             offsetScale: dashboard.offsetScale
-            position: root.geometry.effectiveDashboardPosition
+            position: root.geometry.dashboard.position
 
             anchors.fill: parent
             visible: !dashboard.closed
@@ -183,9 +183,9 @@ Item {
         shouldBeActive: root.screenState.shouldOsdVisible
 
         verticalAlignment: Drawers.Panel.Alignment.Center
-        horizontalAlignment: root.geometry.osdOnLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        horizontalAlignment: root.geometry.osd.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
         slidingDirection: Drawers.Panel.SlidingDirection.Horizontal
-        margin: (root.geometry.osdBesideSidebar ? sidebar.width * (1 - sidebar.offsetScale) : 0) + (root.geometry.osdBesideSession ? session.width * (1 - session.offsetScale) : 0) + (root.geometry.osdBesideDashboard ? dashboard.width * (1 - dashboard.offsetScale) : 0)
+        margin: (root.geometry.osd.besideSidebar ? sidebar.width * (1 - sidebar.offsetScale) : 0) + (root.geometry.osd.besideSession ? session.width * (1 - session.offsetScale) : 0) + (root.geometry.osd.besideDashboard ? dashboard.width * (1 - dashboard.offsetScale) : 0)
 
         content: osdContent
         trigger: osdTrigger
@@ -199,10 +199,10 @@ Item {
             shouldBeActive: osd.shouldBeActive
 
             sidebarVisible: root.screenState.shouldSidebarVisible
-            besideSession: root.geometry.sidebarOnLeft === root.geometry.osdOnLeft && (root.screenState.session || root.screenState.sessionTemporary)
-            besideSidebar: root.geometry.osdBesideSidebar && sidebar.shouldBeActive
-            besideDashboard: (root.geometry.dashboardOnLeft && root.geometry.osdOnLeft) || (root.geometry.dashboardOnRight && root.geometry.osdOnRight) && (root.screenState.dashboard || root.screenState.dashboardTemporary)
-            onLeft: root.geometry.osdOnLeft
+            besideSession: root.geometry.sidebar.onLeft === root.geometry.osd.onLeft && (root.screenState.session || root.screenState.sessionTemporary)
+            besideSidebar: root.geometry.osd.besideSidebar && sidebar.shouldBeActive
+            besideDashboard: (root.geometry.dashboard.onLeft && root.geometry.osd.onLeft) || (root.geometry.dashboard.onRight && root.geometry.osd.onRight) && (root.screenState.dashboard || root.screenState.dashboardTemporary)
+            onLeft: root.geometry.osd.onLeft
 
             anchors.fill: parent
             visible: !osd.closed
@@ -215,8 +215,8 @@ Item {
         name: "utilities"
         shouldBeActive: root.screenState.shouldUtilitiesVisible
 
-        verticalAlignment: root.geometry.utilitiesOnTop ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
-        horizontalAlignment: root.geometry.utilitiesOnLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        verticalAlignment: root.geometry.utilities.onTop ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        horizontalAlignment: root.geometry.utilities.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
         slidingDirection: Drawers.Panel.SlidingDirection.Vertical
 
         content: utilitiesContent
@@ -228,7 +228,7 @@ Item {
             screenState: root.screenState
             offsetScale: utilities.offsetScale
             popouts: popoutsWrapper.content
-            position: root.geometry.effectiveUtilitiesPosition
+            position: root.geometry.utilities.position
 
             anchors.fill: parent
             visible: !utilities.closed
@@ -241,7 +241,7 @@ Item {
         name: "sidebar"
         shouldBeActive: (root.screenState.sidebar || root.screenState.sidebarTemporary) && Config.sidebar.enabled
 
-        horizontalAlignment: root.geometry.sidebarOnLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        horizontalAlignment: root.geometry.sidebar.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
         verticalAlignment: Drawers.Panel.Alignment.Center
         anchors.top: parent.top
         anchors.bottom: root.sidebarSharesUtilities ? utilities.top : parent.bottom
@@ -288,10 +288,10 @@ Item {
         anchors.fill: parent
 
         Drawers.TriggerPart {
-            x: dashboard.x - (root.geometry.dashboardOnLeft ? Config.border.thickness * 2 + root.geometry.insetLeft(0) : 0)
-            y: dashboard.y - (root.geometry.dashboardOnTop ? Config.border.thickness * 2 + root.geometry.insetTop(0) : 0)
-            width: dashboard.width + (root.geometry.dashboardOnRight || root.geometry.dashboardOnLeft ? Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0) : 0)
-            height: dashboard.height + (root.geometry.dashboardOnTop ? Config.border.thickness * 2 + root.geometry.insetTop(0) : 0)
+            x: dashboard.x - (root.geometry.dashboard.onLeft ? Config.border.thickness * 2 + root.geometry.insetLeft(0) : 0)
+            y: dashboard.y - (root.geometry.dashboard.onTop ? Config.border.thickness * 2 + root.geometry.insetTop(0) : 0)
+            width: dashboard.width + (root.geometry.dashboard.onRight || root.geometry.dashboard.onLeft ? Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0) : 0)
+            height: dashboard.height + (root.geometry.dashboard.onTop ? Config.border.thickness * 2 + root.geometry.insetTop(0) : 0)
         }
     }
 
@@ -305,7 +305,7 @@ Item {
         Drawers.TriggerPart {
             x: osd.x
             y: osd.y
-            width: osd.width * (1 - osd.offsetScale) + Config.border.thickness * 2 - (root.geometry.osdBesideSidebar ? Config.border.thickness / 2 * (osd.offsetScale) : 0)
+            width: osd.width * (1 - osd.offsetScale) + Config.border.thickness * 2 - (root.geometry.osd.besideSidebar ? Config.border.thickness / 2 * (osd.offsetScale) : 0)
             height: osd.height
         }
     }
@@ -358,11 +358,11 @@ Item {
 
         Drawers.TriggerPart {
             active: !sidebar.closed
-            subtract: root.geometry.barBesideSidebar
+            subtract: root.geometry.bar.besideSidebar
 
             anchors.bottom: parent.bottom
-            anchors.right: root.geometry.sidebarOnLeft ? parent.left : undefined
-            anchors.left: root.geometry.sidebarOnLeft ? undefined : parent.right
+            anchors.right: root.geometry.sidebar.onLeft ? parent.left : undefined
+            anchors.left: root.geometry.sidebar.onLeft ? undefined : parent.right
 
             width: Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0)
             height: parent.height - Config.sidebar.minHoverThreshold
@@ -370,8 +370,8 @@ Item {
 
         Drawers.TriggerPart {
             anchors.top: parent.top
-            anchors.right: root.geometry.sidebarOnLeft ? parent.left : undefined
-            anchors.left: root.geometry.sidebarOnLeft ? undefined : parent.right
+            anchors.right: root.geometry.sidebar.onLeft ? parent.left : undefined
+            anchors.left: root.geometry.sidebar.onLeft ? undefined : parent.right
             anchors.leftMargin: sidebar.shouldBeActive ? 0 : Config.border.thickness / 2
 
             width: Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0)

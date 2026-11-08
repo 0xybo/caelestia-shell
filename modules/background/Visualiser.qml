@@ -15,7 +15,7 @@ Item {
     required property ShellScreen screen
     required property Item wallpaper
 
-    readonly property var edgeGeometry: ShellState.componentsFor(screen)?.rootWindow?.geometry
+    readonly property var edgeGeometry: ShellState.geometryFor(screen)
 
     readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || (Hypr.monitorFor(screen)?.activeWorkspace?.toplevels?.values.every(t => t.lastIpcObject?.floating) ?? true))
     property real offset: shouldBeActive ? 0 : screen.height * 0.2
@@ -62,10 +62,10 @@ Item {
 
                     anchors.fill: parent
                     anchors.margins: Config.border.thickness
-                    anchors.leftMargin: (root.edgeGeometry?.barOnLeft ?? true) ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
-                    anchors.rightMargin: root.edgeGeometry?.barOnRight ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
-                    anchors.topMargin: root.edgeGeometry?.barOnTop ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
-                    anchors.bottomMargin: root.edgeGeometry?.barOnBottom ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
+                    anchors.leftMargin: (root.edgeGeometry?.bar.onLeft ?? true) ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
+                    anchors.rightMargin: root.edgeGeometry?.bar.onRight ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
+                    anchors.topMargin: root.edgeGeometry?.bar.onTop ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
+                    anchors.bottomMargin: root.edgeGeometry?.bar.onBottom ? (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing : Config.border.thickness
 
                     values: Audio.cava.values
                     primaryColor: Qt.alpha(Colours.palette.m3primary, 0.7)

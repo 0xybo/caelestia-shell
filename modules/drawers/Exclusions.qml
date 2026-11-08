@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Caelestia.Config
+import qs.services
 import qs.components.containers
 import qs.modules.bar as Bar
 
@@ -11,26 +12,29 @@ Scope {
 
     required property ShellScreen screen
     required property Bar.BarWrapper bar
-    required property EdgeGeometry geometry
+
+    readonly property var geometry: ShellState.geometryFor(screen)
+
+    Component.onCompleted: console.log(`Exclusions: geometry for ${screen.name} => ${geometry}`)
 
     ExclusionZone {
         anchors.left: true
-        hasBar: root.geometry.barOnLeft
+        hasBar: root.geometry.bar.onLeft
     }
 
     ExclusionZone {
         anchors.top: true
-        hasBar: root.geometry.barOnTop
+        hasBar: root.geometry.bar.onTop
     }
 
     ExclusionZone {
         anchors.right: true
-        hasBar: root.geometry.barOnRight
+        hasBar: root.geometry.bar.onRight
     }
 
     ExclusionZone {
         anchors.bottom: true
-        hasBar: root.geometry.barOnBottom
+        hasBar: root.geometry.bar.onBottom
     }
 
     component ExclusionZone: StyledWindow {

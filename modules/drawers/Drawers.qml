@@ -15,7 +15,6 @@ Variants {
         Exclusions {
             screen: scope.modelData
             bar: content.bar
-            geometry: content.geometry
         }
 
         ContentWindow {

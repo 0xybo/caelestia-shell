@@ -5,7 +5,7 @@ import Caelestia.Config
 PersistentProperties {
     required property ShellScreen modelData
 
-    readonly property QtObject config: GlobalConfig.forScreen(modelData)
+    readonly property var config: GlobalConfig.forScreen(modelData.name)
 
     // Drawer visibilities
     property bool bar

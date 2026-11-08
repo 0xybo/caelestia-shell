@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia
 import qs.components
 import qs.services
+import qs.modules.drawers
 
 Singleton {
     property ShellRoot shellRoot
@@ -42,6 +43,12 @@ Singleton {
             if (Hypr.monitorFor(c.modelData) === mon)
                 return c;
         return null;
+    }
+
+    function geometryFor(screen: ShellScreen): EdgeGeometry {
+        const c = componentsFor(screen);
+        console.log(`ShellState: geometryFor(${screen}) => ${c ? c.rootWindow?.geometry : null}`);
+        return c ? c.rootWindow?.geometry : null;
     }
 
     Variants {

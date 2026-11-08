@@ -38,7 +38,7 @@ CustomMouseArea {
         nextScreenState.osdTemporary = inPanelArea(panels.osd, x, y);
 
         // Keep the sidebar open
-        if (root.geometry.osdBesideSidebar && screenState.shouldSidebarVisible && nextScreenState.osdTemporary)
+        if (root.geometry.osd.besideSidebar && screenState.shouldSidebarVisible && nextScreenState.osdTemporary)
             nextScreenState.sidebarTemporary = true;
     }
 
@@ -73,7 +73,7 @@ CustomMouseArea {
             return;
 
         // Keep the sidebar open
-        if (root.geometry.sessionBesideSidebar && screenState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
+        if (root.geometry.session.besideSidebar && screenState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
             nextScreenState.sidebarTemporary = true;
     }
 
