@@ -17,10 +17,6 @@ Item {
     required property int position
     property matrix4x4 deformMatrix
 
-    // readonly property bool onTop: BarLayout.isCornerOn(position, BarPosition.Top)
-    // readonly property bool onLeft: BarLayout.isCornerOn(position, BarPosition.Left)
-    // readonly property real padding: Tokens.padding.large
-
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
         property string recordingConfirmDelete
@@ -28,20 +24,9 @@ Item {
 
         reloadableId: "utilities"
     }
-    // readonly property bool shouldBeActive: Config.utilities.enabled && (screenState.utilities || (screenState.utilitiesTemporary && (!(Config.session.enabled && screenState.session) || Config.utilities.alsoShowSidebar)))
-    // readonly property real totalPadding: content.anchors.margins + CUtils.clamp(content.anchors.margins - Config.border.thickness, 0, content.anchors.margins)
-    // readonly property real nonAnimHeight: ((content.item as Content)?.nonAnimHeight ?? 0) + totalPadding
-    // property real offsetScale: shouldBeActive ? 0 : 1
 
-    // x: onLeft ? 0 : parent.width - width
-    // y: onTop ? (-implicitHeight - 5) * offsetScale : parent.height - height + (implicitHeight + 5) * offsetScale
     implicitHeight: content.implicitHeight + content.anchors.margins * 2
-    implicitWidth: Tokens.sizes.utilities.width + content.anchors.margins * 2
-    opacity: 1 - offsetScale
-
-    // Behavior on offsetScale {
-    //     Anim {}
-    // }
+    implicitWidth: Tokens.sizes.utilities.width
 
     Loader {
         id: content
@@ -51,10 +36,10 @@ Item {
         anchors.margins: Tokens.padding.medium
 
         asynchronous: true
-        active: root.shouldBeActive || root.visible
+        active: root.offsetScale < 1
 
         sourceComponent: Content {
-            implicitWidth: Tokens.sizes.utilities.width
+            implicitWidth: Tokens.sizes.utilities.width - content.anchors.margins * 2
             props: root.props
             screenState: root.screenState
             popouts: root.popouts

@@ -13,6 +13,7 @@ Item {
     id: root
 
     required property ScreenState screenState
+    required property real offsetScale
     required property int position
     readonly property bool onLeft: position === DashboardPosition.Left
     readonly property bool onRight: position === DashboardPosition.Right
@@ -30,27 +31,26 @@ Item {
         }
     }
 
-    readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
-    readonly property bool shouldBeActive: (screenState.dashboard || screenState.dashboardTemporary) && Config.dashboard.enabled
-    property real offsetScale: shouldBeActive ? 0 : 1
+    // readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
+    // readonly property bool shouldBeActive: (screenState.dashboard || screenState.dashboardTemporary) && Config.dashboard.enabled
 
-    x: root.onLeft ? (-implicitWidth - 5) * offsetScale : root.onRight ? parent.width - width + (implicitWidth + 5) * offsetScale : (parent.width - width) / 2
-    y: root.onLeft || root.onRight ? (parent.height - height) / 2 : (-implicitHeight - 5) * offsetScale
+    // x: root.onLeft ? (-implicitWidth - 5) * offsetScale : root.onRight ? parent.width - width + (implicitWidth + 5) * offsetScale : (parent.width - width) / 2
+    // y: root.onLeft || root.onRight ? (parent.height - height) / 2 : (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 854 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
+    // opacity: 1 - offsetScale
 
-    Behavior on offsetScale {
-        Anim {}
-    }
+    // Behavior on offsetScale {
+    //     Anim {}
+    // }
 
     Loader {
         id: content
 
-        x: root.onLeft || root.onRight ? parent.width - width : (parent.width - width) / 2
-        y: root.onLeft || root.onRight ? (parent.height - height) / 2 : parent.height - height
+        // x: root.onLeft || root.onRight ? parent.width - width : (parent.width - width) / 2
+        // y: root.onLeft || root.onRight ? (parent.height - height) / 2 : parent.height - height
 
-        active: root.shouldBeActive || root.visible
+        active: root.offsetScale < 1
 
         sourceComponent: Content {
             screenState: root.screenState

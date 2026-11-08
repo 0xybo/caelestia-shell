@@ -16,11 +16,11 @@ Item {
     required property bool besideSidebar
     required property bool besideDashboard
     required property bool onLeft
+    required property real offsetScale
+    required property bool shouldBeActive
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
-    readonly property bool shouldBeActive: (screenState.osd || screenState.osdTemporary) && Config.osd.enabled && !(Config.utilities.enabled && screenState.utilities && !Config.utilities.alsoShowSidebar)
-    property real offsetScale: shouldBeActive ? 0 : 1
     property real sidebarOffset: sidebarVisible ? 12 : 0
 
     property real volume
@@ -59,14 +59,9 @@ Item {
         brightness = root.monitor?.brightness ?? 0;
     }
 
-    x: onLeft ? (-implicitWidth - 5 - sidebarOffset) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5 + sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
-    // opacity: 1 - offsetScale
-
-    Behavior on offsetScale {
-        Anim {}
-    }
+    anchors.rightMargin: onLeft ? 0 : -sidebarOffset
 
     Connections {
         function onMutedChanged(): void {
@@ -119,7 +114,7 @@ Item {
         anchors.left: parent.left
 
         asynchronous: true
-        active: root.shouldBeActive || root.visible
+        active: root.shouldBeActive
 
         sourceComponent: Content {
             monitor: root.monitor

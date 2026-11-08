@@ -108,8 +108,8 @@ StyledWindow {
 
         Region {
             x: geometry.osdOnLeft ? 0 : root.width - width
-            y: panels.osdWrapper.y + root.borderThickness
-            width: panels.osdWrapper.width * (1 - panels.osd.offsetScale) + root.borderThickness
+            y: panels.osd.y + root.borderThickness
+            width: panels.osd.width * (1 - panels.osd.offsetScale) + root.borderThickness
             height: panels.osd.height
         }
     }
@@ -207,11 +207,9 @@ StyledWindow {
         PanelBg {
             id: sessionBg
 
-            panel: panels.sessionWrapper
+            panel: panels.session
             offsetScale: panels.session.offsetScale
             deformAmount: 0.2
-            x: panels.sessionWrapper.x + panels.session.x + geometry.insetLeft(root.borderThickness)
-            implicitWidth: panels.session.width
         }
 
         PanelBg {
@@ -238,11 +236,8 @@ StyledWindow {
         PanelBg {
             id: osdBg
 
-            panel: panels.osdWrapper
-            offsetScale: panels.osd.offsetScale
+            panel: panels.osd
             deformAmount: 0.25
-            x: panels.osdWrapper.x + panels.osd.x + geometry.insetLeft(root.borderThickness)
-            implicitWidth: panels.osd.width
         }
 
         PanelBg {

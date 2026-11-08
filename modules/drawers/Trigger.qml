@@ -7,7 +7,7 @@ import qs.modules.drawers as Drawers
 Item {
     id: root
 
-    readonly property Drawers.Panel panel: parent as Drawers.Panel
+    required property Drawers.Panel panel
 
     function containsMouse(x: real, y: real): bool {
         const win = QsWindow.window as QsWindow;
@@ -21,15 +21,14 @@ Item {
             if (!(child instanceof Drawers.TriggerPart))
                 continue;
 
-            if (!child.active)
+            if (!child.active || !child.containsMouse(pos.x, pos.y))
                 continue;
-            if (child.containsMouse(pos.x, pos.y))
-                if (child.invert)
-                    return false;
-                else
-                    contains = true;
-        }
 
+            if (child.subtract)
+                return false;
+            else
+                contains = true;
+        }
         return contains;
     }
 

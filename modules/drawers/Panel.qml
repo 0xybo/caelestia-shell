@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
 import qs.components
 import qs.modules.drawers as Drawers
 
@@ -21,14 +20,16 @@ Item {
     required property string name
     required property bool shouldBeActive
 
-    required property EdgeGeometry geometry
-
     required property Item content
-    required property Drawers.Trigger trigger
 
     required property int verticalAlignment
     required property int horizontalAlignment
     required property int slidingDirection
+
+    property Drawers.Trigger trigger
+
+    property real margin: 0
+    property real slideOffset: 5
 
     property real offsetScale: shouldBeActive ? 0 : 1
 
@@ -39,15 +40,16 @@ Item {
 
     implicitWidth: root.content.implicitWidth
     implicitHeight: root.content.implicitHeight
+    opacity: 1 - root.offsetScale
 
     x: {
         switch (root.horizontalAlignment) {
         case Panel.Alignment.Start:
-            return root.geometry.insetLeft(0) - (root.width + 5) * root.horizontalOffsetScale;
+            return root.margin - (root.width + root.slideOffset) * root.horizontalOffsetScale;
         case Panel.Alignment.Center:
             return (root.parent.width - root.width) / 2;
         case Panel.Alignment.End:
-            return root.parent.width - root.width - root.geometry.insetRight(0) + (root.width + 5) * root.horizontalOffsetScale;
+            return root.parent.width - root.width - root.margin + (root.width + root.slideOffset) * root.horizontalOffsetScale;
         default:
             return 0;
         }
@@ -55,11 +57,11 @@ Item {
     y: {
         switch (root.verticalAlignment) {
         case Panel.Alignment.Start:
-            return root.geometry.insetTop(0) - (root.height + 5) * root.verticalOffsetScale;
+            return root.margin - (root.height + root.slideOffset) * root.verticalOffsetScale;
         case Panel.Alignment.Center:
             return (root.parent.height - root.height) / 2;
         case Panel.Alignment.End:
-            return root.parent.height - root.height - root.geometry.insetBottom(0) + (root.height + 5) * root.verticalOffsetScale;
+            return root.parent.height - root.height - root.margin + (root.height + root.slideOffset) * root.verticalOffsetScale;
         default:
             return 0;
         }

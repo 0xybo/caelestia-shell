@@ -1,13 +1,13 @@
-import QtQml
 import QtQuick
 import QtQuick.Controls
+import QtQml
 import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
-import qs.modules.drawers as Drawers
+import qs.modules.osd as Osd
 
 CustomMouseArea {
     id: root
@@ -23,26 +23,11 @@ CustomMouseArea {
 
     property point dragStart
 
-    function inPanelArea(panel: Drawers.Panel, x: real, y: real): bool {
-        // for (let child of (panel.children.length ? panel.children : [panel])) {
-        //     if (!child.visible)
-        //         continue;
+    function inPanelArea(panel: var, x: real, y: real): bool {
+        if (!panel || !panel.trigger)
+            return false;
 
-        //     // console.log(`Child=${child}, isLoader=${child instanceof Loader}, sourceComponent=${child.sourceComponent}, item=${child.item}`);
-
-        //     // If Loader, check the loaded item instead
-        //     // if (child instanceof Loader && child.item)
-        //     //     child = child.item;
-
-        //     const childPos = child.mapToItem(Window.window.contentItem, 0, 0);
-
-        //     if (x >= childPos.x && x <= childPos.x + child.width && y >= childPos.y && y <= childPos.y + child.height)
-        //         return "inverted" in child ? !child.inverted : true;
-        // }
-        // return false;
-        const contains = panel.trigger.containsMouse(x, y);
-        console.log(`Checking if point (${Math.round(x)}, ${Math.round(y)}) is in panel area of ${panel.name}: ${contains ? "✅️" : "❌"}`);
-        return contains;
+        return panel.trigger.containsMouse(x, y);
     }
 
     function canDismissPopouts(): bool {
@@ -50,10 +35,11 @@ CustomMouseArea {
     }
 
     function handleOsd(x: real, y: real): void {
-        if (panels.osd.timerRunning)
-            return;
+        nextScreenState.osdTemporary = inPanelArea(panels.osd, x, y);
 
-        nextScreenState.osdTemporary = inPanelArea(panels.osdTrigger, x, y);
+        // Keep the sidebar open
+        if (root.geometry.osdBesideSidebar && screenState.shouldSidebarVisible && nextScreenState.osdTemporary)
+            nextScreenState.sidebarTemporary = true;
     }
 
     function handleUtilities(x: real, y: real): void {
@@ -64,19 +50,11 @@ CustomMouseArea {
     }
 
     function handleSidebar(x: real, y: real): void {
-        if (inPanelArea(panels.sidebar, x, y))
-            nextScreenState.sidebarTemporary = true;
-        else {
-            const inOsdArea = Config.sidebar.position === Config.osd.position && (nextScreenState.osd || nextScreenState.osdTemporary);
-            const inSessionArea = Config.sidebar.position === HorizontalPosition.Right && (nextScreenState.session || nextScreenState.sessionTemporary);
-
-            if (!inOsdArea && !inSessionArea)
-                nextScreenState.sidebarTemporary = false;
-        }
+        nextScreenState.sidebarTemporary = inPanelArea(panels.sidebar, x, y);
     }
 
     function handleDashboard(x: real, y: real, dragX: real, dragY: real): void {
-        if (inPanelArea(panels.dashboardTrigger, x, y))
+        if (inPanelArea(panels.dashboard, x, y))
             nextScreenState.dashboardTemporary = true;
         else {
             const inOsdArea = ((Config.dashboard.position === DashboardPosition.Left && Config.osd.position === HorizontalPosition.Left) || (Config.dashboard.position === DashboardPosition.Right)) && nextScreenState.osd || nextScreenState.osdTemporary;
@@ -87,7 +65,16 @@ CustomMouseArea {
     }
 
     function handleLauncher(x: real, y: real, dragY: real): void {
-        nextScreenState.launcherTemporary = inPanelArea(panels.launcherTrigger, x, y);
+        nextScreenState.launcherTemporary = inPanelArea(panels.launcher, x, y);
+    }
+
+    function handleSession(x: real, y: real): void {
+        if (!screenState.shouldSessionVisible)
+            return;
+
+        // Keep the sidebar open
+        if (root.geometry.sessionBesideSidebar && screenState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
+            nextScreenState.sidebarTemporary = true;
     }
 
     function handlePopouts(x: real, y: real): void {
@@ -110,31 +97,31 @@ CustomMouseArea {
         if (nextScreenState.session || nextScreenState.sessionTemporary)
             activePanels.push({
                 name: "session",
-                item: panels.sessionWrapper,
+                item: panels.session,
                 close: () => nextScreenState.session = nextScreenState.sessionTemporary = false
             });
         if (nextScreenState.dashboard || nextScreenState.dashboardTemporary)
             activePanels.push({
                 name: "dashboard",
-                item: panels.dashboardTrigger,
+                item: panels.dashboard,
                 close: () => nextScreenState.dashboard = nextScreenState.dashboardTemporary = false
             });
         if (nextScreenState.utilities || nextScreenState.utilitiesTemporary)
             activePanels.push({
                 name: "utilities",
-                item: panels.utilitiesTrigger,
+                item: panels.utilities,
                 close: () => nextScreenState.utilities = nextScreenState.utilitiesTemporary = false
             });
         if (nextScreenState.sidebar || nextScreenState.sidebarTemporary)
             activePanels.push({
                 name: "sidebar",
-                item: panels.sidebarTrigger,
+                item: panels.sidebar,
                 close: () => nextScreenState.sidebar = nextScreenState.sidebarTemporary = false
             });
         if (nextScreenState.launcher || nextScreenState.launcherTemporary)
             activePanels.push({
                 name: "launcher",
-                item: panels.launcherTrigger,
+                item: panels.launcher,
                 close: () => nextScreenState.launcher = nextScreenState.launcherTemporary = false
             });
 
@@ -198,17 +185,7 @@ CustomMouseArea {
                     bottom: otherBottom
                 } = fakeOpenedPanel(otherPanel.item.mapToItem(Window.window.contentItem, 0, 0, otherPanel.item.width, otherPanel.item.height));
 
-                if (!(//
-                    panelRight <= otherLeft || //
-                    panelLeft >= otherRight || //
-                    panelBottom <= otherTop || //
-                    panelTop >= otherBottom //
-                )) {
-                    // console.log(`Closing ${otherPanel.name} due to overlap with ${panel.name}`);
-                    // console.debug(`Panel ${panel.name} geometry: left=${Math.round(panelLeft)}, top=${Math.round(panelTop)}, right=${Math.round(panelRight)}, bottom=${Math.round(panelBottom)}`);
-                    // console.debug(`Panel ${otherPanel.name} geometry: left=${Math.round(otherLeft)}, top=${Math.round(otherTop)}, right=${Math.round(otherRight)}, bottom=${Math.round(otherBottom)}`);
-                    // console.log(`Current mouse position: x=${root.mouseX}, y=${root.mouseY}`);
-
+                if (!(panelRight <= otherLeft || panelLeft >= otherRight || panelBottom <= otherTop || panelTop >= otherBottom)) {
                     otherPanel.close();
 
                     activePanels.splice(j, 1); // Remove the closed panel from the list
@@ -260,14 +237,15 @@ CustomMouseArea {
             const dragY = event.y - dragStart.y;
 
             // handleBar(event.x, event.y, dragX, dragY);
-            // handleOsd(event.x, event.y);
-            // handleLauncher(event.x, event.y, dragY);
-            // handleDashboard(event.x, event.y, dragX, dragY);
+            handleLauncher(event.x, event.y, dragY);
             handleSidebar(event.x, event.y);
             handleUtilities(event.x, event.y);
-            // handlePopouts(event.x, event.y);
+            handleDashboard(event.x, event.y, dragX, dragY);
+            handleOsd(event.x, event.y);
+            handleSession(event.x, event.y);
+            handlePopouts(event.x, event.y);
 
-            // handleOverlap();
+            handleOverlap();
         }
 
         // console.log(`osd=${nextScreenState.osd ? "✅️" : "❌"}|${nextScreenState.osdTemporary ? "✅️" : "❌"}, dashboard=${nextScreenState.dashboard ? "✅️" : "❌"}|${nextScreenState.dashboardTemporary ? "✅️" : "❌"}, utilities=${nextScreenState.utilities ? "✅️" : "❌"}|${nextScreenState.utilitiesTemporary ? "✅️" : "❌"}, sidebar=${nextScreenState.sidebar ? "✅️" : "❌"}|${nextScreenState.sidebarTemporary ? "✅️" : "❌"}, session=${nextScreenState.session ? "✅️" : "❌"}|${nextScreenState.sessionTemporary ? "✅️" : "❌"}, launcher=${nextScreenState.launcher ? "✅️" : "❌"}|${nextScreenState.launcherTemporary ? "✅️" : "❌"}`);
@@ -306,8 +284,6 @@ CustomMouseArea {
             , ["launcherTemporary", [root.screenState, "launcherTemporary"]] //
         ]
 
-        Component.onCompleted: reset()
-
         function reset(): void {
             properties.map(p => nextScreenState[p[0]] = p[1][0][p[1][1]]);
         }
@@ -315,5 +291,7 @@ CustomMouseArea {
         function apply(): void {
             properties.map(p => p[1][0][p[1][1]] = nextScreenState[p[0]]);
         }
+
+        Component.onCompleted: reset()
     }
 }

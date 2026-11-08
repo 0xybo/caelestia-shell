@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
 import qs.components
 
 Item {
@@ -9,23 +8,11 @@ Item {
 
     required property ScreenState screenState
     required property bool sidebarVisible
-    readonly property real nonAnimWidth: content.implicitWidth
+    required property bool shouldBeActive
+    required property real offsetScale
 
-    readonly property bool shouldBeActive: (screenState.session || screenState.sessionTemporary) && Config.session.enabled
-    property real offsetScale: shouldBeActive ? 0 : 1
-    property real sidebarOffset: sidebarVisible ? 14 : 0
-
-    visible: offsetScale < 1
-    anchors.right: parent.right
-    anchors.leftMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
-    anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight || 510 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
-
-    Behavior on offsetScale {
-        Anim {}
-    }
 
     Loader {
         id: content
@@ -34,7 +21,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
 
-        active: root.shouldBeActive || root.visible
+        active: root.shouldBeActive
 
         sourceComponent: Content {
             screenState: root.screenState

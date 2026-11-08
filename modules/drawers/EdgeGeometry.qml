@@ -39,6 +39,11 @@ QtObject {
     readonly property bool activeWindowHover: BarLayout.activeWindowHoverSupported(position, effectiveDashboardPosition)
 
     readonly property bool barBesideSidebar: (barOnLeft && sidebarOnLeft) || (barOnRight && sidebarOnRight)
+    readonly property bool sessionBesideSidebar: sidebarOnRight
+    readonly property bool sessionBesideDashboard: (dashboardOnLeft && sidebarOnLeft) || (dashboardOnRight && sidebarOnRight)
+    readonly property bool osdBesideSidebar: osdPosition === sidebarPosition
+    readonly property bool osdBesideSession: osdPosition === HorizontalPosition.Right
+    readonly property bool osdBesideDashboard: (osdOnLeft && dashboardOnLeft) || (osdOnRight && dashboardOnRight)
 
     readonly property real barExtent: bar.extent
     readonly property real barClamped: bar.clampedExtent

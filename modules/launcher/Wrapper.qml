@@ -13,8 +13,6 @@ Item {
     required property ScreenState screenState
     required property var panels
 
-    readonly property bool shouldBeActive: (screenState.launcher || screenState.launcherTemporary) && Config.launcher.enabled
-
     readonly property real maxHeight: {
         let max = screen.height - Config.border.thickness * 2 + Tokens.padding.extraLarge;
         if (screenState.dashboard)
@@ -22,7 +20,8 @@ Item {
         return max;
     }
 
-    property real offsetScale: shouldBeActive ? 0 : 1
+    required property bool shouldBeActive
+    required property real offsetScale
 
     onShouldBeActiveChanged: {
         if (shouldBeActive)
@@ -31,17 +30,11 @@ Item {
             implicitHeight = implicitHeight; // Break binding during close anim
     }
 
-    visible: offsetScale < 1
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
 
     Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
-
-    Behavior on offsetScale {
-        Anim {}
-    }
 
     Loader {
         id: content
