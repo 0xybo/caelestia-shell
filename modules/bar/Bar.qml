@@ -14,7 +14,6 @@ GridLayout {
     id: root
 
     required property int position
-    required property bool powerTriggersUtilities
     required property bool activeWindowHover
     readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
     readonly property bool powerAtEnd: {
@@ -96,8 +95,6 @@ GridLayout {
             popouts.currentName = id.toLowerCase();
             popouts.currentCenter = axisCenterOf(ch.item as Item);
             popouts.hasCurrent = true;
-        } else if (id === "power" && powerTriggersUtilities) {
-            popouts.hasCurrent = false;
         }
     }
 

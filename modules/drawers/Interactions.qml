@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQml
 import Quickshell
 import Caelestia.Config
+import qs.services
 import qs.components
 import qs.components.controls
 import qs.modules.bar as Bar
@@ -35,37 +36,37 @@ CustomMouseArea {
     }
 
     function handleOsd(x: real, y: real): void {
-        nextScreenState.osdTemporary = inPanelArea(panels.osd, x, y);
+        screenState.osdTemporary = inPanelArea(panels.osd, x, y);
 
         // Keep the sidebar open
-        if (root.geometry.osd.besideSidebar && screenState.shouldSidebarVisible && nextScreenState.osdTemporary)
-            nextScreenState.sidebarTemporary = true;
+        if (root.geometry.osd.besideSidebar && screenState.osdTemporary && previousState.shouldSidebarVisible)
+            screenState.sidebarTemporary = true;
     }
 
     function handleUtilities(x: real, y: real): void {
         const inUtilitiesArea = inPanelArea(panels.utilities, x, y);
-        nextScreenState.utilitiesTemporary = inUtilitiesArea;
+        screenState.utilitiesTemporary = inUtilitiesArea;
         if (Config.utilities.alsoShowSidebar && inUtilitiesArea)
-            nextScreenState.sidebarTemporary = true;
+            screenState.sidebarTemporary = true;
     }
 
     function handleSidebar(x: real, y: real): void {
-        nextScreenState.sidebarTemporary = inPanelArea(panels.sidebar, x, y);
+        screenState.sidebarTemporary = inPanelArea(panels.sidebar, x, y);
     }
 
     function handleDashboard(x: real, y: real, dragX: real, dragY: real): void {
         if (inPanelArea(panels.dashboard, x, y))
-            nextScreenState.dashboardTemporary = true;
+            screenState.dashboardTemporary = true;
         else {
-            const inOsdArea = ((Config.dashboard.position === DashboardPosition.Left && Config.osd.position === HorizontalPosition.Left) || (Config.dashboard.position === DashboardPosition.Right)) && nextScreenState.osd || nextScreenState.osdTemporary;
+            const inOsdArea = (root.geometry.dashboard.onLeft && root.geometry.osd.onLeft || root.geometry.dashboard.onRight) && (screenState.osd || screenState.osdTemporary);
 
             if (!inOsdArea)
-                nextScreenState.dashboardTemporary = false;
+                screenState.dashboardTemporary = false;
         }
     }
 
     function handleLauncher(x: real, y: real, dragY: real): void {
-        nextScreenState.launcherTemporary = inPanelArea(panels.launcher, x, y);
+        screenState.launcherTemporary = inPanelArea(panels.launcher, x, y);
     }
 
     function handleSession(x: real, y: real): void {
@@ -73,8 +74,8 @@ CustomMouseArea {
             return;
 
         // Keep the sidebar open
-        if (root.geometry.session.besideSidebar && screenState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
-            nextScreenState.sidebarTemporary = true;
+        if (root.geometry.session.besideSidebar && previousState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
+            screenState.sidebarTemporary = true;
     }
 
     function handlePopouts(x: real, y: real): void {
@@ -94,35 +95,41 @@ CustomMouseArea {
                     bar.closeTray();
                 }
             });
-        if (nextScreenState.session || nextScreenState.sessionTemporary)
+        if (screenState.osd || screenState.osdTemporary)
+            activePanels.push({
+                name: "osd",
+                item: panels.osd,
+                close: () => screenState.osd = screenState.osdTemporary = false
+            });
+        if (screenState.session || screenState.sessionTemporary)
             activePanels.push({
                 name: "session",
                 item: panels.session,
-                close: () => nextScreenState.session = nextScreenState.sessionTemporary = false
+                close: () => screenState.session = screenState.sessionTemporary = false
             });
-        if (nextScreenState.dashboard || nextScreenState.dashboardTemporary)
+        if (screenState.dashboard || screenState.dashboardTemporary)
             activePanels.push({
                 name: "dashboard",
                 item: panels.dashboard,
-                close: () => nextScreenState.dashboard = nextScreenState.dashboardTemporary = false
+                close: () => screenState.dashboard = screenState.dashboardTemporary = false
             });
-        if (nextScreenState.utilities || nextScreenState.utilitiesTemporary)
+        if (screenState.utilities || screenState.utilitiesTemporary)
             activePanels.push({
                 name: "utilities",
                 item: panels.utilities,
-                close: () => nextScreenState.utilities = nextScreenState.utilitiesTemporary = false
+                close: () => screenState.utilities = screenState.utilitiesTemporary = false
             });
-        if (nextScreenState.sidebar || nextScreenState.sidebarTemporary)
+        if (screenState.sidebar || screenState.sidebarTemporary)
             activePanels.push({
                 name: "sidebar",
                 item: panels.sidebar,
-                close: () => nextScreenState.sidebar = nextScreenState.sidebarTemporary = false
+                close: () => screenState.sidebar = screenState.sidebarTemporary = false
             });
-        if (nextScreenState.launcher || nextScreenState.launcherTemporary)
+        if (screenState.launcher || screenState.launcherTemporary)
             activePanels.push({
                 name: "launcher",
                 item: panels.launcher,
-                close: () => nextScreenState.launcher = nextScreenState.launcherTemporary = false
+                close: () => screenState.launcher = screenState.launcherTemporary = false
             });
 
         return activePanels;
@@ -165,11 +172,16 @@ CustomMouseArea {
 
                 if (panel === otherPanel)
                     continue;
-                if (Config.utilities.alsoShowSidebar && //
-                panel.name === "sidebar" && otherPanel.name === "utilities" || //
-                panel.name === "utilities" && otherPanel.name === "sidebar" || //
-                panel.name === "session" && (otherPanel.name === "sidebar" || otherPanel.name === "utilities") || //
-                otherPanel.name === "session" && (panel.name === "sidebar" || panel.name === "utilities")) //
+                if (//
+                /*   */panel.name === "osd" && (otherPanel.name === "dashboard" || otherPanel.name === "sidebar" || otherPanel.name === "session") || //
+                /*   */otherPanel.name === "osd" && (panel.name === "dashboard" || panel.name === "sidebar" || panel.name === "session")) //
+                    continue;
+                if ( //
+                /*    */Config.utilities.alsoShowSidebar && //
+                /*    */panel.name === "sidebar" && otherPanel.name === "utilities" || //
+                /*    */panel.name === "utilities" && otherPanel.name === "sidebar" || //
+                /*    */panel.name === "session" && (otherPanel.name === "sidebar" || otherPanel.name === "utilities") || //
+                /*    */otherPanel.name === "session" && (panel.name === "sidebar" || panel.name === "utilities")) //
                     continue;
 
                 const {
@@ -187,6 +199,10 @@ CustomMouseArea {
 
                 if (!(panelRight <= otherLeft || panelLeft >= otherRight || panelBottom <= otherTop || panelTop >= otherBottom)) {
                     otherPanel.close();
+
+                    console.log(`Closed ${otherPanel.name} because it overlapped with ${panel.name}`);
+                    // console.log(`panel [${panel.name}]: left=${panelLeft}, top=${panelTop}, right=${panelRight}, bottom=${panelBottom}, height=${panel.item.height}, width=${panel.item.width}`);
+                    // console.log(`otherPanel [${otherPanel.name}]: left=${otherLeft}, top=${otherTop}, right=${otherRight}, bottom=${otherBottom}, height=${otherPanel.item.height}, width=${otherPanel.item.width}`);
 
                     activePanels.splice(j, 1); // Remove the closed panel from the list
                     j--; // Adjust index since we removed an item
@@ -228,13 +244,13 @@ CustomMouseArea {
         if (popouts.isDetached)
             return;
 
-        nextScreenState.reset();
-
         if (fullscreen) {
             handleOsd(event.x, event.y);
         } else {
             const dragX = event.x - dragStart.x;
             const dragY = event.y - dragStart.y;
+
+            previousState.capture();
 
             // handleBar(event.x, event.y, dragX, dragY);
             handleLauncher(event.x, event.y, dragY);
@@ -248,50 +264,19 @@ CustomMouseArea {
             handleOverlap();
         }
 
-        // console.log(`osd=${nextScreenState.osd ? "✅️" : "❌"}|${nextScreenState.osdTemporary ? "✅️" : "❌"}, dashboard=${nextScreenState.dashboard ? "✅️" : "❌"}|${nextScreenState.dashboardTemporary ? "✅️" : "❌"}, utilities=${nextScreenState.utilities ? "✅️" : "❌"}|${nextScreenState.utilitiesTemporary ? "✅️" : "❌"}, sidebar=${nextScreenState.sidebar ? "✅️" : "❌"}|${nextScreenState.sidebarTemporary ? "✅️" : "❌"}, session=${nextScreenState.session ? "✅️" : "❌"}|${nextScreenState.sessionTemporary ? "✅️" : "❌"}, launcher=${nextScreenState.launcher ? "✅️" : "❌"}|${nextScreenState.launcherTemporary ? "✅️" : "❌"}`);
-
-        nextScreenState.apply();
+    // console.log(`osd=${screenState.osd ? "✅️" : "❌"}|${screenState.osdTemporary ? "✅️" : "❌"}, dashboard=${screenState.dashboard ? "✅️" : "❌"}|${screenState.dashboardTemporary ? "✅️" : "❌"}, utilities=${screenState.utilities ? "✅️" : "❌"}|${screenState.utilitiesTemporary ? "✅️" : "❌"}, sidebar=${screenState.sidebar ? "✅️" : "❌"}|${screenState.sidebarTemporary ? "✅️" : "❌"}, session=${screenState.session ? "✅️" : "❌"}|${screenState.sessionTemporary ? "✅️" : "❌"}, launcher=${screenState.launcher ? "✅️" : "❌"}|${screenState.launcherTemporary ? "✅️" : "❌"}`);
     }
 
     QtObject {
-        id: nextScreenState
+        id: previousState
 
-        property bool osd
-        property bool osdTemporary
-        property bool dashboard
-        property bool dashboardTemporary
-        property bool utilities
-        property bool utilitiesTemporary
         property bool sidebar
         property bool sidebarTemporary
-        property bool session
-        property bool sessionTemporary
-        property bool launcher
-        property bool launcherTemporary
+        readonly property bool shouldSidebarVisible: previousState.sidebar || previousState.sidebarTemporary && Config.sidebar.enabled
 
-        property list<variant> properties: [ //
-            ["osd", [root.screenState, "osd"]] //
-            , ["osdTemporary", [root.screenState, "osdTemporary"]] //
-            , ["dashboard", [root.screenState, "dashboard"]] //
-            , ["dashboardTemporary", [root.screenState, "dashboardTemporary"]] //
-            , ["utilities", [root.screenState, "utilities"]] //
-            , ["utilitiesTemporary", [root.screenState, "utilitiesTemporary"]] //
-            , ["sidebar", [root.screenState, "sidebar"]] //
-            , ["sidebarTemporary", [root.screenState, "sidebarTemporary"]] //
-            , ["session", [root.screenState, "session"]] //
-            , ["sessionTemporary", [root.screenState, "sessionTemporary"]] //
-            , ["launcher", [root.screenState, "launcher"]] //
-            , ["launcherTemporary", [root.screenState, "launcherTemporary"]] //
-        ]
-
-        function reset(): void {
-            properties.map(p => nextScreenState[p[0]] = p[1][0][p[1][1]]);
+        function capture(): void {
+            previousState.sidebar = root.screenState.sidebar;
+            previousState.sidebarTemporary = root.screenState.sidebarTemporary;
         }
-
-        function apply(): void {
-            properties.map(p => p[1][0][p[1][1]] = nextScreenState[p[0]]);
-        }
-
-        Component.onCompleted: reset()
     }
 }

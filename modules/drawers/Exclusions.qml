@@ -12,10 +12,7 @@ Scope {
 
     required property ShellScreen screen
     required property Bar.BarWrapper bar
-
-    readonly property var geometry: ShellState.geometryFor(screen)
-
-    Component.onCompleted: console.log(`Exclusions: geometry for ${screen.name} => ${geometry}`)
+    required property EdgeGeometry geometry
 
     ExclusionZone {
         anchors.left: true

@@ -5,18 +5,20 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.modules.launcher.services
+import qs.modules.drawers
 
 Item {
     id: root
 
     required property ShellScreen screen
     required property ScreenState screenState
+    required property EdgeGeometry geometry
     required property var panels
 
     readonly property real maxHeight: {
-        let max = screen.height - Config.border.thickness * 2 + Tokens.padding.extraLarge;
-        if (screenState.dashboard)
-            max -= panels.dashboard.nonAnimHeight;
+        let max = panels.height;
+        if (screenState.shouldDashboardVisible)
+            max -= panels.dashboard.implicitHeight + Tokens.padding.extraLarge;
         return max;
     }
 
@@ -31,7 +33,7 @@ Item {
     }
 
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
-    implicitHeight: content.implicitHeight
+    implicitHeight: content.implicitHeight // Fallback for first open
     implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
 
     Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init

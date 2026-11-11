@@ -13,8 +13,10 @@ Item {
     required property ScreenState screenState
     required property bool sidebarVisible
     required property bool besideSession
+    required property real sessionHeight
     required property bool besideSidebar
     required property bool besideDashboard
+    required property real dashboardHeight
     required property bool onLeft
     required property real offsetScale
     required property bool shouldBeActive
@@ -109,6 +111,9 @@ Item {
     Loader {
         id: content
 
+        readonly property real baseHeight: Tokens.sizes.osd.sliderHeight * 3 + Tokens.spacing.medium * 2 + Config.border.thickness * 2 + 10
+        readonly property bool showMicrophone: Config.osd.enableMicrophone && !(root.besideSession && root.sessionHeight < baseHeight) && !(root.besideDashboard && root.dashboardHeight < baseHeight)
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
@@ -124,8 +129,7 @@ Item {
             sourceVolume: root.sourceVolume
             sourceMuted: root.sourceMuted
             brightness: root.brightness
-            besideSession: root.besideSession && root.screenState.session
-            besideDashboard: root.besideDashboard && root.screenState.dashboard
+            showMicrophone: content.showMicrophone
         }
     }
 }

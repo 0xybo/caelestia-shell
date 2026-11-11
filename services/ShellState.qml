@@ -47,8 +47,22 @@ Singleton {
 
     function geometryFor(screen: ShellScreen): EdgeGeometry {
         const c = componentsFor(screen);
-        console.log(`ShellState: geometryFor(${screen}) => ${c ? c.rootWindow?.geometry : null}`);
         return c ? c.rootWindow?.geometry : null;
+    }
+
+    function geometryForActive(): EdgeGeometry {
+        const c = componentsForActive();
+        return c ? c.rootWindow?.geometry : null;
+    }
+
+    function interactionsFor(screen: ShellScreen): Interactions {
+        const c = componentsFor(screen);
+        return c ? c.interactionWrapper : null;
+    }
+
+    function interactionsForActive(): Interactions {
+        const c = componentsForActive();
+        return c ? c.interactionWrapper : null;
     }
 
     Variants {

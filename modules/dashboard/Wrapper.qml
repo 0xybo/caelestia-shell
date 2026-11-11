@@ -31,24 +31,11 @@ Item {
         }
     }
 
-    // readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
-    // readonly property bool shouldBeActive: (screenState.dashboard || screenState.dashboardTemporary) && Config.dashboard.enabled
-
-    // x: root.onLeft ? (-implicitWidth - 5) * offsetScale : root.onRight ? parent.width - width + (implicitWidth + 5) * offsetScale : (parent.width - width) / 2
-    // y: root.onLeft || root.onRight ? (parent.height - height) / 2 : (-implicitHeight - 5) * offsetScale
-    implicitHeight: content.implicitHeight
+    implicitHeight: content.implicitHeight || 480 // Hard coded fallback for first open
     implicitWidth: content.implicitWidth || 854 // Hard coded fallback for first open
-    // opacity: 1 - offsetScale
-
-    // Behavior on offsetScale {
-    //     Anim {}
-    // }
 
     Loader {
         id: content
-
-        // x: root.onLeft || root.onRight ? parent.width - width : (parent.width - width) / 2
-        // y: root.onLeft || root.onRight ? (parent.height - height) / 2 : parent.height - height
 
         active: root.offsetScale < 1
 

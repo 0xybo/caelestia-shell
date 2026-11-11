@@ -16,52 +16,65 @@ QtObject {
     readonly property var config: GlobalConfig.forScreen(screen.name)
 
     readonly property var bar: QtObject {
-        property real extent: root.barWrapper.extent
-        property real clampedExtent: root.barWrapper.clampedExtent
-        property int position: root.config.bar.position
-        property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
-        property bool onLeft: position === BarPosition.Left
-        property bool onTop: position === BarPosition.Top
-        property bool onRight: position === BarPosition.Right
-        property bool onBottom: position === BarPosition.Bottom
-        property bool besideSidebar: (onLeft && root.sidebar.position === HorizontalPosition.Left) || (onRight && root.sidebar.position === HorizontalPosition.Right)
+        readonly property real extent: root.barWrapper.extent
+        readonly property real clampedExtent: root.barWrapper.clampedExtent
+        readonly property int position: root.config.bar.position
+        readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
+        readonly property bool onLeft: position === BarPosition.Left
+        readonly property bool onTop: position === BarPosition.Top
+        readonly property bool onRight: position === BarPosition.Right
+        readonly property bool onBottom: position === BarPosition.Bottom
     }
 
     readonly property var dashboard: QtObject {
-        property int position: BarLayout.dashboardFor(root.bar.position, root.config.dashboard.position)
-        property bool onLeft: position === DashboardPosition.Left
-        property bool onTop: position === DashboardPosition.Top
-        property bool onRight: position === DashboardPosition.Right
-        property bool activeWindowHover: BarLayout.activeWindowHoverSupported(root.bar.position, position)
+        readonly property int position: BarLayout.dashboardFor(root.bar.position, root.config.dashboard.position)
+        readonly property bool onLeft: position === DashboardPosition.Left
+        readonly property bool onTop: position === DashboardPosition.Top
+        readonly property bool onRight: position === DashboardPosition.Right
+        readonly property bool activeWindowHover: BarLayout.activeWindowHoverSupported(root.bar.position, position)
+        readonly property bool horizontal: position === DashboardPosition.Left || position === DashboardPosition.Right
     }
 
     readonly property var utilities: QtObject {
-        property int position: BarLayout.utilitiesFor(root.bar.position, root.config.utilities.position)
-        property bool onLeft: BarLayout.isCornerOn(position, BarPosition.Left)
-        property bool onRight: BarLayout.isCornerOn(position, BarPosition.Right)
-        property bool onTop: BarLayout.isCornerOn(position, BarPosition.Top)
-        property bool onBottom: BarLayout.isCornerOn(position, BarPosition.Bottom)
-        property bool powerTriggers: BarLayout.powerTriggersUtilities(root.bar.position, position, root.barWrapper.powerAtEnd())
+        readonly property int position: BarLayout.utilitiesFor(root.bar.position, root.config.utilities.position)
+        readonly property bool onLeft: BarLayout.isCornerOn(position, BarPosition.Left)
+        readonly property bool onRight: BarLayout.isCornerOn(position, BarPosition.Right)
+        readonly property bool onTop: BarLayout.isCornerOn(position, BarPosition.Top)
+        readonly property bool onBottom: BarLayout.isCornerOn(position, BarPosition.Bottom)
     }
 
     readonly property var osd: QtObject {
-        property int position: root.config.osd.position
-        property bool onLeft: position === HorizontalPosition.Left
-        property bool onRight: !onLeft
-        property bool besideSidebar: position === root.sidebar.position
-        property bool besideSession: position === HorizontalPosition.Right
-        property bool besideDashboard: (onLeft && root.dashboard.onLeft) || (onRight && root.dashboard.onRight)
+        readonly property int position: root.config.osd.position
+        readonly property bool onLeft: position === HorizontalPosition.Left
+        readonly property bool onRight: !onLeft
+        readonly property bool besideSidebar: position === root.sidebar.position
+        readonly property bool besideSession: position === root.sidebar.position
+        readonly property bool besideDashboard: (onLeft && root.dashboard.onLeft) || (onRight && root.dashboard.onRight)
     }
 
     readonly property var sidebar: QtObject {
-        property int position: root.config.sidebar.position
-        property bool onLeft: position === HorizontalPosition.Left
-        property bool onRight: !onLeft
+        readonly property int position: root.config.sidebar.position
+        readonly property bool onLeft: position === HorizontalPosition.Left
+        readonly property bool onRight: !onLeft
+        readonly property bool besideBar: (onLeft && root.bar.onLeft) || (onRight && root.bar.onRight)
+        readonly property bool besideDashboard: (onLeft && root.dashboard.onLeft) || (onRight && root.dashboard.onRight)
+        readonly property bool besideSession: onRight
+        readonly property bool besideOSD: (onLeft && root.osd.onLeft) || (onRight && root.osd.onRight)
+        readonly property bool alongUtilities: (onLeft && root.utilities.onLeft) || (onRight && root.utilities.onRight)
+        readonly property bool aboveUtilities: (onLeft && root.utilities.onBottom && root.utilities.onLeft) || (onRight && root.utilities.onBottom && root.utilities.onRight) && root.config.utilities.alsoShowSidebar
+        readonly property bool belowUtilities: (onLeft && root.utilities.onTop && root.utilities.onLeft) || (onRight && root.utilities.onTop && root.utilities.onRight) && root.config.utilities.alsoShowSidebar
     }
 
     readonly property var session: QtObject {
-        property bool besideSidebar: root.sidebar.position === HorizontalPosition.Right
-        property bool besideDashboard: (root.dashboard.onLeft && root.sidebar.onLeft) || (root.dashboard.onRight && root.sidebar.onRight)
+        readonly property bool besideSidebar: true
+        readonly property bool besideDashboard: (root.dashboard.onLeft && root.sidebar.onLeft) || (root.dashboard.onRight && root.sidebar.onRight)
+    }
+
+    readonly property var notifications: QtObject {
+        readonly property bool alongUtilities: ((root.utilities.onLeft && root.sidebar.onLeft) || (root.utilities.onRight && root.sidebar.onRight)) && root.config.utilities.alsoShowSidebar
+        readonly property bool besideSidebar: ((root.sidebar.onLeft && root.utilities.onLeft) || (root.sidebar.onRight && root.utilities.onRight)) && !root.config.utilities.alsoShowSidebar
+        readonly property bool aboveUtilities: alongUtilities && root.utilities.onBottom
+        readonly property bool belowUtilities: alongUtilities && root.utilities.onTop
     }
 
     function insetLeft(border: real, clamped = false): real {

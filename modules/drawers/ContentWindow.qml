@@ -191,7 +191,8 @@ StyledWindow {
             panel: panels.dashboard
             offsetScale: panels.dashboard.offsetScale
             deformAmount: 0.1
-            x: panels.dashboard.x + geometry.insetLeft(root.borderThickness)
+            x: panels.dashboard.x + (root.geometry.dashboard.onRight ? 0 : geometry.insetLeft(root.borderThickness))
+            implicitWidth: panels.dashboard.width + (root.geometry.dashboard.onRight ? geometry.insetRight(root.borderThickness) : 0)
         }
 
         PanelBg {
@@ -222,13 +223,13 @@ StyledWindow {
             // The 2px compensates SDF rounding on a free bottom edge. Stacked against the
             // utilities panel that edge is covered, and the 2px would poke through it and smin
             // into a bump on the inner border.
-            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (panels.sidebarUtilitiesBelow ? 0 : 2)
+            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (geometry.sidebar.aboveUtilities ? 0 : 2)
             // Where the two panels meet, both sides square off so the smin bridge is a clean
             // joint instead of a bulge past the border
-            bottomLeftRadius: geometry.sidebar.onLeft || panels.sidebarUtilitiesBelow ? 0 : cornerRadius
-            bottomRightRadius: !geometry.sidebar.onLeft || panels.sidebarUtilitiesBelow ? 0 : cornerRadius
-            topLeftRadius: panels.sidebarUtilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebarUtilitiesAbove ? 0 : -1
+            bottomLeftRadius: geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
+            bottomRightRadius: !geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
+            topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            topRightRadius: geometry.sidebar.belowUtilities ? 0 : -1
         }
 
         PanelBg {
@@ -251,10 +252,10 @@ StyledWindow {
             offsetScale: panels.utilities.offsetScale
             deformAmount: 0.15
             // Square off the edge facing the sidebar, see sidebarBg
-            topLeftRadius: panels.sidebarUtilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebarUtilitiesAbove ? 0 : -1
-            bottomLeftRadius: panels.sidebarUtilitiesBelow ? 0 : -1
-            bottomRightRadius: panels.sidebarUtilitiesBelow ? 0 : -1
+            topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            topRightRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            bottomLeftRadius: geometry.sidebar.aboveUtilities ? 0 : -1
+            bottomRightRadius: geometry.sidebar.aboveUtilities ? 0 : -1
         }
 
         PanelBg {
@@ -342,7 +343,6 @@ StyledWindow {
             screenState: root.screenState
             popouts: panels.popouts
             position: geometry.bar.position
-            powerTriggersUtilities: geometry.utilities.powerTriggers
             activeWindowHover: geometry.dashboard.activeWindowHover
 
             fullscreen: root.hasFullscreen
@@ -395,5 +395,6 @@ StyledWindow {
         height: parked ? 0 : implicitHeight
         radius: Tokens.rounding.extraLarge
         deformScale: (deformAmount * Config.appearance.deformScale) / 10000
+        visible: panel.visible && !parked
     }
 }

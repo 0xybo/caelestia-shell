@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.modules.drawers as Drawers
 
@@ -10,7 +11,8 @@ Item {
     enum Alignment {
         Start,
         Center,
-        End
+        End,
+        None
     }
     enum SlidingDirection {
         Horizontal,
@@ -22,9 +24,10 @@ Item {
 
     required property Item content
 
-    required property int verticalAlignment
-    required property int horizontalAlignment
     required property int slidingDirection
+
+    property int verticalAlignment: Panel.Alignment.None
+    property int horizontalAlignment: Panel.Alignment.None
 
     property Drawers.Trigger trigger
 
@@ -41,6 +44,7 @@ Item {
     implicitWidth: root.content.implicitWidth
     implicitHeight: root.content.implicitHeight
     opacity: 1 - root.offsetScale
+    visible: root.offsetScale < 1
 
     x: {
         switch (root.horizontalAlignment) {

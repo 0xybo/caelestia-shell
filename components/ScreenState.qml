@@ -1,11 +1,14 @@
 import QtQuick
 import Quickshell
 import Caelestia.Config
+import qs.services
+import qs.modules.drawers
 
 PersistentProperties {
     required property ShellScreen modelData
 
     readonly property var config: GlobalConfig.forScreen(modelData.name)
+    readonly property EdgeGeometry geometry: ShellState.geometryFor(modelData)
 
     // Drawer visibilities
     property bool bar
@@ -39,4 +42,10 @@ PersistentProperties {
     // Dashboard state
     property int dashboardTab
     property date dashboardDate: new Date()
+
+    // Notifications state
+    readonly property bool shouldNotificationsVisible: Notifs.shouldShowPopup() && !shouldDashboardVisible && !(shouldSessionVisible && geometry?.session.besideSidebar) && !shouldSidebarVisible && !(shouldOsdVisible && geometry?.osd.besideSidebar) && !(shouldUtilitiesVisible && geometry?.sidebar.alongUtilities)
+
+    // Toasts state
+    readonly property bool shouldToastsVisible: !shouldDashboardVisible && !(shouldSessionVisible && geometry?.session.besideSidebar) && !(shouldOsdVisible && geometry?.osd.besideSidebar)
 }
