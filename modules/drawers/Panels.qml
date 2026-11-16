@@ -2,7 +2,6 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
-import qs.services
 import qs.modules.bar as Bar
 import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher
@@ -275,25 +274,6 @@ Item {
     // ╭────────────────────────────────────────────────────────╮
     // │                        TRIGGERS                        │
     // ╰────────────────────────────────────────────────────────╯
-
-    Loader {
-        active: ShellState.debug
-
-        sourceComponent: Drawers.Trigger {
-            id: popoutsTrigger
-
-            name: "popouts"
-
-            anchors.fill: parent
-
-            Drawers.TriggerPart {
-                x: popoutsWrapper.x
-                y: popoutsWrapper.y
-                width: popoutsWrapper.width
-                height: popoutsWrapper.height
-            }
-        }
-    }
 
     Drawers.Trigger {
         id: sessionTrigger

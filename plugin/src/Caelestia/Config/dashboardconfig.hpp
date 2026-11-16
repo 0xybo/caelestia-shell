@@ -2,7 +2,6 @@
 
 #include "settings/objectnode.hpp"
 #include "common.hpp"
-
 #include "enums.hpp"
 
 namespace caelestia::shell::config {

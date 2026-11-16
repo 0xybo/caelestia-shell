@@ -96,7 +96,7 @@ class LazyListView : public QQuickItem {
 public:
     enum class Orientation : quint8 {
         Vertical,
-        Horizontal
+        Horizontal,
     };
     Q_ENUM(Orientation)
 

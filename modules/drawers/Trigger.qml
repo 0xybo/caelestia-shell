@@ -10,13 +10,6 @@ Item {
     property Drawers.Panel panel
     property string name: panel.name
 
-    Component.onCompleted: {
-        for (const child of root.children) {
-            if (child instanceof Drawers.TriggerPart)
-                child.panelName = root.name;
-        }
-    }
-
     function containsMouse(x: real, y: real): bool {
         const win = QsWindow.window as QsWindow;
         if (!win)
@@ -38,6 +31,13 @@ Item {
                 contains = true;
         }
         return contains;
+    }
+
+    Component.onCompleted: {
+        for (const child of root.children) {
+            if (child instanceof Drawers.TriggerPart)
+                child.panelName = root.name;
+        }
     }
 
     anchors.fill: parent

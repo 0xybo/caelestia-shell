@@ -468,7 +468,7 @@ qreal LazyListView::delegateWidth(QQuickItem* item) {
     if (!item)
         return 0;
 
-    auto* attached = attachedFor(item);
+    const auto* attached = attachedFor(item);
     if (attached && attached->preferredWidth() >= 0)
         return attached->preferredWidth();
 
@@ -479,7 +479,7 @@ qreal LazyListView::delegateVisibleWidth(QQuickItem* item) {
     if (!item)
         return 0;
 
-    auto* attached = attachedFor(item);
+    const auto* attached = attachedFor(item);
     if (attached && attached->visibleWidth() >= 0)
         return attached->visibleWidth();
 
@@ -584,14 +584,14 @@ void LazyListView::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
 
     if (m_orientation == Orientation::Horizontal) {
         if (!qFuzzyCompare(newGeometry.height(), oldGeometry.height())) {
-            for (const auto& entry : m_delegates) {
+            for (const auto& entry : std::as_const(m_delegates)) {
                 if (entry.item)
                     entry.item->setHeight(newGeometry.height());
             }
         }
     } else {
         if (!qFuzzyCompare(newGeometry.width(), oldGeometry.width())) {
-            for (const auto& entry : m_delegates) {
+            for (const auto& entry : std::as_const(m_delegates)) {
                 if (entry.item)
                     entry.item->setWidth(newGeometry.width());
             }

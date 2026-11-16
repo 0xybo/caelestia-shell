@@ -12,9 +12,9 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
-import qs.daemons
 import qs.modules.drawers
 import qs.modules.utilities as Utilities
+import qs.daemons
 
 StyledWindow {
     id: root

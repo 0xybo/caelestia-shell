@@ -3,12 +3,10 @@ import QtQuick.Controls
 import QtQml
 import Quickshell
 import Caelestia.Config
-import qs.services
 import qs.components
 import qs.components.controls
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
-import qs.modules.osd as Osd
 
 CustomMouseArea {
     id: root

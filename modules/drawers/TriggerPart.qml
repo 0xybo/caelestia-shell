@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs.services
-import qs.modules.drawers as Drawers
 
 Item {
     id: root
