@@ -11,17 +11,19 @@ Item {
 
     required property ShellScreen screen
     required property ScreenState screenState
-    required property bool sidebarOrSessionVisible
+    required property bool sidebarVisible
     required property bool besideSession
+    required property real sessionHeight
     required property bool besideSidebar
     required property bool besideDashboard
+    required property real dashboardHeight
     required property bool onLeft
+    required property real offsetScale
+    required property bool shouldBeActive
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
-    readonly property bool shouldBeActive: screenState.osd && Config.osd.enabled && !(Config.utilities.enabled && screenState.utilities && !Config.utilities.alwaysShowNotifications)
-    property real offsetScale: shouldBeActive ? 0 : 1
-    property real sidebarOffset: sidebarOrSessionVisible ? 12 : 0
+    property real sidebarOffset: sidebarVisible ? 12 : 0
 
     property real volume
     property bool muted
@@ -59,15 +61,9 @@ Item {
         brightness = root.monitor?.brightness ?? 0;
     }
 
-    visible: offsetScale < 1
-    x: onLeft ? (-implicitWidth - 5 - sidebarOffset) * offsetScale : parent.width - implicitWidth + (implicitWidth + 5 + sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
-    opacity: 1 - offsetScale
-
-    Behavior on offsetScale {
-        Anim {}
-    }
+    anchors.rightMargin: onLeft ? 0 : -sidebarOffset
 
     Connections {
         function onMutedChanged(): void {
@@ -115,12 +111,15 @@ Item {
     Loader {
         id: content
 
+        readonly property real baseHeight: Tokens.sizes.osd.sliderHeight * 3 + Tokens.spacing.medium * 2 + Config.border.thickness * 2 + 10
+        readonly property bool showMicrophone: Config.osd.enableMicrophone && !(root.besideSession && root.sessionHeight < baseHeight) && !(root.besideDashboard && root.dashboardHeight < baseHeight)
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
 
         asynchronous: true
-        active: root.shouldBeActive || root.visible
+        active: root.shouldBeActive
 
         sourceComponent: Content {
             monitor: root.monitor
@@ -130,8 +129,7 @@ Item {
             sourceVolume: root.sourceVolume
             sourceMuted: root.sourceMuted
             brightness: root.brightness
-            besideSession: root.besideSession && root.screenState.session
-            besideDashboard: root.besideDashboard && root.screenState.dashboard
+            showMicrophone: content.showMicrophone
         }
     }
 }

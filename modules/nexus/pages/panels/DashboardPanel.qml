@@ -11,7 +11,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.bar.dashboardPosition)
+    readonly property int effectiveDashboardPosition: BarLayout.dashboardFor(Config.bar.position, Config.dashboard.position)
     readonly property list<MenuItem> dashboardPositionItems: BarLayout.dashboardPositions(Config.bar.position).map(pos => root.dashboardPositionItem(pos))
 
     function dashboardPositionItem(pos: int): MenuItem {
@@ -49,7 +49,7 @@ PageBase {
             subtext: Tr.tr("Which screen edge the dashboard sits on")
             menuItems: root.dashboardPositionItems
             active: menuItems.find(i => i.value === root.effectiveDashboardPosition)
-            onSelected: i => GlobalConfig.bar.dashboardPosition = i.value
+            onSelected: i => GlobalConfig.dashboard.position = i.value
 
             MenuItem {
                 id: dashboardPosTop

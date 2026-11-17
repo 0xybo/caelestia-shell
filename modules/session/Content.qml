@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
@@ -49,9 +48,7 @@ Column {
     }
 
     Loader {
-        id: gif
-
-        active: Config.session.showGif
+        active: Config.paths.sessionGif.trim() !== ""
 
         sourceComponent: AnimatedImage {
             width: Tokens.sizes.session.button

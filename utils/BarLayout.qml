@@ -21,7 +21,7 @@ Singleton {
         if (barPosition === BarPosition.Left)
             return [UtilitiesPosition.BottomRight, UtilitiesPosition.TopRight, UtilitiesPosition.BottomLeft];
         if (barPosition === BarPosition.Right)
-            return [UtilitiesPosition.BottomLeft, UtilitiesPosition.TopLeft, UtilitiesPosition.TopRight];
+            return [UtilitiesPosition.BottomLeft, UtilitiesPosition.TopLeft, UtilitiesPosition.BottomRight];
         if (barPosition === BarPosition.Bottom)
             return [UtilitiesPosition.TopLeft, UtilitiesPosition.TopRight, UtilitiesPosition.BottomRight];
         return [UtilitiesPosition.BottomLeft, UtilitiesPosition.BottomRight, UtilitiesPosition.TopRight];
@@ -59,10 +59,6 @@ Singleton {
         if (barPosition === BarPosition.Left)
             return powerAtEnd ? UtilitiesPosition.BottomLeft : UtilitiesPosition.TopLeft;
         return powerAtEnd ? UtilitiesPosition.BottomRight : UtilitiesPosition.TopRight;
-    }
-
-    function powerTriggersUtilities(barPosition: int, corner: int, powerAtEnd: bool): bool {
-        return corner === powerCorner(barPosition, powerAtEnd);
     }
 
     function isCornerOn(corner: int, edge: int): bool {

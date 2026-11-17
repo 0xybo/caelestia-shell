@@ -1,20 +1,19 @@
 pragma ComponentBehavior: Bound
 
-import "popouts" as BarPopouts
-import "components"
-import "components/workspaces"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.services
+import qs.modules.bar.components
+import qs.modules.bar.popouts as BarPopouts
+import qs.modules.bar.components.workspaces
 
 GridLayout {
     id: root
 
     required property int position
-    required property bool powerTriggersUtilities
     required property bool activeWindowHover
     readonly property bool horizontal: position === BarPosition.Top || position === BarPosition.Bottom
     readonly property bool powerAtEnd: {
@@ -175,6 +174,7 @@ GridLayout {
                         bar: root
                         monitor: Brightness.getMonitorForScreen(root.screen)
                         horizontal: root.horizontal
+                        screenState: root.screenState
                     }
                 }
             }

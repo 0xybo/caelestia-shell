@@ -14,7 +14,7 @@
 #include <functional>
 #include <utility>
 
-namespace caelestia::components {
+namespace caelestia::shell::components {
 
 class LazyListViewAttached : public QObject {
     Q_OBJECT
@@ -96,7 +96,7 @@ class LazyListView : public QQuickItem {
 public:
     enum class Orientation : quint8 {
         Vertical,
-        Horizontal
+        Horizontal,
     };
     Q_ENUM(Orientation)
 
@@ -356,4 +356,4 @@ private:
     QList<QMetaObject::Connection> m_modelConnections;
 };
 
-} // namespace caelestia::components
+} // namespace caelestia::shell::components

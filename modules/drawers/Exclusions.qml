@@ -15,22 +15,22 @@ Scope {
 
     ExclusionZone {
         anchors.left: true
-        hasBar: root.geometry.barOnLeft
+        hasBar: root.geometry.bar.onLeft
     }
 
     ExclusionZone {
         anchors.top: true
-        hasBar: root.geometry.barOnTop
+        hasBar: root.geometry.bar.onTop
     }
 
     ExclusionZone {
         anchors.right: true
-        hasBar: root.geometry.barOnRight
+        hasBar: root.geometry.bar.onRight
     }
 
     ExclusionZone {
         anchors.bottom: true
-        hasBar: root.geometry.barOnBottom
+        hasBar: root.geometry.bar.onBottom
     }
 
     component ExclusionZone: StyledWindow {

@@ -10,6 +10,7 @@ import qs.modules.osd as Osd
 import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
+import qs.modules.drawers as Drawers
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 
@@ -23,10 +24,8 @@ Item {
     required property real borderThickness
 
     readonly property alias osd: osd
-    readonly property alias osdWrapper: osdWrapper
     readonly property alias notifications: notifications
     readonly property alias session: session
-    readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
     readonly property alias popouts: popoutsWrapper.content
@@ -39,6 +38,7 @@ Item {
     anchors.margins: borderThickness
     anchors.leftMargin: geometry.insetLeft(borderThickness)
     anchors.topMargin: geometry.insetTop(borderThickness)
+    anchors.rightMargin: geometry.insetRight(borderThickness)
     anchors.bottomMargin: geometry.insetBottom(borderThickness)
 
     Notifications.Wrapper {
@@ -46,125 +46,348 @@ Item {
 
         screenState: root.screenState
         sidebarPanel: sidebar
-        osdPanel: osdWrapper
-        sessionPanel: sessionWrapper
-        utilitiesPanel: utilities
+
+        height: Math.min(//
+        /**/notifications.implicitHeight, //
+        /**/(root.screenState.shouldNotificationsVisible ? parent.height : 0), //
+        /**/((root.popouts.hasCurrent && root.geometry.sidebar.onRight) || root.popouts.isDetached) ? 0 : parent.height, //
+        /**/(toasts.height) > 0 ? (toasts.y - Tokens.spacing.medium) : parent.height //
+        )
 
         anchors.top: parent.top
-        anchors.right: parent.right
+        anchors.left: root.geometry.sidebar.onLeft ? (sidebar.closed ? parent.left : sidebar.right) : undefined
+        anchors.right: root.geometry.sidebar.onRight ? (sidebar.closed ? parent.right : sidebar.left) : undefined
     }
 
-    Item {
-        id: sessionWrapper
+    Toasts.Toasts {
+        id: toasts
 
-        anchors.verticalCenter: parent.verticalCenter
-        x: root.geometry.sidebarOnLeft ? sidebar.width * (1 - sidebar.offsetScale) : parent.width - implicitWidth - sidebar.width * (1 - sidebar.offsetScale)
-        clip: sidebar.visible
+        height: Math.min(//
+        /**/toasts.implicitHeight, //
+        /**/(root.screenState.shouldToastsVisible ? parent.height : 0), //
+        /**/(root.popouts.isDetached || (root.popouts.hasCurrent && root.geometry.bar.onBottom && root.geometry.sidebar.onRight)) ? 0 : parent.height //
+        )
 
-        implicitWidth: session.implicitWidth * (1 - session.offsetScale)
-        implicitHeight: session.implicitHeight
+        anchors.bottom: root.geometry.utilities.onBottom && (root.geometry.sidebar.alongUtilities || Config.utilities.alsoShowSidebar) && root.screenState.shouldUtilitiesVisible ? utilities.top : parent.bottom
+        anchors.left: root.geometry.sidebar.onLeft ? (sidebar.closed ? parent.left : sidebar.right) : undefined
+        anchors.right: root.geometry.sidebar.onRight ? (sidebar.closed ? parent.right : sidebar.left) : undefined
+        anchors.margins: Tokens.padding.medium
 
-        Session.Wrapper {
-            id: session
-
-            screenState: root.screenState
-            sidebarVisible: sidebar.visible
-            onLeft: root.geometry.sidebarOnLeft
-
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
-    Launcher.Wrapper {
-        id: launcher
-
-        screen: root.screen
-        screenState: root.screenState
-        panels: root
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-    }
-
-    Dashboard.Wrapper {
-        id: dashboard
-
-        screenState: root.screenState
-        position: root.geometry.effectiveDashboardPosition
-    }
-
-    Item {
-        id: osdWrapper
-
-        readonly property bool sessionOnOsdSide: root.geometry.osdOnRight
-        readonly property bool sidebarOnOsdSide: root.geometry.sidebarOnLeft === root.geometry.osdOnLeft
-        readonly property bool dashboardOnOsdSide: (root.geometry.dashboardOnLeft && root.geometry.osdOnLeft) || (root.geometry.dashboardOnRight && root.geometry.osdOnRight)
-        readonly property real edgeShift: (sidebarOnOsdSide ? sidebar.width * (1 - sidebar.offsetScale) + session.width * (1 - session.offsetScale) : 0) + (dashboardOnOsdSide ? dashboard.width * (1 - dashboard.offsetScale) : 0)
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: root.geometry.osdOnLeft ? edgeShift : 0
-        anchors.rightMargin: root.geometry.osdOnLeft ? 0 : edgeShift
-        x: root.geometry.osdOnLeft ? edgeShift : parent.width - visibleWidth - edgeShift
-        clip: sidebar.visible || session.visible
-
-        readonly property real visibleWidth: osd.width * (1 - osd.offsetScale)
-        implicitWidth: visibleWidth
-        implicitHeight: osd.implicitHeight
-
-        Osd.Wrapper {
-            id: osd
-
-            screen: root.screen
-            screenState: root.screenState
-            sidebarOrSessionVisible: sidebar.visible || session.visible
-            besideSession: osdWrapper.sessionOnOsdSide && session.visible
-            besideSidebar: osdWrapper.sidebarOnOsdSide && sidebar.visible
-            besideDashboard: osdWrapper.dashboardOnOsdSide && dashboard.visible
-            onLeft: root.geometry.osdOnLeft
-
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        clip: true
     }
 
     BarPopouts.ClipWrapper {
         id: popoutsWrapper
 
         screen: root.screen
-        position: root.geometry.position
+        position: root.geometry.bar.position
         borderThickness: root.borderThickness
     }
 
-    Utilities.Wrapper {
+    // ╭────────────────────────────────────────────────────────╮
+    // │                         PANELS                         │
+    // ╰────────────────────────────────────────────────────────╯
+
+    Drawers.Panel {
+        id: session
+
+        name: "session"
+        shouldBeActive: root.screenState.shouldSessionVisible
+
+        verticalAlignment: Drawers.Panel.Alignment.Center
+        horizontalAlignment: root.geometry.sidebar.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        slidingDirection: Drawers.Panel.SlidingDirection.Horizontal
+        margin: sidebar.width * (1 - sidebar.offsetScale)
+
+        content: sessionContent
+        trigger: sessionTrigger
+
+        Session.Wrapper {
+            id: sessionContent
+
+            screenState: root.screenState
+            shouldBeActive: session.shouldBeActive
+            offsetScale: session.offsetScale
+            sidebarVisible: sidebar.shouldBeActive
+
+            anchors.fill: parent
+            visible: !session.closed
+        }
+    }
+
+    Drawers.Panel {
+        id: launcher
+
+        name: "launcher"
+        shouldBeActive: root.screenState.shouldLauncherVisible
+
+        verticalAlignment: Drawers.Panel.Alignment.End
+        horizontalAlignment: Drawers.Panel.Alignment.Center
+        slidingDirection: Drawers.Panel.SlidingDirection.Vertical
+
+        content: launcherContent
+        trigger: launcherTrigger
+
+        Launcher.Wrapper {
+            id: launcherContent
+
+            screen: root.screen
+            panels: root
+            screenState: root.screenState
+            geometry: root.geometry
+            shouldBeActive: launcher.shouldBeActive
+            offsetScale: launcher.offsetScale
+
+            anchors.fill: parent
+            visible: !launcher.closed
+        }
+    }
+
+    Drawers.Panel {
+        id: dashboard
+
+        name: "dashboard"
+        shouldBeActive: root.screenState.shouldDashboardVisible
+
+        verticalAlignment: {
+            switch (root.geometry.dashboard.position) {
+            case DashboardPosition.Left:
+            case DashboardPosition.Right:
+                return Drawers.Panel.Alignment.Center;
+            case DashboardPosition.Top:
+                return Drawers.Panel.Alignment.Start;
+            }
+        }
+        horizontalAlignment: {
+            switch (root.geometry.dashboard.position) {
+            case DashboardPosition.Left:
+                return Drawers.Panel.Alignment.Start;
+            case DashboardPosition.Right:
+                return Drawers.Panel.Alignment.End;
+            case DashboardPosition.Top:
+                return Drawers.Panel.Alignment.Center;
+            }
+        }
+        slidingDirection: root.geometry.dashboard.horizontal ? Drawers.Panel.SlidingDirection.Horizontal : Drawers.Panel.SlidingDirection.Vertical
+
+        content: dashboardContent
+        trigger: dashboardTrigger
+
+        Dashboard.Wrapper {
+            id: dashboardContent
+
+            screenState: root.screenState
+            offsetScale: dashboard.offsetScale
+            position: root.geometry.dashboard.position
+
+            anchors.fill: parent
+            visible: !dashboard.closed
+        }
+    }
+
+    Drawers.Panel {
+        id: osd
+
+        name: "osd"
+        shouldBeActive: root.screenState.shouldOsdVisible
+
+        verticalAlignment: Drawers.Panel.Alignment.Center
+        horizontalAlignment: root.geometry.osd.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        slidingDirection: Drawers.Panel.SlidingDirection.Horizontal
+        margin: (root.geometry.osd.besideSidebar ? (sidebar.width - Config.border.thickness * osd.offsetScale) * (1 - sidebar.offsetScale) : 0) + (root.geometry.osd.besideSession ? session.width * (1 - session.offsetScale) : 0) + (root.geometry.osd.besideDashboard ? (dashboard.width - Config.border.thickness * osd.offsetScale) * (1 - dashboard.offsetScale) : 0)
+
+        content: osdContent
+        trigger: osdTrigger
+
+        Osd.Wrapper {
+            id: osdContent
+
+            screen: root.screen
+            screenState: root.screenState
+            offsetScale: osd.offsetScale
+            shouldBeActive: osd.shouldBeActive
+
+            sidebarVisible: root.screenState.shouldSidebarVisible
+            besideSession: root.geometry.osd.besideSession && session.shouldBeActive
+            sessionHeight: session.height
+            besideSidebar: root.geometry.osd.besideSidebar && sidebar.shouldBeActive
+            besideDashboard: root.geometry.osd.besideDashboard && dashboard.shouldBeActive
+            dashboardHeight: dashboard.height
+            onLeft: root.geometry.osd.onLeft
+
+            anchors.fill: parent
+            visible: !osd.closed
+        }
+    }
+
+    Drawers.Panel {
         id: utilities
 
-        screenState: root.screenState
-        popouts: popoutsWrapper.content
-        position: root.geometry.effectiveUtilitiesPosition
+        name: "utilities"
+        shouldBeActive: root.screenState.shouldUtilitiesVisible
+
+        verticalAlignment: root.geometry.utilities.onTop ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        horizontalAlignment: root.geometry.utilities.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        slidingDirection: Drawers.Panel.SlidingDirection.Vertical
+
+        content: utilitiesContent
+        trigger: utilitiesTrigger
+
+        Utilities.Wrapper {
+            id: utilitiesContent
+
+            screenState: root.screenState
+            offsetScale: utilities.offsetScale
+            popouts: popoutsWrapper.content
+            position: root.geometry.utilities.position
+
+            anchors.fill: parent
+            visible: !utilities.closed
+        }
     }
 
-    Toasts.Toasts {
-        id: toasts
-
-        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
-        anchors.left: root.geometry.sidebarOnLeft ? sidebar.right : undefined
-        anchors.right: root.geometry.sidebarOnLeft ? undefined : sidebar.left
-        anchors.margins: Tokens.padding.medium
-    }
-
-    Sidebar.Wrapper {
+    Drawers.Panel {
         id: sidebar
 
-        readonly property bool sharesNotifications: root.geometry.sidebarOnRight
-        readonly property bool sharesUtilities: root.geometry.sidebarOnLeft ? root.geometry.utilitiesOnLeft : root.geometry.utilitiesOnRight
-        // The utilities panel stacks against this one on a corner; the facing edge is not free
-        readonly property bool utilitiesAbove: sharesUtilities && root.geometry.utilitiesOnTop
-        readonly property bool utilitiesBelow: sharesUtilities && root.geometry.utilitiesOnBottom
+        name: "sidebar"
+        shouldBeActive: root.screenState.shouldSidebarVisible
 
-        screenState: root.screenState
-        onLeft: root.geometry.sidebarOnLeft
+        horizontalAlignment: root.geometry.sidebar.onLeft ? Drawers.Panel.Alignment.Start : Drawers.Panel.Alignment.End
+        anchors.top: root.geometry.sidebar.belowUtilities ? utilities.bottom : parent.top
+        anchors.bottom: root.geometry.sidebar.aboveUtilities ? utilities.top : parent.bottom
+        slidingDirection: Drawers.Panel.SlidingDirection.Horizontal
 
-        anchors.top: utilitiesAbove ? utilities.bottom : sharesNotifications ? notifications.bottom : parent.top
-        anchors.bottom: utilitiesBelow ? utilities.top : parent.bottom
-        anchors.topMargin: utilitiesAbove ? 0 : sharesNotifications ? -notifications.anchors.topMargin : 0
+        content: sidebarContent
+        trigger: sidebarTrigger
+
+        Sidebar.Wrapper {
+            id: sidebarContent
+
+            screenState: root.screenState
+            offsetScale: sidebar.offsetScale
+
+            anchors.fill: parent
+            visible: !sidebar.closed
+        }
+    }
+
+    // ╭────────────────────────────────────────────────────────╮
+    // │                        TRIGGERS                        │
+    // ╰────────────────────────────────────────────────────────╯
+
+    Drawers.Trigger {
+        id: sessionTrigger
+
+        panel: session
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            x: session.x
+            y: session.y
+            width: session.width
+            height: session.height
+        }
+    }
+
+    Drawers.Trigger {
+        id: dashboardTrigger
+
+        panel: dashboard
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            x: dashboard.x - (root.geometry.dashboard.onLeft ? Config.border.thickness * 4 + root.geometry.insetLeft(0) : 0)
+            y: dashboard.y - (root.geometry.dashboard.onTop ? Config.border.thickness * 4 + root.geometry.insetTop(0) : 0)
+            width: dashboard.width + (root.geometry.dashboard.onLeft ? Config.border.thickness * 4 + root.geometry.insetLeft(0) : 0) + (root.geometry.dashboard.onRight ? Config.border.thickness * 4 + root.geometry.insetRight(0) : 0)
+            height: dashboard.height + (root.geometry.dashboard.onTop ? Config.border.thickness * 4 + root.geometry.insetTop(0) : 0)
+        }
+    }
+
+    Drawers.Trigger {
+        id: osdTrigger
+
+        panel: osd
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            x: osd.x + (root.geometry.osd.onLeft ? osd.width - width : 0)
+            y: osd.y
+            width: osd.width * (1 - osd.offsetScale) + Config.border.thickness * 2 + Config.border.thickness * 2 * (1 - osd.offsetScale) + (root.geometry.osd.onRight && !(root.screenState.shouldSidebarVisible || root.screenState.shouldSessionVisible || root.screenState.shouldDashboardVisible) ? root.geometry.insetRight(0) : 0)
+            height: osd.height
+        }
+    }
+
+    Drawers.Trigger {
+        id: utilitiesTrigger
+
+        panel: utilities
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            x: utilities.x
+            y: utilities.y - (root.geometry.utilities.onTop ? Config.border.thickness * 2 + root.geometry.insetTop(0) : 0)
+            width: utilities.width
+            height: utilities.height + Config.border.thickness * 2 + (root.geometry.utilities.onTop ? root.geometry.insetTop(0) : 0) + (root.geometry.utilities.onBottom ? root.geometry.insetBottom(0) : 0)
+        }
+    }
+
+    Drawers.Trigger {
+        id: launcherTrigger
+
+        panel: launcher
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            x: launcher.x
+            y: launcher.y
+            width: launcher.width
+            height: launcher.height + Config.border.thickness * 2 + root.geometry.insetBottom(0)
+        }
+    }
+
+    Drawers.Trigger {
+        id: sidebarTrigger
+
+        panel: sidebar
+
+        anchors.fill: parent
+
+        Drawers.TriggerPart {
+            active: !sidebar.closed
+
+            x: sidebar.x
+            y: sidebar.y
+            width: sidebar.width
+            height: sidebar.height
+        }
+
+        Drawers.TriggerPart {
+            anchors.right: root.geometry.sidebar.onLeft ? parent.left : undefined
+            anchors.left: root.geometry.sidebar.onRight ? parent.right : undefined
+            anchors.leftMargin: sidebar.shouldBeActive && root.geometry.sidebar.onRight ? 0 : Config.border.thickness / 2
+            anchors.rightMargin: sidebar.shouldBeActive ? 0 : Config.border.thickness / 2
+            anchors.top: parent.top
+
+            width: Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0)
+            height: Config.sidebar.minHoverThreshold
+        }
+
+        Drawers.TriggerPart {
+            active: !sidebar.closed
+            subtract: root.geometry.sidebar.besideBar
+
+            anchors.right: root.geometry.sidebar.onLeft ? parent.left : undefined
+            anchors.left: root.geometry.sidebar.onRight ? parent.right : undefined
+            anchors.top: parent.top
+            anchors.topMargin: Config.sidebar.minHoverThreshold
+
+            width: Config.border.thickness * 2 + root.geometry.insetRight(0) + root.geometry.insetLeft(0)
+            height: parent.height - Config.sidebar.minHoverThreshold
+        }
     }
 }

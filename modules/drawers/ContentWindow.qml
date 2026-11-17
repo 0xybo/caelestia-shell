@@ -12,6 +12,9 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
+import qs.modules.drawers
+import qs.modules.utilities as Utilities
+import qs.daemons
 
 StyledWindow {
     id: root
@@ -39,7 +42,7 @@ StyledWindow {
     property real fsTransitionProg: hasFullscreen ? 1 : 0
     readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
     readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
-    readonly property real borderRounding: contentItem.Config.border.rounding * (1 - fsTransitionProg)
+    readonly property real borderRounding: (GameMode.enabled && GlobalConfig.utilities.gameMode.options["decoration:rounding"] === 0 ? 0 : contentItem.Config.border.rounding) * (1 - fsTransitionProg)
     readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
 
@@ -89,13 +92,9 @@ StyledWindow {
     EdgeGeometry {
         id: geometry
 
-        bar: bar
-        win: root
-        configPosition: root.contentItem.Config.bar.position
-        dashboardPosition: root.contentItem.Config.bar.dashboardPosition
-        configUtilitiesPosition: root.contentItem.Config.utilities.position
-        osdPosition: root.contentItem.Config.osd.position
-        sidebarPosition: root.contentItem.Config.sidebar.position
+        barWrapper: bar
+        contentWindow: root
+        screen: root.screen
     }
 
     Region {
@@ -107,9 +106,9 @@ StyledWindow {
         height: panels.notifications.height
 
         Region {
-            x: geometry.osdOnLeft ? 0 : root.width - width
-            y: panels.osdWrapper.y + root.borderThickness
-            width: panels.osdWrapper.width * (1 - panels.osd.offsetScale) + root.borderThickness
+            x: geometry.osd.onLeft ? 0 : root.width - width
+            y: panels.osd.y + root.borderThickness
+            width: panels.osd.width * (1 - panels.osd.offsetScale) + root.borderThickness
             height: panels.osd.height
         }
     }
@@ -207,11 +206,9 @@ StyledWindow {
         PanelBg {
             id: sessionBg
 
-            panel: panels.sessionWrapper
+            panel: panels.session
             offsetScale: panels.session.offsetScale
             deformAmount: 0.2
-            x: panels.sessionWrapper.x + panels.session.x + geometry.insetLeft(root.borderThickness)
-            implicitWidth: panels.session.width
         }
 
         PanelBg {
@@ -226,23 +223,20 @@ StyledWindow {
             // The 2px compensates SDF rounding on a free bottom edge. Stacked against the
             // utilities panel that edge is covered, and the 2px would poke through it and smin
             // into a bump on the inner border.
-            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (panels.sidebar.utilitiesBelow ? 0 : 2)
+            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (geometry.sidebar.aboveUtilities ? 0 : 2)
             // Where the two panels meet, both sides square off so the smin bridge is a clean
             // joint instead of a bulge past the border
-            bottomLeftRadius: geometry.sidebarOnLeft || panels.sidebar.utilitiesBelow ? 0 : cornerRadius
-            bottomRightRadius: !geometry.sidebarOnLeft || panels.sidebar.utilitiesBelow ? 0 : cornerRadius
-            topLeftRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebar.utilitiesAbove ? 0 : -1
+            bottomLeftRadius: geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
+            bottomRightRadius: !geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
+            topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            topRightRadius: geometry.sidebar.belowUtilities ? 0 : -1
         }
 
         PanelBg {
             id: osdBg
 
-            panel: panels.osdWrapper
-            offsetScale: panels.osd.offsetScale
+            panel: panels.osd
             deformAmount: 0.25
-            x: panels.osdWrapper.x + panels.osd.x + geometry.insetLeft(root.borderThickness)
-            implicitWidth: panels.osd.width
         }
 
         PanelBg {
@@ -258,10 +252,10 @@ StyledWindow {
             offsetScale: panels.utilities.offsetScale
             deformAmount: 0.15
             // Square off the edge facing the sidebar, see sidebarBg
-            topLeftRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            topRightRadius: panels.sidebar.utilitiesAbove ? 0 : -1
-            bottomLeftRadius: panels.sidebar.utilitiesBelow ? 0 : -1
-            bottomRightRadius: panels.sidebar.utilitiesBelow ? 0 : -1
+            topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            topRightRadius: geometry.sidebar.belowUtilities ? 0 : -1
+            bottomLeftRadius: geometry.sidebar.aboveUtilities ? 0 : -1
+            bottomRightRadius: geometry.sidebar.aboveUtilities ? 0 : -1
         }
 
         PanelBg {
@@ -269,15 +263,15 @@ StyledWindow {
 
             // Extra extent to prevent axis movement deformation partially detaching panel from bar
             property real extraExtent: panels.popouts.isDetached ? 0 : 0.2
-            readonly property real extraX: geometry.horizontal || geometry.barOnRight ? 0 : -panels.popouts.width * extraExtent
+            readonly property real extraX: geometry.bar.horizontal || geometry.bar.onRight ? 0 : -panels.popouts.width * extraExtent
 
             panel: panels.popoutsWrapper
             offsetScale: panels.popoutsWrapper.offsetScale
             deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
             x: panels.popoutsWrapper.x + panels.popouts.x + geometry.insetLeft(root.borderThickness) + extraX
-            y: panels.popoutsWrapper.y + panels.popouts.y + geometry.insetTop(root.borderThickness) - (geometry.barOnTop ? panels.popouts.height * extraExtent : 0)
-            implicitWidth: panels.popouts.width * (geometry.horizontal ? 1 : 1 + extraExtent)
-            implicitHeight: panels.popouts.height * (geometry.horizontal ? 1 + extraExtent : 1)
+            y: panels.popoutsWrapper.y + panels.popouts.y + geometry.insetTop(root.borderThickness) - (geometry.bar.onTop ? panels.popouts.height * extraExtent : 0)
+            implicitWidth: panels.popouts.width * (geometry.bar.horizontal ? 1 : 1 + extraExtent)
+            implicitHeight: panels.popouts.height * (geometry.bar.horizontal ? 1 + extraExtent : 1)
 
             Behavior on extraExtent {
                 Anim {}
@@ -306,7 +300,9 @@ StyledWindow {
             geometry: geometry
             borderThickness: root.borderThickness
 
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
+            Component.onCompleted: {
+                (utilities.content as Utilities.Wrapper).deformMatrix = utilsBg.rawDeformMatrix;
+            }
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
@@ -337,18 +333,17 @@ StyledWindow {
         BarWrapper {
             id: bar
 
-            x: geometry.barOnRight ? parent.width - width : 0
-            y: geometry.barOnBottom ? parent.height - height : 0
+            x: geometry.bar.onRight ? parent.width - width : 0
+            y: geometry.bar.onBottom ? parent.height - height : 0
 
-            width: geometry.horizontal ? parent.width : implicitWidth
-            height: geometry.horizontal ? implicitHeight : parent.height
+            width: geometry.bar.horizontal ? parent.width : implicitWidth
+            height: geometry.bar.horizontal ? implicitHeight : parent.height
 
             screen: root.screen
             screenState: root.screenState
             popouts: panels.popouts
-            position: geometry.position
-            powerTriggersUtilities: geometry.powerTriggersUtilities
-            activeWindowHover: geometry.activeWindowHover
+            position: geometry.bar.position
+            activeWindowHover: geometry.dashboard.activeWindowHover
 
             fullscreen: root.hasFullscreen
         }
@@ -400,5 +395,6 @@ StyledWindow {
         height: parked ? 0 : implicitHeight
         radius: Tokens.rounding.extraLarge
         deformScale: (deformAmount * Config.appearance.deformScale) / 10000
+        visible: panel.visible && !parked
     }
 }

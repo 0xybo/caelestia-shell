@@ -20,8 +20,7 @@ Item {
     required property real sourceVolume
     required property bool sourceMuted
     required property real brightness
-    required property bool besideSession
-    required property bool besideDashboard
+    required property bool showMicrophone
 
     readonly property real padding: Tokens.padding.medium
 
@@ -59,7 +58,7 @@ Item {
 
         // Microphone volume
         WrappedLoader {
-            shouldBeActive: Config.osd.enableMicrophone && !(root.besideSession && root.screenState.session) && !(root.besideDashboard && root.screenState.dashboard)
+            shouldBeActive: root.showMicrophone
 
             sourceComponent: CustomMouseArea {
                 function onWheel(event: WheelEvent) {

@@ -51,20 +51,10 @@ PageBase {
         }
 
         ToggleRow {
-            text: Tr.tr("Show on hover")
-            subtext: Tr.tr("Reveal the sidebar when the cursor reaches the screen edge")
+            text: Tr.trCtx("Show on hover", "toggle label")
+            subtext: Tr.tr("Reveal the sidebar when the mouse hovers over its edge")
             checked: Config.sidebar.showOnHover
             onToggled: GlobalConfig.sidebar.showOnHover = checked
-        }
-
-        StepperRow {
-            label: Tr.tr("Minimum hover threshold")
-            subtext: Tr.tr("Hover time (ms) before the sidebar opens")
-            value: Config.sidebar.minHoverThreshold
-            from: 0
-            to: 1000
-            stepSize: 25
-            onMoved: v => GlobalConfig.sidebar.minHoverThreshold = v
         }
 
         StepperRow {

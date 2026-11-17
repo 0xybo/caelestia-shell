@@ -142,26 +142,27 @@ QtObject {
         Component {
             // Panels
             StackPage {
-                pages: [
-                    { name: "main", component: main },
-                    { name: "dashboardPanel", component: dashboardPanel },
-                    { name: "taskbarPanel", component: taskbarPanel },
-                    { name: "launcherPanel", component: launcherPanel },
-                    { name: "sidebarPanel", component: sidebarPanel },
-                    { name: "utilitiesPanel", component: utilitiesPanel },
-                    { name: "osdPanel", component: osdPanel },
-                    { name: "sessionPanel", component: sessionPanel },
-                    { name: "barWorkspaces", component: barWorkspaces },
-                    { name: "barActiveWindow", component: barActiveWindow },
-                    { name: "barTray", component: barTray },
-                    { name: "barStatusIcons", component: barStatusIcons },
-                    { name: "barClock", component: barClock },
-                    { name: "workspaceIconRules", component: workspaceIconRules },
-                    { name: "workspaceIconRulesSpecial", component: workspaceIconRulesSpecial },
-                    { name: "workspaceIconRulesWindow", component: workspaceIconRulesWindow },
-                    { name: "trayIconSubs", component: trayIconSubs },
-                    { name: "launcherActions", component: launcherActions }
-                ]
+                Component {
+                    PanelsPage {}
+                }
+                Component {
+                    DashboardPanel {}
+                }
+                Component {
+                    TaskbarPanel {}
+                }
+                Component {
+                    LauncherPanel {}
+                }
+                Component {
+                    SidebarPanel {}
+                }
+                Component {
+                    UtilitiesPanel {}
+                }
+                Component {
+                    OsdPanel {}
+                }
 
                 Component { id: main; PanelsPage {} }
                 Component { id: dashboardPanel; DashboardPanel {} }
