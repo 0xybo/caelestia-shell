@@ -213,18 +213,12 @@ StyledWindow {
         PanelBg {
             id: sidebarBg
 
-            // Corners square off as the panel slides away, so it can pass under the border
             readonly property real cornerRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
 
             panel: panels.sidebar
             offsetScale: panels.sidebar.offsetScale
             deformAmount: 0.03
-            // The 2px compensates SDF rounding on a free bottom edge. Stacked against the
-            // utilities panel that edge is covered, and the 2px would poke through it and smin
-            // into a bump on the inner border.
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + (geometry.sidebar.aboveUtilities ? 0 : 2)
-            // Where the two panels meet, both sides square off so the smin bridge is a clean
-            // joint instead of a bulge past the border
             bottomLeftRadius: geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
             bottomRightRadius: !geometry.sidebar.onLeft || geometry.sidebar.aboveUtilities ? 0 : cornerRadius
             topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
@@ -250,7 +244,6 @@ StyledWindow {
             panel: panels.utilities
             offsetScale: panels.utilities.offsetScale
             deformAmount: 0.15
-            // Square off the edge facing the sidebar, see sidebarBg
             topLeftRadius: geometry.sidebar.belowUtilities ? 0 : -1
             topRightRadius: geometry.sidebar.belowUtilities ? 0 : -1
             bottomLeftRadius: geometry.sidebar.aboveUtilities ? 0 : -1
@@ -260,7 +253,6 @@ StyledWindow {
         PanelBg {
             id: popoutBg
 
-            // Extra extent to prevent axis movement deformation partially detaching panel from bar
             property real extraExtent: panels.popouts.isDetached ? 0 : 0.2
             readonly property real extraX: geometry.bar.horizontal || geometry.bar.onRight ? 0 : -panels.popouts.width * extraExtent
 
@@ -374,15 +366,8 @@ StyledWindow {
 
     component PanelBg: BlobRect {
         required property Item panel
-        // Mirrors the panel's own offsetScale: 0 while on screen, 1 once fully parked off it.
-        // Panels that do not slide (notifications) leave this at 0, since their own size
-        // already collapses when closed.
         property real offsetScale: 0
         property real deformAmount: 0.15
-        // A parked panel is only parked 5px off screen, well inside the border's smoothing
-        // band, so the border reads it as a panel intruding and dissolves there. Collapsing to
-        // zero size drops this rect from the group entirely, which is what the shader already
-        // does for zero-size rects.
         readonly property bool parked: offsetScale >= 1
 
         group: blobGroup

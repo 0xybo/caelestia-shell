@@ -363,7 +363,7 @@ Item {
             x: sidebar.x
             y: sidebar.y
             width: sidebar.width
-            height: sidebar.height
+            height: sidebar.height + (root.geometry.sidebar.aboveUtilities ? Config.border.thickness : 0)
         }
 
         Drawers.TriggerPart {

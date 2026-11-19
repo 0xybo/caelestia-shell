@@ -61,8 +61,8 @@ QtObject {
         readonly property bool besideSession: onRight
         readonly property bool besideOSD: (onLeft && root.osd.onLeft) || (onRight && root.osd.onRight)
         readonly property bool alongUtilities: (onLeft && root.utilities.onLeft) || (onRight && root.utilities.onRight)
-        readonly property bool aboveUtilities: (onLeft && root.utilities.onBottom && root.utilities.onLeft) || (onRight && root.utilities.onBottom && root.utilities.onRight) && root.config.utilities.alsoShowSidebar
-        readonly property bool belowUtilities: (onLeft && root.utilities.onTop && root.utilities.onLeft) || (onRight && root.utilities.onTop && root.utilities.onRight) && root.config.utilities.alsoShowSidebar
+        readonly property bool aboveUtilities: (onLeft && root.utilities.onBottom && root.utilities.onLeft) || (onRight && root.utilities.onBottom && root.utilities.onRight)
+        readonly property bool belowUtilities: (onLeft && root.utilities.onTop && root.utilities.onLeft) || (onRight && root.utilities.onTop && root.utilities.onRight)
     }
 
     readonly property var session: QtObject {

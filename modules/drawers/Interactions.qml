@@ -44,7 +44,7 @@ CustomMouseArea {
     function handleUtilities(x: real, y: real): void {
         const inUtilitiesArea = inPanelArea(panels.utilities, x, y);
         nextState.utilitiesTemporary = inUtilitiesArea;
-        if (Config.utilities.alsoShowSidebar && inUtilitiesArea)
+        if (inUtilitiesArea && root.screenState.shouldSidebarVisible && root.geometry.sidebar.alongUtilities)
             nextState.sidebarTemporary = true;
     }
 
@@ -178,10 +178,12 @@ CustomMouseArea {
                     continue;
                 if ( //
                 /*    */Config.utilities.alsoShowSidebar && //
-                /*    */panel.name === "sidebar" && otherPanel.name === "utilities" || //
-                /*    */panel.name === "utilities" && otherPanel.name === "sidebar" || //
                 /*    */panel.name === "session" && (otherPanel.name === "sidebar" || otherPanel.name === "utilities") || //
                 /*    */otherPanel.name === "session" && (panel.name === "sidebar" || panel.name === "utilities")) //
+                    continue;
+                if ( //
+                /*    */panel.name === "sidebar" && otherPanel.name === "utilities" || //
+                /*    */panel.name === "utilities" && otherPanel.name === "sidebar")//
                     continue;
 
                 const {
