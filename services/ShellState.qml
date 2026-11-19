@@ -9,7 +9,7 @@ import qs.modules.drawers
 
 Singleton {
     property ShellRoot shellRoot
-    property bool debug: true
+    property bool debug: false
 
     function anySidebarOpen(): bool {
         return states.instances.some(s => s.sidebar);
