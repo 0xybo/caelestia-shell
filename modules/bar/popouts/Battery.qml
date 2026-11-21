@@ -144,15 +144,15 @@ Column {
             const p = PowerProfiles.profile;
             if (p === PowerProfile.PowerSaver)
                 return saver.icon;
-            if (p === PowerProfile.Performance)
+            if (p === PowerProfile.Performance && PowerProfiles.hasPerformanceProfile)
                 return perf.icon;
             return balance.icon;
         }
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.largeIncreased * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + (PowerProfiles.hasPerformanceProfile ? perf.implicitHeight + Tokens.spacing.largeIncreased * 2 : 0) + Tokens.padding.medium * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, PowerProfiles.hasPerformanceProfile ? perf.implicitHeight : 0) + Tokens.padding.small
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
@@ -207,7 +207,10 @@ Column {
         Profile {
             id: balance
 
-            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: PowerProfiles.hasPerformanceProfile ? parent.horizontalCenter : undefined
+            anchors.right: PowerProfiles.hasPerformanceProfile ? undefined : parent.right
+            anchors.rightMargin: PowerProfiles.hasPerformanceProfile ? 0 : Tokens.padding.extraSmall
 
             profile: PowerProfile.Balanced
             icon: "balance"
@@ -215,6 +218,8 @@ Column {
 
         Profile {
             id: perf
+
+            visible: PowerProfiles.hasPerformanceProfile
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
