@@ -29,6 +29,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             lock: root.lock
+            visible: Config.lock.showMedia
         }
     }
 

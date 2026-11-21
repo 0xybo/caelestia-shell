@@ -82,14 +82,35 @@ PageBase {
             }
         }
 
-        StyledText {
+        // Local wallpapers
+        SectionHeader {
             Layout.topMargin: Tokens.spacing.large
             text: Tr.tr("Local wallpapers")
-            font: Tokens.font.title.small
+        }
+
+        FilePickerRow {
+            first: true
+            label: Tr.tr("Wallpaper folder")
+            subtext: Tr.tr("Folder scanned for local wallpapers")
+            value: GlobalConfig.paths.wallpaperDir
+            selectFolder: true
+            onEditingFinished: v => GlobalConfig.paths.wallpaperDir = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Wallpapers per row")
+            subtext: Tr.tr("Number of wallpaper thumbnails per row")
+            value: Config.nexus.wallpapersPerRow
+            from: 1
+            to: 10
+            stepSize: 1
+            onMoved: v => GlobalConfig.nexus.wallpapersPerRow = v
         }
 
         GridLayout {
             Layout.fillWidth: true
+            Layout.topMargin: Tokens.spacing.medium
             visible: localWalls.count > 0
 
             columns: Config.nexus.wallpapersPerRow
@@ -141,7 +162,7 @@ PageBase {
                     onClicked: {
                         if (modelData.parentDir !== Paths.wallsdir) {
                             root.nState.selectedWallpaperCategory = Wallpapers.getCategoryFor(modelData);
-                            root.nState.openSubPage(2); // Category page
+                            root.nState.openSubPage("wallpaperCategoryPage"); // Category page
                         } else {
                             Wallpapers.setWallpaper(modelData.path);
                             root.nState.closeSubPage();

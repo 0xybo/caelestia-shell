@@ -14,10 +14,14 @@ ListView {
 
     property alias values: valuesModel.values
     property bool first
+    property bool last
+    property bool showToggle: true
+    property bool editable: false
 
     signal itemMoved(from: int, to: int)
     signal itemRemoved(index: int)
     signal itemToggled(index: int, checked: bool)
+    signal itemEditRequested(index: int)
 
     function labelFor(item: var): string {
         return item.label;
@@ -100,7 +104,9 @@ ListView {
         property real lastMoveY
 
         property real topRadius: root?.first && DelegateModel.itemsIndex === 0 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+        property real bottomRadius: root?.last && DelegateModel.itemsIndex === visualModel.items.count - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
         property real radiusLerpProg
+        readonly property real dimAmount: root?.showToggle ? (enabledSwitch.checked ? 1 : 0.5) : 1
 
         function lerpRadius(a: real, b: real): real {
             return a + (b - a) * radiusLerpProg;
@@ -137,6 +143,12 @@ ListView {
         }
 
         Behavior on topRadius {
+            Anim {
+                type: Anim.DefaultEffects
+            }
+        }
+
+        Behavior on bottomRadius {
             Anim {
                 type: Anim.DefaultEffects
             }
@@ -238,6 +250,8 @@ ListView {
                 radius: itemBg.radius
                 topLeftRadius: itemBg.topLeftRadius
                 topRightRadius: itemBg.topRightRadius
+                bottomLeftRadius: itemBg.bottomLeftRadius
+                bottomRightRadius: itemBg.bottomRightRadius
                 level: 3
                 opacity: 0
             }
@@ -250,6 +264,8 @@ ListView {
                 radius: item.lerpRadius(Tokens.rounding.extraSmall, Tokens.rounding.large)
                 topLeftRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
                 topRightRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
+                bottomLeftRadius: item.lerpRadius(item.bottomRadius, Tokens.rounding.large)
+                bottomRightRadius: item.lerpRadius(item.bottomRadius, Tokens.rounding.large)
             }
 
             MouseArea {
@@ -265,6 +281,8 @@ ListView {
                     radius: itemBg.radius
                     topLeftRadius: itemBg.topLeftRadius
                     topRightRadius: itemBg.topRightRadius
+                    bottomLeftRadius: itemBg.bottomLeftRadius
+                    bottomRightRadius: itemBg.bottomRightRadius
                     color: Colours.palette.m3onSurface
                     opacity: parent.containsMouse && !item.held ? 0.08 : 0
 
@@ -290,7 +308,7 @@ ListView {
                     id: dragIcon
 
                     text: "drag_indicator"
-                    color: Qt.alpha(Colours.palette.m3onSurfaceVariant, enabledSwitch.checked ? 1 : 0.5)
+                    color: Qt.alpha(Colours.palette.m3onSurfaceVariant, item.dimAmount)
                     fontStyle: Tokens.font.icon.medium
                 }
 
@@ -299,16 +317,29 @@ ListView {
 
                     Layout.fillWidth: true
                     text: root.labelFor(item.modelData)
-                    color: Qt.alpha(Colours.palette.m3onSurface, enabledSwitch.checked ? 1 : 0.5)
+                    color: Qt.alpha(Colours.palette.m3onSurface, item.dimAmount)
                     elide: Text.ElideRight
                 }
 
                 StyledSwitch {
                     id: enabledSwitch
 
+                    visible: root.showToggle
                     checked: root.toggledFor(item.modelData)
                     font: Tokens.font.icon.medium
                     onToggled: root.itemToggled(item.DelegateModel.itemsIndex, checked)
+                }
+
+                IconButton {
+                    visible: root.editable
+                    type: IconButton.Text
+                    isRound: true
+                    icon: "edit"
+                    inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.icon.medium
+                    label.fill: 0
+
+                    onClicked: root.itemEditRequested(item.DelegateModel.itemsIndex)
                 }
 
                 IconButton {

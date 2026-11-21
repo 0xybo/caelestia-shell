@@ -19,6 +19,7 @@ class LockConfig : public settings::ObjectNode {
     CONFIG_GLOBAL_PROPERTY(int, maxFaceAuthTries, 3)
     CONFIG_GLOBAL_PROPERTY(bool, triggerFaceAuthOnWake, true)
     CONFIG_PROPERTY(bool, hideNotifs, false)
+    CONFIG_PROPERTY(bool, showMedia, true)
     CONFIG_GLOBAL_PROPERTY(bool, enableSessionControls, false)
 };
 

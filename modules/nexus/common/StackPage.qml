@@ -8,17 +8,17 @@ StackView {
     id: root
 
     required property NexusState nState
-    default property list<Component> pages
+    required property var pages
     readonly property int animMovement: Tokens.padding.extraExtraLarge * 2
 
-    function openSubPage(idx: int, immediate: bool): void {
-        const page = pages[idx];
+    function openSubPage(id: string, immediate: bool): void {
+        const page = pages.find(p => p.name === id)?.component;
         if (page) {
             push(page, {
                 nState
             }, immediate ? StackView.Immediate : StackView.PushTransition);
         } else {
-            console.warn(logCat, "Attempted to open invalid sub-page index", idx);
+            console.warn(logCat, "Attempted to open invalid sub-page with id", id);
             nState.closeSubPage();
         }
     }
@@ -26,8 +26,8 @@ StackView {
     clip: busy
 
     Component.onCompleted: {
-        openSubPage(0, true);
-        for (const page of nState.subPageIdxStack)
+        openSubPage("main", true);
+        for (const page of nState.subPageIdStack)
             openSubPage(page, true);
     }
 
@@ -105,12 +105,12 @@ StackView {
     }
 
     Connections {
-        function onSubPageOpened(idx: int): void {
-            root.openSubPage(idx, false);
+        function onSubPageOpened(id: string): void {
+            root.openSubPage(id, false);
         }
 
         function onSubPageClosed(): void {
-            if (root.depth < root.nState.subPageIdxStack.length) {
+            if (root.depth < root.nState.subPageIdStack.length) {
                 console.log(logCat, "Attempted to close page while depth < stack depth. Ignoring.");
                 return;
             }

@@ -160,6 +160,38 @@ PageBase {
             onToggled: GlobalConfig.dashboard.performance.showNetwork = checked
         }
 
+        // Dashboard
+        SectionHeader {
+            text: Tr.tr("Dashboard")
+        }
+
+        ToggleRow {
+            first: true
+            text: Tr.tr("Show media GIF")
+            checked: Config.dashboard.showMediaGif
+            onToggled: GlobalConfig.dashboard.showMediaGif = checked
+        }
+
+        FilePickerRow {
+            label: Tr.tr("Media GIF")
+            subtext: Tr.tr("GIF shown for media playback")
+            value: Config.paths.mediaGif
+            filterLabel: Tr.tr("Image files")
+            filters: Images.validImageExtensions
+            onEditingFinished: v => GlobalConfig.paths.mediaGif = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Media GIF speed adjustment")
+            subtext: Tr.tr("Compensates for GIFs of varying playback speeds")
+            value: GlobalConfig.general.mediaGifSpeedAdjustment
+            from: 0
+            to: 1000
+            stepSize: 10
+            onMoved: v => GlobalConfig.general.mediaGifSpeedAdjustment = v
+        }
+
         // Behaviour
         SectionHeader {
             text: Tr.tr("Behaviour")

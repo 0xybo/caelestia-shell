@@ -17,7 +17,9 @@ Item {
     required property string icon
     required property string label
     required property string header
+    required property bool first
     required property Component content
+    property var contentContext
     required property string acceptLabel
     property bool acceptAllowed: true
     property bool separateContent
@@ -79,6 +81,8 @@ Item {
                 openButton.opacity: 0
                 dialogContent.opacity: 1
                 dialogBg.radius: root.Tokens.rounding.extraLargeIncreased
+                dialogBg.topLeftRadius: root.Tokens.rounding.extraLargeIncreased
+                dialogBg.topRightRadius: root.Tokens.rounding.extraLargeIncreased
                 dialogBg.bottomLeftRadius: root.Tokens.rounding.extraLargeIncreased
                 dialogBg.bottomRightRadius: root.Tokens.rounding.extraLargeIncreased
                 dialogWrapper.x: (root.rootParent.width - root.openWidth) / 2
@@ -120,6 +124,8 @@ Item {
 
             anchors.fill: parent
             radius: dialogBg.radius
+            topLeftRadius: dialogBg.topLeftRadius
+            topRightRadius: dialogBg.topRightRadius
             bottomLeftRadius: dialogBg.bottomLeftRadius
             bottomRightRadius: dialogBg.bottomRightRadius
             level: 4
@@ -138,6 +144,8 @@ Item {
             radius: Tokens.rounding.extraSmall
             bottomLeftRadius: Tokens.rounding.extraLarge
             bottomRightRadius: Tokens.rounding.extraLarge
+            topLeftRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+            topRightRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
         }
 
         RowButton {
@@ -153,6 +161,7 @@ Item {
             color: "transparent"
 
             last: true
+            first: root.first
             icon: root.icon
             text: root.label
             onClicked: root.open = true
@@ -201,6 +210,11 @@ Item {
                         Layout.leftMargin: root.horizontalContentMargin
                         Layout.rightMargin: root.horizontalContentMargin
                         sourceComponent: root.content
+
+                        onLoaded: {
+                            if (root.contentContext && "editor" in item)
+                                item.editor = root.contentContext;
+                        }
                     }
 
                     Loader {

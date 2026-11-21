@@ -88,7 +88,7 @@ PageBase {
             // TRANSLATORS: %1 = number of networks found
             text: Tr.tr("Show all networks (%1)").arg(Nmcli.networks.length)
             trailingIcon: "chevron_right"
-            onClicked: root.nState.openSubPage(5) // All networks sub-page
+            onClicked: root.nState.openSubPage("allNetworksPage") // All networks sub-page
 
             Behavior on Layout.preferredHeight {
                 Anim {
@@ -102,7 +102,7 @@ PageBase {
             icon: "bookmark"
             text: Tr.tr("Saved networks")
             trailingIcon: "chevron_right"
-            onClicked: root.nState.openSubPage(6) // Saved networks sub-page
+            onClicked: root.nState.openSubPage("savedNetworksPage") // Saved networks sub-page
         }
 
         RowButton {
@@ -110,7 +110,7 @@ PageBase {
             icon: "add"
             text: Tr.tr("Add network")
             disabled: !Nmcli.wifiEnabled
-            onClicked: root.nState.openSubPage(2) // Add network sub-page
+            onClicked: root.nState.openSubPage("addNetworkPage") // Add network sub-page
         }
 
         // ---- VPN -------------------------------------------------------------
@@ -333,7 +333,7 @@ PageBase {
                         icon: "edit"
                         onClicked: {
                             root.nState.editingVpnIndex = provider.index;
-                            root.nState.openSubPage(4); // Add/edit provider sub-page
+                            root.nState.openSubPage("addVpnPage"); // Add/edit provider sub-page
                         }
                     }
                 }
@@ -342,13 +342,39 @@ PageBase {
 
         // Add provider
         RowButton {
-            last: true
             icon: "add"
             text: Tr.tr("Add provider")
             onClicked: {
                 root.nState.editingVpnIndex = -1;
-                root.nState.openSubPage(4); // Add/edit provider sub-page
+                root.nState.openSubPage("addVpnPage"); // Add/edit provider sub-page
             }
+        }
+
+        // Settings
+        SectionHeader {
+            text: Tr.tr("Settings")
+        }
+
+        StepperRow {
+            first: true
+            label: Tr.tr("Max networks shown")
+            subtext: Tr.tr("Networks listed before collapsing into \"show all\"")
+            value: GlobalConfig.nexus.maxNetworksShown
+            from: 1
+            to: 20
+            stepSize: 1
+            onMoved: v => GlobalConfig.nexus.maxNetworksShown = v
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.tr("Wi-Fi rescan")
+            subtext: Tr.tr("How often available networks are rescanned (seconds)")
+            value: GlobalConfig.nexus.networkRescanInterval / 1000
+            from: 5
+            to: 120
+            stepSize: 5
+            onMoved: v => GlobalConfig.nexus.networkRescanInterval = Math.round(v * 1000)
         }
     }
 }

@@ -6,6 +6,7 @@ import Quickshell
 import Caelestia.I18n
 import qs.components
 import qs.services
+import qs.utils
 
 LazyLoader {
     id: loader
@@ -14,6 +15,7 @@ LazyLoader {
     property string filterLabel: Tr.tr("All files")
     property list<string> filters: ["*"]
     property string title: Tr.tr("Select a file")
+    property bool selectFolder: false
 
     signal accepted(path: string)
     signal rejected
@@ -35,8 +37,11 @@ LazyLoader {
         property list<string> cwd: loader.cwd
         property string filterLabel: loader.filterLabel
         property list<string> filters: loader.filters
+        property bool selectFolder: loader.selectFolder
 
         readonly property bool selectionValid: {
+            if (selectFolder)
+                return true;
             const file = folderContents.currentItem?.modelData;
             return (file && !file.isDir && (filters.includes("*") || filters.some(filter => filter.toLowerCase() === file.suffix.toLowerCase()))) ?? false;
         }
@@ -47,6 +52,22 @@ LazyLoader {
 
         function rejected(): void {
             loader.rejected();
+        }
+
+        function currentFolderPath(): string {
+            if (cwd[0] === "Home")
+                return Paths.home + `/${cwd.slice(1).join("/")}`;
+            return cwd.join("/");
+        }
+
+        function selectedPath(): string {
+            const file = folderContents.currentItem?.modelData;
+            if (selectFolder) {
+                if (file?.isDir)
+                    return file.path;
+                return currentFolderPath();
+            }
+            return file?.path ?? "";
         }
 
         implicitWidth: 1000

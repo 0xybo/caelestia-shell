@@ -95,6 +95,8 @@ GridLayout {
             popouts.currentName = id.toLowerCase();
             popouts.currentCenter = axisCenterOf(ch.item as Item);
             popouts.hasCurrent = true;
+        } else if (id === "power" && horizontal) {
+            popouts.hasCurrent = false;
         }
     }
 

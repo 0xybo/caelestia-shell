@@ -6,10 +6,11 @@ import qs.services
 
 StyledText {
     property bool first
+    property bool last
 
     Layout.fillWidth: true
     Layout.topMargin: first ? 0 : Tokens.spacing.largeIncreased - ((parent as ColumnLayout).spacing ?? 0)
-    Layout.bottomMargin: Tokens.spacing.extraSmall
+    Layout.bottomMargin: last ? Tokens.spacing.extraSmall : 0
     Layout.leftMargin: Tokens.padding.small
 
     color: Colours.palette.m3onSurfaceVariant

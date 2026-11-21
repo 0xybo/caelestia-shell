@@ -192,6 +192,7 @@ StyledWindow {
             panel: panels.dashboard
             offsetScale: panels.dashboard.offsetScale
             deformAmount: 0.1
+            x: panels.dashboard.x + geometry.insetLeft(root.borderThickness)
         }
 
         PanelBg {
