@@ -25,12 +25,15 @@ Scope {
     CustomShortcut {
         // qmllint enable unresolved-type
         name: "showall"
-        description: "Toggle launcher, dashboard and osd"
+        description: "Toggle launcher, dashboard, osd, sidebar and utilities"
         onPressed: {
             if (root.hasFullscreen)
                 return;
             const v = ShellState.forActive();
-            v.launcher = v.dashboard = v.osd = v.utilities = !(v.launcher || v.dashboard || v.osd || v.utilities);
+            v.launcher = v.dashboard = v.osd = v.sidebar = v.utilities = !(v.launcher || v.dashboard || v.osd || v.sidebar || v.utilities);
+
+            const interactions = ShellState.interactionsForActive();
+            interactions?.handleOverlap();
         }
     }
 
@@ -44,6 +47,9 @@ Scope {
                 return;
             const screenState = ShellState.forActive();
             screenState.dashboard = !screenState.dashboard;
+
+            const interactions = ShellState.interactionsForActive();
+            interactions?.handleOverlap();
         }
     }
 
@@ -57,6 +63,9 @@ Scope {
                 return;
             const screenState = ShellState.forActive();
             screenState.session = !screenState.session;
+
+            const interactions = ShellState.interactionsForActive();
+            interactions?.handleOverlap();
         }
     }
 
@@ -93,6 +102,9 @@ Scope {
                 return;
             const screenState = ShellState.forActive();
             screenState.sidebar = !screenState.sidebar;
+
+            const interactions = ShellState.interactionsForActive();
+            interactions?.handleOverlap();
         }
     }
 
@@ -106,6 +118,9 @@ Scope {
                 return;
             const screenState = ShellState.forActive();
             screenState.utilities = !screenState.utilities;
+
+            const interactions = ShellState.interactionsForActive();
+            interactions?.handleOverlap();
         }
     }
 
@@ -116,6 +131,9 @@ Scope {
                     return;
                 const screenState = ShellState.forActive();
                 screenState[drawer] = !screenState[drawer];
+
+                const interactions = ShellState.interactionsForActive();
+                interactions?.handleOverlap();
             } else {
                 console.warn(lc, `Drawer "${drawer}" does not exist`);
             }
@@ -134,6 +152,26 @@ Scope {
         }
 
         target: "drawers"
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            ShellState.debug = !ShellState.debug;
+        }
+
+        function enable(): void {
+            ShellState.debug = true;
+        }
+
+        function disable(): void {
+            ShellState.debug = false;
+        }
+
+        function status(): string {
+            return ShellState.debug ? "1" : "0";
+        }
+
+        target: "debug"
     }
 
     IpcHandler {

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQml
 import Quickshell
 import Caelestia.Config
 import qs.components
@@ -15,49 +16,210 @@ CustomMouseArea {
     required property ScreenState screenState
     required property Panels panels
     required property Bar.BarWrapper bar
+    required property EdgeGeometry geometry
     required property real borderThickness
     required property bool fullscreen
 
     property point dragStart
-    property bool dashboardShortcutActive
-    property bool osdShortcutActive
-    property bool utilitiesShortcutActive
-    property bool sidebarShortcutActive
 
-    function withinPanelHeight(panel: Item, x: real, y: real): bool {
-        const panelY = root.borderThickness + panel.y;
-        return y >= panelY - Config.border.rounding && y <= panelY + panel.height + Config.border.rounding;
+    function inPanelArea(panel: var, x: real, y: real): bool {
+        if (!panel || !panel.trigger)
+            return false;
+
+        return panel.trigger.containsMouse(x, y);
     }
 
-    function withinPanelWidth(panel: Item, x: real, y: real): bool {
-        const panelX = bar.implicitWidth + panel.x;
-        return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding;
+    function canDismissPopouts(): bool {
+        return !popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1;
     }
 
-    function inLeftPanel(panel: Item, x: real, y: real): bool {
-        return x < bar.implicitWidth + panel.x + panel.width && withinPanelHeight(panel, x, y);
+    function handleOsd(x: real, y: real): void {
+        nextState.osdTemporary = inPanelArea(panels.osd, x, y);
+
+        // Keep the sidebar open
+        if (root.geometry.osd.besideSidebar && nextState.osdTemporary && root.screenState.shouldSidebarVisible)
+            nextState.sidebarTemporary = true;
     }
 
-    function inRightPanel(panel: Item, x: real, y: real): bool {
-        return x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
+    function handleUtilities(x: real, y: real): void {
+        const inUtilitiesArea = inPanelArea(panels.utilities, x, y);
+        nextState.utilitiesTemporary = inUtilitiesArea;
+        if (inUtilitiesArea && root.screenState.shouldSidebarVisible && root.geometry.sidebar.alongUtilities)
+            nextState.sidebarTemporary = true;
     }
 
-    function inTopPanel(panel: Item, x: real, y: real): bool {
-        const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y < Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
+    function handleSidebar(x: real, y: real): void {
+        nextState.sidebarTemporary = inPanelArea(panels.sidebar, x, y);
     }
 
-    function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
-        const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y > height - Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) - (isCorner ? Config.border.rounding : 0) && withinPanelWidth(panel, x, y);
-    }
+    function handleDashboard(x: real, y: real, dragX: real, dragY: real): void {
+        if (inPanelArea(panels.dashboard, x, y))
+            nextState.dashboardTemporary = true;
+        else {
+            const inOsdArea = (root.geometry.dashboard.onLeft && root.geometry.osd.onLeft || root.geometry.dashboard.onRight) && (nextState.osd || nextState.osdTemporary);
 
-    function onWheel(event: WheelEvent): void {
-        if (fullscreen)
-            return;
-        if (event.x < bar.implicitWidth) {
-            bar.handleWheel(event.y, event.angleDelta);
+            if (!inOsdArea)
+                nextState.dashboardTemporary = false;
         }
+    }
+
+    function handleLauncher(x: real, y: real, dragY: real): void {
+        nextState.launcherTemporary = inPanelArea(panels.launcher, x, y);
+    }
+
+    function handleSession(x: real, y: real): void {
+        if (!root.screenState.shouldSessionVisible)
+            return;
+
+        // Keep the sidebar open
+        if (root.geometry.session.besideSidebar && root.screenState.shouldSidebarVisible && inPanelArea(panels.session, x, y))
+            nextState.sidebarTemporary = true;
+    }
+
+    function handlePopouts(x: real, y: real): void {
+        if (geometry.barContains(x, y))
+            bar.checkPopout(geometry.axisPos(x, y));
+    }
+
+    function getActivePanels(state: var): list<var> {
+        const activePanels = [];
+
+        if (panels.popouts.hasCurrent)
+            activePanels.push({
+                name: "popouts",
+                item: panels.popoutsWrapper,
+                close: () => {
+                    panels.popouts.hasCurrent = false;
+                    bar.closeTray();
+                }
+            });
+        if (state.osd || state.osdTemporary)
+            activePanels.push({
+                name: "osd",
+                item: panels.osd,
+                close: () => state.osd = state.osdTemporary = false
+            });
+        if (state.session || state.sessionTemporary)
+            activePanels.push({
+                name: "session",
+                item: panels.session,
+                close: () => state.session = state.sessionTemporary = false
+            });
+        if (state.dashboard || state.dashboardTemporary)
+            activePanels.push({
+                name: "dashboard",
+                item: panels.dashboard,
+                close: () => state.dashboard = state.dashboardTemporary = false
+            });
+        if (state.utilities || state.utilitiesTemporary)
+            activePanels.push({
+                name: "utilities",
+                item: panels.utilities,
+                close: () => state.utilities = state.utilitiesTemporary = false
+            });
+        if (state.sidebar || state.sidebarTemporary)
+            activePanels.push({
+                name: "sidebar",
+                item: panels.sidebar,
+                close: () => state.sidebar = state.sidebarTemporary = false
+            });
+        if (state.launcher || state.launcherTemporary)
+            activePanels.push({
+                name: "launcher",
+                item: panels.launcher,
+                close: () => state.launcher = state.launcherTemporary = false
+            });
+
+        return activePanels;
+    }
+
+    function fakeOpenedPanel(rect) {
+        let {
+            left,
+            top,
+            right,
+            bottom
+        } = rect;
+
+        if (left < 0) {
+            right += -left - (Config.bar.position === BarPosition.Left && Tokens.sizes.bar.innerWidth);
+            left = 0;
+        } else if (right > Window.window.width) {
+            left -= right - Window.window.width + (Config.bar.position === BarPosition.Right && Tokens.sizes.bar.innerWidth);
+            right = Window.window.width;
+        }
+
+        if (top < 0) {
+            bottom += -top - (Config.bar.position === BarPosition.Top && Tokens.sizes.bar.innerWidth);
+            top = 0;
+        } else if (bottom > Window.window.height) {
+            top -= bottom - Window.window.height + (Config.bar.position === BarPosition.Bottom && Tokens.sizes.bar.innerWidth);
+            bottom = Window.window.height;
+        }
+
+        return Qt.rect(left, top, right - left, bottom - top);
+    }
+
+    function handleOverlap(state: var): void {
+        if (!state)
+            state = screenState;
+        const activePanels = getActivePanels(state);
+
+        for (let i = 0; i < activePanels.length; i++) {
+            const panel = activePanels[i];
+            for (let j = 0; j < activePanels.length; j++) {
+                const otherPanel = activePanels[j];
+
+                if (panel === otherPanel)
+                    continue;
+                if (//
+                /*   */panel.name === "osd" && (otherPanel.name === "dashboard" || otherPanel.name === "sidebar" || otherPanel.name === "session") || //
+                /*   */otherPanel.name === "osd" && (panel.name === "dashboard" || panel.name === "sidebar" || panel.name === "session")) //
+                    continue;
+                if ( //
+                /*    */Config.utilities.alsoShowSidebar && //
+                /*    */panel.name === "session" && (otherPanel.name === "sidebar" || otherPanel.name === "utilities") || //
+                /*    */otherPanel.name === "session" && (panel.name === "sidebar" || panel.name === "utilities")) //
+                    continue;
+                if ( //
+                /*    */panel.name === "sidebar" && otherPanel.name === "utilities" || //
+                /*    */panel.name === "utilities" && otherPanel.name === "sidebar")//
+                    continue;
+
+                const {
+                    left: panelLeft,
+                    top: panelTop,
+                    right: panelRight,
+                    bottom: panelBottom
+                } = fakeOpenedPanel(panel.item.mapToItem(Window.window.contentItem, 0, 0, panel.item.width, panel.item.height));
+                const {
+                    left: otherLeft,
+                    top: otherTop,
+                    right: otherRight,
+                    bottom: otherBottom
+                } = fakeOpenedPanel(otherPanel.item.mapToItem(Window.window.contentItem, 0, 0, otherPanel.item.width, otherPanel.item.height));
+
+                if (!(panelRight <= otherLeft || panelLeft >= otherRight || panelBottom <= otherTop || panelTop >= otherBottom)) {
+                    otherPanel.close();
+
+                    console.log(`Closed ${otherPanel.name} because it overlapped with ${panel.name}`);
+                    // console.log(`panel [${panel.name}]: left=${panelLeft}, top=${panelTop}, right=${panelRight}, bottom=${panelBottom}, height=${panel.item.height}, width=${panel.item.width}`);
+                    // console.log(`otherPanel [${otherPanel.name}]: left=${otherLeft}, top=${otherTop}, right=${otherRight}, bottom=${otherBottom}, height=${otherPanel.item.height}, width=${otherPanel.item.width}`);
+
+                    activePanels.splice(j, 1); // Remove the closed panel from the list
+                    j--; // Adjust index since we removed an item
+                }
+            }
+        }
+    }
+
+    function closeAllTemporaryPanels(): void {
+        screenState.osdTemporary = false;
+        screenState.dashboardTemporary = false;
+        screenState.utilitiesTemporary = false;
+        screenState.sidebarTemporary = false;
+        screenState.sessionTemporary = false;
+        screenState.launcherTemporary = false;
     }
 
     anchors.fill: parent
@@ -66,265 +228,75 @@ CustomMouseArea {
 
     onPressed: event => dragStart = Qt.point(event.x, event.y)
     onContainsMouseChanged: {
-        if (!containsMouse) {
-            // Only hide if not activated by shortcut
-            if (!osdShortcutActive) {
-                screenState.osd = false;
-                root.panels.osd.hovered = false;
-            }
+        if (containsMouse)
+            return;
 
-            if (!dashboardShortcutActive)
-                screenState.dashboard = false;
+        closeAllTemporaryPanels();
 
-            if (!utilitiesShortcutActive)
-                screenState.utilities = false;
-
-            if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
-                popouts.hasCurrent = false;
-                bar.closeTray();
-            }
-
-            if (Config.bar.showOnHover)
-                bar.isHovered = false;
-
-            if (Config.sidebar.showOnHover && !sidebarShortcutActive)
-                screenState.sidebar = false;
+        if (canDismissPopouts()) {
+            popouts.hasCurrent = false;
+            bar.closeTray();
         }
+
+        if (Config.bar.showOnHover)
+            bar.isHovered = false;
     }
 
     onPositionChanged: event => {
         if (popouts.isDetached)
             return;
 
-        const x = event.x;
-        const y = event.y;
-        const dragX = x - dragStart.x;
-        const dragY = y - dragStart.y;
-
         if (fullscreen) {
-            root.panels.osd.hovered = inRightPanel(panels.osdWrapper, x, y);
-            return;
-        }
-
-        // Show bar in non-exclusive mode on hover
-        if (!screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
-            bar.isHovered = true;
-
-        // Show/hide bar on drag
-        if (pressed && dragStart.x < bar.clampedWidth) {
-            if (dragX > Config.bar.dragThreshold)
-                screenState.bar = true;
-            else if (dragX < -Config.bar.dragThreshold)
-                screenState.bar = false;
-        }
-
-        if (panels.sidebar.offsetScale === 1) {
-            // Show osd on hover
-            const showOsd = inRightPanel(panels.osdWrapper, x, y);
-
-            // Always update visibility based on hover if not in shortcut mode
-            if (!osdShortcutActive) {
-                screenState.osd = showOsd;
-                root.panels.osd.hovered = showOsd;
-            } else if (showOsd) {
-                // If hovering over OSD area while in shortcut mode, transition to hover control
-                osdShortcutActive = false;
-                root.panels.osd.hovered = true;
-            }
-
-            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
-
-            // Show sidebar on hover (top-right corner, bounded by notification panel height)
-            if (Config.sidebar.showOnHover && Config.sidebar.enabled) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
-                if (showSidebarHover && !screenState.sidebar)
-                    screenState.sidebar = true;
-            }
-
-            // Show/hide session on drag
-            if (pressed && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
-                    screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
-                    screenState.session = false;
-
-                // Show sidebar on drag if in session area and session is nearly fully visible
-                if (showSidebar && panels.session.offsetScale <= 0 && dragX < -Config.sidebar.dragThreshold)
-                    screenState.sidebar = true;
-            } else if (showSidebar && dragX < -Config.sidebar.dragThreshold) {
-                // Show sidebar on drag if not in session area
-                screenState.sidebar = true;
-            }
+            handleOsd(event.x, event.y);
         } else {
-            const outOfSidebar = x < width - panels.sidebar.width * (1 - panels.sidebar.offsetScale);
-            // Show osd on hover
-            const showOsd = outOfSidebar && inRightPanel(panels.osdWrapper, x, y);
+            const dragX = event.x - dragStart.x;
+            const dragY = event.y - dragStart.y;
 
-            // Always update visibility based on hover if not in shortcut mode
-            if (!osdShortcutActive) {
-                screenState.osd = showOsd;
-                root.panels.osd.hovered = showOsd;
-            } else if (showOsd) {
-                // If hovering over OSD area while in shortcut mode, transition to hover control
-                osdShortcutActive = false;
-                root.panels.osd.hovered = true;
-            }
+            nextState.reset();
 
-            // Show/hide session on drag
-            if (pressed && outOfSidebar && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
-                    screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
-                    screenState.session = false;
-            }
+            // handleBar(event.x, event.y, dragX, dragY);
+            handleLauncher(event.x, event.y, dragY);
+            handleSidebar(event.x, event.y);
+            handleUtilities(event.x, event.y);
+            handleDashboard(event.x, event.y, dragX, dragY);
+            handleOsd(event.x, event.y);
+            handleSession(event.x, event.y);
+            handlePopouts(event.x, event.y);
 
-            // Show/hide sidebar on hover
-            if (Config.sidebar.showOnHover && Config.sidebar.enabled && !pressed) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
-                if (showSidebarHover && !screenState.sidebar) {
-                    screenState.sidebar = true;
-                } else if (!sidebarShortcutActive) {
-                    const inSidebarArea = inRightPanel(panels.sidebar, x, y) || inRightPanel(panels.sessionWrapper, x, y) || inRightPanel(panels.utilities, x, y);
-                    if (!inSidebarArea)
-                        screenState.sidebar = false;
-                } else if (showSidebarHover) {
-                    // If hovering over sidebar area while in shortcut mode, transition to hover control
-                    sidebarShortcutActive = false;
-                }
-            }
+            handleOverlap(nextState);
 
-            // Hide sidebar on drag
-            if (pressed && inRightPanel(panels.sidebar, dragStart.x, 0) && dragX > Config.sidebar.dragThreshold)
-                screenState.sidebar = false;
+            nextState.apply();
         }
 
-        // Show launcher on hover, or show/hide on drag if hover is disabled
-        if (Config.launcher.showOnHover) {
-            if (!screenState.launcher && inBottomPanel(panels.launcher, x, y))
-                screenState.launcher = true;
-        } else if (pressed && inBottomPanel(panels.launcher, dragStart.x, dragStart.y) && withinPanelWidth(panels.launcher, x, y)) {
-            if (dragY < -Config.launcher.dragThreshold)
-                screenState.launcher = true;
-            else if (dragY > Config.launcher.dragThreshold)
-                screenState.launcher = false;
-        }
-
-        // Show dashboard on hover
-        const showDashboard = Config.dashboard.showOnHover && inTopPanel(panels.dashboard, x, y);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!dashboardShortcutActive) {
-            screenState.dashboard = showDashboard;
-        } else if (showDashboard) {
-            // If hovering over dashboard area while in shortcut mode, transition to hover control
-            dashboardShortcutActive = false;
-        }
-
-        // Show/hide dashboard on drag (for touchscreen devices)
-        if (pressed && inTopPanel(panels.dashboard, dragStart.x, dragStart.y) && withinPanelWidth(panels.dashboard, x, y)) {
-            if (dragY > Config.dashboard.dragThreshold)
-                screenState.dashboard = true;
-            else if (dragY < -Config.dashboard.dragThreshold)
-                screenState.dashboard = false;
-        }
-
-        // Show utilities on hover
-        const showUtilities = inBottomPanel(panels.utilities, x, y, true);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!utilitiesShortcutActive) {
-            screenState.utilities = showUtilities;
-        } else if (showUtilities) {
-            // If hovering over utilities area while in shortcut mode, transition to hover control
-            utilitiesShortcutActive = false;
-        }
-
-        // Show popouts on hover
-        if (x < bar.implicitWidth) {
-            bar.checkPopout(y);
-        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inLeftPanel(panels.popoutsWrapper, x, y)) {
-            popouts.hasCurrent = false;
-            bar.closeTray();
-        }
+    // console.log(`osd=${screenState.osd ? "✅️" : "❌"}|${screenState.osdTemporary ? "✅️" : "❌"}, dashboard=${screenState.dashboard ? "✅️" : "❌"}|${screenState.dashboardTemporary ? "✅️" : "❌"}, utilities=${screenState.utilities ? "✅️" : "❌"}|${screenState.utilitiesTemporary ? "✅️" : "❌"}, sidebar=${screenState.sidebar ? "✅️" : "❌"}|${screenState.sidebarTemporary ? "✅️" : "❌"}, session=${screenState.session ? "✅️" : "❌"}|${screenState.sessionTemporary ? "✅️" : "❌"}, launcher=${screenState.launcher ? "✅️" : "❌"}|${screenState.launcherTemporary ? "✅️" : "❌"}`);
     }
 
-    // Monitor individual visibility changes
-    Connections {
-        function onLauncherChanged() {
-            // If launcher is hidden, clear shortcut flags for dashboard and OSD
-            if (!root.screenState.launcher) {
-                root.dashboardShortcutActive = false;
-                root.osdShortcutActive = false;
-                root.utilitiesShortcutActive = false;
-                root.sidebarShortcutActive = false;
+    QtObject {
+        id: nextState
 
-                // Also hide dashboard and OSD if they're not being hovered
-                const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
-                const inOsdArea = root.inRightPanel(root.panels.osdWrapper, root.mouseX, root.mouseY);
+        property bool osd
+        property bool osdTemporary
+        property bool dashboard
+        property bool dashboardTemporary
+        property bool utilities
+        property bool utilitiesTemporary
+        property bool sidebar
+        property bool sidebarTemporary
+        property bool session
+        property bool sessionTemporary
+        property bool launcher
+        property bool launcherTemporary
 
-                if (!inDashboardArea) {
-                    root.screenState.dashboard = false;
-                }
-                if (!inOsdArea) {
-                    root.screenState.osd = false;
-                    root.panels.osd.hovered = false;
-                }
-            }
+        function reset(): void {
+            for (const key in nextState)
+                if (nextState.hasOwnProperty(key) && typeof nextState[key] === "boolean" && nextState[key] !== root.screenState[key])
+                    nextState[key] = root.screenState[key];
         }
 
-        function onDashboardChanged() {
-            if (root.screenState.dashboard) {
-                // Dashboard became visible, immediately check if this should be shortcut mode
-                const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
-                if (!inDashboardArea) {
-                    root.dashboardShortcutActive = true;
-                }
-            } else {
-                // Dashboard hidden, clear shortcut flag
-                root.dashboardShortcutActive = false;
-            }
+        function apply(): void {
+            for (const key in nextState)
+                if (nextState.hasOwnProperty(key) && typeof nextState[key] === "boolean" && nextState[key] !== root.screenState[key])
+                    root.screenState[key] = nextState[key];
         }
-
-        function onOsdChanged() {
-            if (root.screenState.osd) {
-                // OSD became visible, immediately check if this should be shortcut mode
-                const inOsdArea = root.inRightPanel(root.panels.osdWrapper, root.mouseX, root.mouseY);
-                if (!inOsdArea) {
-                    root.osdShortcutActive = true;
-                }
-            } else {
-                // OSD hidden, clear shortcut flag
-                root.osdShortcutActive = false;
-            }
-        }
-
-        function onUtilitiesChanged() {
-            if (root.screenState.utilities) {
-                // Utilities became visible, immediately check if this should be shortcut mode
-                const inUtilitiesArea = root.inBottomPanel(root.panels.utilities, root.mouseX, root.mouseY);
-                if (!inUtilitiesArea) {
-                    root.utilitiesShortcutActive = true;
-                }
-            } else {
-                // Utilities hidden, clear shortcut flag
-                root.utilitiesShortcutActive = false;
-            }
-        }
-
-        function onSidebarChanged() {
-            if (root.screenState.sidebar) {
-                // Sidebar became visible, immediately check if this should be shortcut mode
-                const inSidebarArea = root.inRightPanel(root.panels.sidebar, root.mouseX, root.mouseY) || root.inRightPanel(root.panels.sessionWrapper, root.mouseX, root.mouseY) || root.inRightPanel(root.panels.utilities, root.mouseX, root.mouseY);
-                if (!inSidebarArea)
-                    root.sidebarShortcutActive = true;
-            } else {
-                // Sidebar hidden, clear shortcut flag
-                root.sidebarShortcutActive = false;
-            }
-        }
-
-        target: root.screenState
     }
 }

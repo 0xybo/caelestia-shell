@@ -5,9 +5,11 @@ import Quickshell
 import Caelestia
 import qs.components
 import qs.services
+import qs.modules.drawers
 
 Singleton {
     property ShellRoot shellRoot
+    property bool debug: false
 
     function anySidebarOpen(): bool {
         return states.instances.some(s => s.sidebar);
@@ -41,6 +43,26 @@ Singleton {
             if (Hypr.monitorFor(c.modelData) === mon)
                 return c;
         return null;
+    }
+
+    function geometryFor(screen: ShellScreen): EdgeGeometry {
+        const c = componentsFor(screen);
+        return c ? c.rootWindow?.geometry : null;
+    }
+
+    function geometryForActive(): EdgeGeometry {
+        const c = componentsForActive();
+        return c ? c.rootWindow?.geometry : null;
+    }
+
+    function interactionsFor(screen: ShellScreen): Interactions {
+        const c = componentsFor(screen);
+        return c ? c.interactionWrapper : null;
+    }
+
+    function interactionsForActive(): Interactions {
+        const c = componentsForActive();
+        return c ? c.interactionWrapper : null;
     }
 
     Variants {

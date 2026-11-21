@@ -3,10 +3,30 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components.controls
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property list<MenuItem> barPositionItems: [
+        MenuItem {
+            text: Tr.tr("Top")
+            value: BarPosition.Top
+        },
+        MenuItem {
+            text: Tr.tr("Bottom")
+            value: BarPosition.Bottom
+        },
+        MenuItem {
+            text: Tr.tr("Left")
+            value: BarPosition.Left
+        },
+        MenuItem {
+            text: Tr.tr("Right")
+            value: BarPosition.Right
+        }
+    ]
 
     title: Tr.tr("Taskbar")
     isSubPage: true
@@ -23,8 +43,16 @@ PageBase {
             text: Tr.tr("Behaviour")
         }
 
-        ToggleRow {
+        SelectRow {
             first: true
+            label: Tr.tr("Position")
+            subtext: Tr.tr("Where the bar is located on the screen")
+            menuItems: root.barPositionItems
+            active: root.barPositionItems.find(i => i.value === Config.bar.position)
+            onSelected: i => GlobalConfig.bar.position = i.value
+        }
+
+        ToggleRow {
             text: Tr.tr("Persistent")
             subtext: Tr.tr("Keep the bar visible at all times")
             checked: Config.bar.persistent
@@ -59,28 +87,28 @@ PageBase {
             icon: "workspaces"
             text: Tr.tr("Workspaces")
             subtext: Tr.tr("Indicators, window icons")
-            onClicked: root.nState.openSubPage(6)
+            onClicked: root.nState.openSubPage(7)
         }
 
         NavRow {
             icon: "web_asset"
             text: Tr.tr("Active window")
             subtext: Tr.tr("Title display, popout")
-            onClicked: root.nState.openSubPage(7)
+            onClicked: root.nState.openSubPage(8)
         }
 
         NavRow {
             icon: "widgets"
             text: Tr.tr("Tray")
             subtext: Tr.tr("System tray icons")
-            onClicked: root.nState.openSubPage(8)
+            onClicked: root.nState.openSubPage(9)
         }
 
         NavRow {
             icon: "signal_cellular_alt"
             text: Tr.tr("Status icons")
             subtext: Tr.tr("Visible indicators")
-            onClicked: root.nState.openSubPage(9)
+            onClicked: root.nState.openSubPage(10)
         }
 
         NavRow {
@@ -88,7 +116,7 @@ PageBase {
             icon: "schedule"
             text: Tr.tr("Clock")
             subtext: Tr.tr("Date, icon, background")
-            onClicked: root.nState.openSubPage(10)
+            onClicked: root.nState.openSubPage(11)
         }
 
         // Scroll actions

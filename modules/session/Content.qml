@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
@@ -16,7 +15,6 @@ Column {
     required property ScreenState screenState
 
     padding: Tokens.padding.large
-    rightPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
     spacing: Tokens.spacing.large
 
     SessionButton {
