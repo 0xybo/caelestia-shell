@@ -33,5 +33,10 @@ QtObject {
         subPageIdStack.pop();
     }
 
+    function closeAllSubPages(): void {
+        subPageClosed();
+        subPageIdStack = [];
+    }
+
     onCurrentPageIdxChanged: subPageIdStack.length = 0
 }
