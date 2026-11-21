@@ -48,7 +48,9 @@ Column {
     }
 
     Loader {
-        active: Config.paths.sessionGif.trim() !== ""
+        id: gif
+
+        active: Config.session.showGif
 
         sourceComponent: AnimatedImage {
             width: Tokens.sizes.session.button
